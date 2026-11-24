@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
 /// Reusable ERP Form Field Widgets strictly enforcing:
-/// - Exact 35px height for inputs and buttons
+/// - Exact 40px height for inputs and buttons
 /// - Maximum FontWeight.w600
 /// - 4px to 6px border radius
 /// - Monochrome Light Gray & Pitch Black enterprise palette
 class ErpFormWidgets {
-  /// Strict 35px Height Text Field with optional label
+  /// Strict 40px Height Text Field with optional label
   static Widget textField({
     required TextEditingController controller,
     String? hintText,
@@ -50,7 +50,7 @@ class ErpFormWidgets {
           const SizedBox(height: 5),
         ],
         SizedBox(
-          height: 35,
+          height: 40,
           child: TextField(
             controller: controller,
             readOnly: readOnly,
@@ -73,10 +73,10 @@ class ErpFormWidgets {
               filled: true,
               fillColor: AppColors.canvas,
               prefixIcon: prefixIcon != null
-                  ? Icon(prefixIcon, size: 15, color: AppColors.zinc600)
+                  ? Icon(prefixIcon, size: 16, color: AppColors.zinc600)
                   : null,
               suffixIcon: suffix,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
                 borderSide: const BorderSide(color: AppColors.border, width: 1),
@@ -96,7 +96,7 @@ class ErpFormWidgets {
     );
   }
 
-  /// Strict 35px Height Dropdown Field
+  /// Strict 40px Height Dropdown Field
   static Widget dropdownField<T>({
     required T? value,
     required List<DropdownMenuItem<T>> items,
@@ -136,7 +136,7 @@ class ErpFormWidgets {
           const SizedBox(height: 5),
         ],
         SizedBox(
-          height: 35,
+          height: 40,
           child: DropdownButtonFormField<T>(
             value: value,
             items: items,
@@ -160,7 +160,7 @@ class ErpFormWidgets {
               ),
               filled: true,
               fillColor: AppColors.canvas,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
                 borderSide: const BorderSide(color: AppColors.border, width: 1),
@@ -180,7 +180,7 @@ class ErpFormWidgets {
     );
   }
 
-  /// Strict 35px Height Primary Black Button
+  /// Strict 40px Height Primary Black Button
   static Widget primaryButton({
     required VoidCallback onPressed,
     required String text,
@@ -188,13 +188,13 @@ class ErpFormWidgets {
     bool isLoading = false,
   }) {
     return SizedBox(
-      height: 35,
+      height: 40,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.pitchBlack,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         ),
         onPressed: isLoading ? null : onPressed,
@@ -212,7 +212,7 @@ class ErpFormWidgets {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (icon != null) ...[
-                    Icon(icon, size: 14, color: Colors.white),
+                    Icon(icon, size: 15, color: Colors.white),
                     const SizedBox(width: 6),
                   ],
                   Text(
@@ -230,21 +230,21 @@ class ErpFormWidgets {
     );
   }
 
-  /// Strict 35px Height Outlined Button
+  /// Strict 40px Height Outlined Button
   static Widget outlinedButton({
     required VoidCallback onPressed,
     required String text,
     IconData? icon,
   }) {
     return SizedBox(
-      height: 35,
+      height: 40,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
           backgroundColor: AppColors.lightGray,
           foregroundColor: AppColors.pitchBlack,
           side: const BorderSide(color: AppColors.border, width: 1),
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         ),
         onPressed: onPressed,
@@ -253,7 +253,7 @@ class ErpFormWidgets {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 14, color: AppColors.pitchBlack),
+              Icon(icon, size: 15, color: AppColors.pitchBlack),
               const SizedBox(width: 6),
             ],
             Text(
@@ -271,19 +271,19 @@ class ErpFormWidgets {
     );
   }
 
-  /// Strict 35px Height Secondary Flat Button (Light Gray)
+  /// Strict 40px Height Secondary Flat Button (Light Gray)
   static Widget secondaryButton({
     required VoidCallback onPressed,
     required String text,
     IconData? icon,
   }) {
     return SizedBox(
-      height: 35,
+      height: 40,
       child: TextButton(
         style: TextButton.styleFrom(
           backgroundColor: AppColors.canvas,
           foregroundColor: AppColors.pitchBlack,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4),
             side: const BorderSide(color: AppColors.border),
@@ -294,7 +294,7 @@ class ErpFormWidgets {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 14, color: AppColors.pitchBlack),
+              Icon(icon, size: 15, color: AppColors.pitchBlack),
               const SizedBox(width: 6),
             ],
             Text(

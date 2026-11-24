@@ -91,7 +91,7 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
             text: 'Cancel',
           ),
           SizedBox(
-            height: 35,
+            height: 40,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade700,

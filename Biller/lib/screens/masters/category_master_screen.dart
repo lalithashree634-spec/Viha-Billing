@@ -84,7 +84,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
             text: 'Cancel',
           ),
           SizedBox(
-            height: 35,
+            height: 40,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade700,

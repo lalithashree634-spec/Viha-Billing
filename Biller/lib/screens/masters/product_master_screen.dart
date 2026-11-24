@@ -95,7 +95,7 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
             text: 'Cancel',
           ),
           SizedBox(
-            height: 35,
+            height: 40,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red.shade700,
@@ -929,7 +929,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                       ),
                                       const SizedBox(height: 5),
                                       SizedBox(
-                                        height: 35,
+                                        height: 40,
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -939,7 +939,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                                 decoration: InputDecoration(
                                                   isDense: true,
                                                   hintText: '8901234...',
-                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                                   filled: true,
                                                   fillColor: AppColors.canvas,
                                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
@@ -949,9 +949,9 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                               ),
                                             ),
                                             const SizedBox(width: 6),
-                                            // Quick Generate Button (35px)
+                                            // Quick Generate Button (40px)
                                             SizedBox(
-                                              height: 35,
+                                              height: 40,
                                               child: OutlinedButton(
                                                 style: OutlinedButton.styleFrom(
                                                   backgroundColor: AppColors.canvas,
@@ -1157,7 +1157,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                         ),
                                         const SizedBox(height: 5),
                                         Container(
-                                          height: 35,
+                                          height: 40,
                                           padding: const EdgeInsets.symmetric(horizontal: 10),
                                           decoration: BoxDecoration(
                                             color: marginPercent > 0 ? Colors.green.withValues(alpha: 0.1) : AppColors.canvas,
@@ -1235,7 +1235,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                         ),
                                         const SizedBox(height: 5),
                                         Container(
-                                          height: 35,
+                                          height: 40,
                                           padding: const EdgeInsets.symmetric(horizontal: 10),
                                           decoration: BoxDecoration(
                                             color: marginPercent > 0 ? Colors.green.withValues(alpha: 0.1) : AppColors.canvas,

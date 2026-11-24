@@ -405,61 +405,67 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // SEARCH BAR IN LIGHT GRAY
+  // SEARCH BAR IN LIGHT GRAY (Strict 40px Height)
   Widget _buildSearchBar() {
-    return TextField(
-      controller: _searchController,
-      focusNode: _searchFocusNode,
-      onChanged: (_) => setState(() {}),
-      style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w500),
-      decoration: InputDecoration(
-        hintText: 'Search items by name, category, or barcode...',
-        prefixIcon: const Icon(Icons.search_rounded, color: AppColors.zinc500, size: 18),
-        suffixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (_searchController.text.isNotEmpty)
-              IconButton(
-                icon: const Icon(Icons.close_rounded, size: 16),
-                onPressed: () {
-                  _searchController.clear();
-                  setState(() {});
-                },
-              ),
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.canvas,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: const Text(
-                'F2',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.zinc600,
+    return SizedBox(
+      height: 40,
+      child: TextField(
+        controller: _searchController,
+        focusNode: _searchFocusNode,
+        onChanged: (_) => setState(() {}),
+        style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w500),
+        decoration: InputDecoration(
+          isDense: true,
+          hintText: 'Search items by name, category, or barcode...',
+          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.zinc500, size: 18),
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_searchController.text.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, size: 16),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() {});
+                  },
+                ),
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.canvas,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: const Text(
+                  'F2',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.zinc600,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        filled: true,
-        fillColor: AppColors.lightGray,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2),
+            ],
+          ),
+          filled: true,
+          fillColor: AppColors.lightGray,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6),
+            borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2),
+          ),
         ),
       ),
     );
@@ -485,7 +491,9 @@ class _PosScreenState extends State<PosScreen> {
               },
               borderRadius: BorderRadius.circular(4),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.pitchBlack : AppColors.lightGray,
                   borderRadius: BorderRadius.circular(4),
@@ -704,10 +712,17 @@ class _PosScreenState extends State<PosScreen> {
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                   decoration: BoxDecoration(
-                    color: const Color(0xF2FFFFFF), // 95% translucent frosted white
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.88),
+                        Colors.white.withValues(alpha: 0.97),
+                      ],
+                    ),
                     border: Border(
                       top: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: Colors.white.withValues(alpha: 0.9),
                         width: 1,
                       ),
                     ),
@@ -852,19 +867,23 @@ class _PosScreenState extends State<PosScreen> {
         ),
         const SizedBox(height: 10),
 
-        // Customer Phone Field (Light Gray)
-        TextField(
-          controller: _customerController,
-          style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),
-          decoration: InputDecoration(
-            hintText: 'Customer phone or name...',
-            prefixIcon: const Icon(Icons.person_outline, size: 16, color: AppColors.zinc600),
-            filled: true,
-            fillColor: AppColors.canvas,
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+        // Customer Phone Field (Light Gray - Strict 40px Height)
+        SizedBox(
+          height: 40,
+          child: TextField(
+            controller: _customerController,
+            style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),
+            decoration: InputDecoration(
+              hintText: 'Customer phone or name...',
+              prefixIcon: const Icon(Icons.person_outline, size: 16, color: AppColors.zinc600),
+              filled: true,
+              fillColor: AppColors.canvas,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2)),
+            ),
           ),
         ),
         const SizedBox(height: 10),
@@ -1951,16 +1970,22 @@ class _PosScreenState extends State<PosScreen> {
           ),
           const SizedBox(height: 12),
 
-          // Transaction Auth / Ref ID
-          TextField(
-            controller: cardRefController,
-            style: const TextStyle(fontFamily: 'Poppins', fontSize: 12),
-            decoration: InputDecoration(
-              hintText: 'Card Approval / Auth Code (Optional)...',
-              isDense: true,
-              fillColor: AppColors.lightGray,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+          // Transaction Auth / Ref ID (Strict 40px Height)
+          SizedBox(
+            height: 40,
+            child: TextField(
+              controller: cardRefController,
+              style: const TextStyle(fontFamily: 'Poppins', fontSize: 12),
+              decoration: InputDecoration(
+                hintText: 'Card Approval / Auth Code (Optional)...',
+                isDense: true,
+                filled: true,
+                fillColor: AppColors.lightGray,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2)),
+              ),
             ),
           ),
         ],
