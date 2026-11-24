@@ -673,29 +673,34 @@ class _PosScreenState extends State<PosScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.canvas,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      product.category.toUpperCase(),
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 9,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.zinc600,
-                        letterSpacing: 0.4,
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.canvas,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        product.category.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.zinc600,
+                          letterSpacing: 0.4,
+                        ),
                       ),
                     ),
                   ),
+                  const SizedBox(width: 4),
                   Text(
                     currencyFormatter.format(product.price),
                     style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      fontSize: 13,
                       color: AppColors.pitchBlack,
                     ),
                   ),
