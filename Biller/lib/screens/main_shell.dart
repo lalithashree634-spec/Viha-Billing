@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'pos_screen.dart';
+import 'masters/category_master_screen.dart';
+import 'masters/subcategory_master_screen.dart';
+import 'masters/product_master_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -11,10 +14,13 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
+  bool _isProductExpanded = true;
 
   final List<Widget> _screens = [
     const PosScreen(),
-    const _InventoryScreen(),
+    const CategoryMasterScreen(),
+    const SubcategoryMasterScreen(),
+    const ProductMasterScreen(),
     const _ReportsScreen(),
     const _SettingsScreen(),
   ];
@@ -32,7 +38,10 @@ class _MainShellState extends State<MainShell> {
           children: [
             _buildSidebarDock(isCompact: isTablet),
             Expanded(
-              child: _screens[_selectedIndex],
+              child: IndexedStack(
+                index: _selectedIndex,
+                children: _screens,
+              ),
             ),
           ],
         ),
@@ -40,14 +49,19 @@ class _MainShellState extends State<MainShell> {
     } else {
       return Scaffold(
         backgroundColor: AppColors.canvas,
-        body: SafeArea(child: _screens[_selectedIndex]),
+        body: SafeArea(
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: _screens,
+          ),
+        ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             color: AppColors.lightGray,
             border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: NavigationBar(
-            selectedIndex: _selectedIndex,
+            selectedIndex: _selectedIndex > 4 ? 4 : _selectedIndex,
             onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
             backgroundColor: AppColors.lightGray,
             indicatorColor: AppColors.canvas,
@@ -59,14 +73,19 @@ class _MainShellState extends State<MainShell> {
                 label: 'POS',
               ),
               NavigationDestination(
-                icon: Icon(Icons.inventory_2_outlined, color: AppColors.zinc600),
-                selectedIcon: Icon(Icons.inventory_2, color: AppColors.pitchBlack),
-                label: 'Stock',
+                icon: Icon(Icons.category_outlined, color: AppColors.zinc600),
+                selectedIcon: Icon(Icons.category, color: AppColors.pitchBlack),
+                label: 'Category',
               ),
               NavigationDestination(
-                icon: Icon(Icons.bar_chart_outlined, color: AppColors.zinc600),
-                selectedIcon: Icon(Icons.bar_chart, color: AppColors.pitchBlack),
-                label: 'Reports',
+                icon: Icon(Icons.account_tree_outlined, color: AppColors.zinc600),
+                selectedIcon: Icon(Icons.account_tree, color: AppColors.pitchBlack),
+                label: 'Sub-Cat',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.inventory_2_outlined, color: AppColors.zinc600),
+                selectedIcon: Icon(Icons.inventory_2, color: AppColors.pitchBlack),
+                label: 'Products',
               ),
               NavigationDestination(
                 icon: Icon(Icons.tune_outlined, color: AppColors.zinc600),
@@ -81,13 +100,15 @@ class _MainShellState extends State<MainShell> {
   }
 
   Widget _buildSidebarDock({required bool isCompact}) {
+    final isProductSubSelected = _selectedIndex >= 1 && _selectedIndex <= 3;
+
     return Container(
-      width: isCompact ? 64 : 210,
+      width: isCompact ? 64 : 220,
       decoration: const BoxDecoration(
         color: AppColors.lightGray,
         border: Border(right: BorderSide(color: AppColors.border, width: 1)),
       ),
-      padding: EdgeInsets.symmetric(vertical: 16, horizontal: isCompact ? 8 : 12),
+      padding: EdgeInsets.symmetric(vertical: 14, horizontal: isCompact ? 8 : 10),
       child: Column(
         crossAxisAlignment: isCompact ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
@@ -103,52 +124,127 @@ class _MainShellState extends State<MainShell> {
               ),
             ),
           ] else ...[
-            Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    width: 34,
-                    height: 34,
-                    fit: BoxFit.contain,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.contain,
+                    ),
                   ),
+                  const SizedBox(width: 10),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'VIHA POS',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.8,
+                          color: AppColors.pitchBlack,
+                        ),
+                      ),
+                      Text(
+                        'Enterprise Billing',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.zinc500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 20),
+
+          // 1. POS Register
+          _buildNavItem(0, 'POS Register', Icons.point_of_sale_outlined, Icons.point_of_sale, isCompact),
+          const SizedBox(height: 4),
+
+          // 2. Product Parent Section (Expandable with 3 Masters)
+          if (isCompact) ...[
+            _buildNavItem(1, 'Category Master', Icons.category_outlined, Icons.category, true),
+            _buildNavItem(2, 'Sub-Category Master', Icons.account_tree_outlined, Icons.account_tree, true),
+            _buildNavItem(3, 'Products', Icons.inventory_2_outlined, Icons.inventory_2, true),
+          ] else ...[
+            // Expandable Header for Product
+            InkWell(
+              onTap: () {
+                setState(() => _isProductExpanded = !_isProductExpanded);
+              },
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isProductSubSelected && !_isProductExpanded ? AppColors.canvas : Colors.transparent,
+                  borderRadius: BorderRadius.circular(4),
                 ),
-                const SizedBox(width: 10),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Row(
                   children: [
-                    Text(
-                      'VIHA POS',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.8,
-                        color: AppColors.pitchBlack,
+                    Icon(
+                      Icons.inventory_2_outlined,
+                      size: 17,
+                      color: isProductSubSelected ? AppColors.pitchBlack : AppColors.zinc600,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Product',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 12,
+                          fontWeight: isProductSubSelected ? FontWeight.w600 : FontWeight.w500,
+                          color: isProductSubSelected ? AppColors.pitchBlack : AppColors.zinc700,
+                        ),
                       ),
                     ),
-                    Text(
-                      'Enterprise Billing',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.zinc500,
-                      ),
+                    Icon(
+                      _isProductExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                      size: 16,
+                      color: AppColors.zinc600,
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
-          ],
-          const SizedBox(height: 24),
 
-          // Nav Items
-          _buildNavItem(0, 'POS Register', Icons.point_of_sale_outlined, Icons.point_of_sale, isCompact),
-          _buildNavItem(1, 'Item Catalog', Icons.inventory_2_outlined, Icons.inventory_2, isCompact),
-          _buildNavItem(2, 'Sales Reports', Icons.bar_chart_outlined, Icons.bar_chart, isCompact),
-          _buildNavItem(3, 'Settings', Icons.tune_outlined, Icons.tune, isCompact),
+            // Indented 3 Options
+            if (_isProductExpanded)
+              Padding(
+                padding: const EdgeInsets.only(left: 14, top: 2, bottom: 2),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    border: Border(left: BorderSide(color: AppColors.border, width: 1.5)),
+                  ),
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Column(
+                    children: [
+                      _buildSubNavItem(1, 'Category Master', Icons.category_outlined),
+                      _buildSubNavItem(2, 'Sub-Cat Master', Icons.account_tree_outlined),
+                      _buildSubNavItem(3, 'Products', Icons.shopping_bag_outlined),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+          const SizedBox(height: 4),
+
+          // 3. Sales Reports
+          _buildNavItem(4, 'Sales Reports', Icons.bar_chart_outlined, Icons.bar_chart, isCompact),
+
+          // 4. Settings
+          _buildNavItem(5, 'Settings', Icons.tune_outlined, Icons.tune, isCompact),
 
           const Spacer(),
 
@@ -178,7 +274,7 @@ class _MainShellState extends State<MainShell> {
                         ),
                       ),
                       Text(
-                        'Counter 01',
+                        'Counter 01 • Main',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 10,
@@ -199,14 +295,14 @@ class _MainShellState extends State<MainShell> {
     final isSelected = _selectedIndex == index;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.only(bottom: 3),
       child: Tooltip(
         message: isCompact ? title : '',
         child: InkWell(
           onTap: () => setState(() => _selectedIndex = index),
           borderRadius: BorderRadius.circular(4),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: isCompact ? 10 : 12, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: isCompact ? 10 : 10, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected ? AppColors.pitchBlack : Colors.transparent,
               borderRadius: BorderRadius.circular(4),
@@ -217,7 +313,7 @@ class _MainShellState extends State<MainShell> {
                 Icon(
                   isSelected ? activeIcon : icon,
                   color: isSelected ? AppColors.textOnDark : AppColors.zinc600,
-                  size: 18,
+                  size: 17,
                 ),
                 if (!isCompact) ...[
                   const SizedBox(width: 10),
@@ -238,38 +334,39 @@ class _MainShellState extends State<MainShell> {
       ),
     );
   }
-}
 
-// INVENTORY TAB (Light Gray)
-class _InventoryScreen extends StatelessWidget {
-  const _InventoryScreen();
+  Widget _buildSubNavItem(int index, String title, IconData icon) {
+    final isSelected = _selectedIndex == index;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.canvas,
-      appBar: AppBar(title: const Text('Inventory & Stock Management')),
-      body: Center(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: InkWell(
+        onTap: () => setState(() => _selectedIndex = index),
+        borderRadius: BorderRadius.circular(4),
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
           decoration: BoxDecoration(
-            color: AppColors.lightGray,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: AppColors.border),
+            color: isSelected ? AppColors.pitchBlack : Colors.transparent,
+            borderRadius: BorderRadius.circular(4),
           ),
-          child: const Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Row(
             children: [
-              Icon(Icons.inventory_2_outlined, size: 32, color: AppColors.pitchBlack),
-              SizedBox(height: 12),
-              Text(
-                'Inventory Catalog',
-                style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 16),
+              Icon(
+                icon,
+                size: 14,
+                color: isSelected ? Colors.white : AppColors.zinc600,
               ),
-              SizedBox(height: 4),
-              Text(
-                'Manage barcodes, purchase cost, selling rates & GST tax slabs',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 11,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected ? Colors.white : AppColors.zinc700,
+                  ),
+                ),
               ),
             ],
           ),
@@ -279,7 +376,7 @@ class _InventoryScreen extends StatelessWidget {
   }
 }
 
-// REPORTS TAB (Light Gray)
+// REPORTS TAB
 class _ReportsScreen extends StatelessWidget {
   const _ReportsScreen();
 
@@ -318,7 +415,7 @@ class _ReportsScreen extends StatelessWidget {
   }
 }
 
-// SETTINGS TAB (Light Gray)
+// SETTINGS TAB
 class _SettingsScreen extends StatelessWidget {
   const _SettingsScreen();
 

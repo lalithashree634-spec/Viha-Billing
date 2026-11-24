@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../models/product.dart';
 import '../models/bill_item.dart';
 import '../theme/app_colors.dart';
+import '../services/inventory_repository.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({super.key});
@@ -13,125 +14,51 @@ class PosScreen extends StatefulWidget {
 }
 
 class _PosScreenState extends State<PosScreen> {
+  final InventoryRepository _inventoryRepo = InventoryRepository();
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _customerController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
 
   String _selectedCategory = 'All';
 
-  final List<Map<String, dynamic>> _categories = [
-    {'name': 'All', 'icon': Icons.apps_outlined},
-    {'name': 'Beverages', 'icon': Icons.local_cafe_outlined},
-    {'name': 'Bakery', 'icon': Icons.bakery_dining_outlined},
-    {'name': 'Dairy', 'icon': Icons.egg_outlined},
-    {'name': 'Snacks', 'icon': Icons.cookie_outlined},
-    {'name': 'Spices', 'icon': Icons.grain_outlined},
-    {'name': 'Essentials', 'icon': Icons.inventory_2_outlined},
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _inventoryRepo.addListener(_onRepoChange);
+  }
 
-  // Professional Product Catalog
-  final List<Product> _allProducts = [
-    const Product(
-      id: 'p1',
-      name: 'Artisan Filter Coffee (250g)',
-      category: 'Beverages',
-      barcode: '8901234001',
-      price: 180.0,
-      costPrice: 120.0,
-      gstPercent: 5.0,
-      stock: 45,
-    ),
-    const Product(
-      id: 'p2',
-      name: 'Roasted Masala Tea (200g)',
-      category: 'Beverages',
-      barcode: '8901234002',
-      price: 120.0,
-      costPrice: 80.0,
-      gstPercent: 5.0,
-      stock: 28,
-    ),
-    const Product(
-      id: 'p3',
-      name: 'Whole Wheat Sourdough Loaf',
-      category: 'Bakery',
-      barcode: '8901234003',
-      price: 95.0,
-      costPrice: 60.0,
-      gstPercent: 0.0,
-      stock: 6,
-    ),
-    const Product(
-      id: 'p4',
-      name: 'Butter Croissant (2 pcs)',
-      category: 'Bakery',
-      barcode: '8901234004',
-      price: 140.0,
-      costPrice: 85.0,
-      gstPercent: 5.0,
-      stock: 4,
-    ),
-    const Product(
-      id: 'p5',
-      name: 'Pure Desi Cow Ghee (500ml)',
-      category: 'Dairy',
-      barcode: '8901234005',
-      price: 490.0,
-      costPrice: 380.0,
-      gstPercent: 12.0,
-      stock: 22,
-    ),
-    const Product(
-      id: 'p6',
-      name: 'California Almonds (250g)',
-      category: 'Snacks',
-      barcode: '8901234006',
-      price: 320.0,
-      costPrice: 240.0,
-      gstPercent: 5.0,
-      stock: 50,
-    ),
-    const Product(
-      id: 'p7',
-      name: 'Dark Chocolate Cookie Pack',
-      category: 'Snacks',
-      barcode: '8901234007',
-      price: 160.0,
-      costPrice: 100.0,
-      gstPercent: 18.0,
-      stock: 35,
-    ),
-    const Product(
-      id: 'p8',
-      name: 'Green Cardamom Extra Bold (50g)',
-      category: 'Spices',
-      barcode: '8901234008',
-      price: 210.0,
-      costPrice: 150.0,
-      gstPercent: 5.0,
-      stock: 40,
-    ),
-    const Product(
-      id: 'p9',
-      name: 'Himalayan Pink Rock Salt (1kg)',
-      category: 'Essentials',
-      barcode: '8901234009',
-      price: 85.0,
-      costPrice: 50.0,
-      gstPercent: 0.0,
-      stock: 65,
-    ),
-    const Product(
-      id: 'p10',
-      name: 'Wood Pressed Gingelly Oil (1L)',
-      category: 'Essentials',
-      barcode: '8901234010',
-      price: 260.0,
-      costPrice: 190.0,
-      gstPercent: 5.0,
-      stock: 14,
-    ),
-  ];
+  @override
+  void dispose() {
+    _inventoryRepo.removeListener(_onRepoChange);
+    _searchController.dispose();
+    _customerController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _onRepoChange() {
+    if (mounted) setState(() {});
+  }
+
+  List<Map<String, dynamic>> get _categories {
+    final defaultIcons = {
+      'Beverages': Icons.local_cafe_outlined,
+      'Bakery': Icons.bakery_dining_outlined,
+      'Dairy': Icons.egg_outlined,
+      'Snacks': Icons.cookie_outlined,
+      'Spices': Icons.grain_outlined,
+      'Essentials': Icons.inventory_2_outlined,
+    };
+    return [
+      {'name': 'All', 'icon': Icons.apps_outlined},
+      ..._inventoryRepo.categories.map((c) => {
+        'name': c.name,
+        'icon': defaultIcons[c.name] ?? Icons.category_outlined,
+      }),
+    ];
+  }
+
+  List<Product> get _allProducts => _inventoryRepo.products;
 
   final List<BillItem> _cart = [];
   final List<List<BillItem>> _heldBills = [];
@@ -139,14 +66,6 @@ class _PosScreenState extends State<PosScreen> {
   String _billNumber = 'INV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
 
   final currencyFormatter = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 2);
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _customerController.dispose();
-    _searchFocusNode.dispose();
-    super.dispose();
-  }
 
   List<Product> get _filteredProducts {
     final query = _searchController.text.trim().toLowerCase();
@@ -844,23 +763,23 @@ class _PosScreenState extends State<PosScreen> {
           child: const Row(
             children: [
               Expanded(
-                flex: 5,
                 child: Text('ITEM', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc700)),
               ),
-              Expanded(
-                flex: 3,
+              SizedBox(
+                width: 78,
                 child: Center(
                   child: Text('QTY', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc700)),
                 ),
               ),
-              Expanded(
-                flex: 3,
+              SizedBox(width: 8),
+              SizedBox(
+                width: 65,
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text('AMOUNT', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc700)),
                 ),
               ),
-              SizedBox(width: 24),
+              SizedBox(width: 28),
             ],
           ),
         ),
@@ -893,12 +812,11 @@ class _PosScreenState extends State<PosScreen> {
                   itemBuilder: (context, index) {
                     final item = _cart[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                       child: Row(
                         children: [
                           // Item Name & Rate
                           Expanded(
-                            flex: 5,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -921,45 +839,68 @@ class _PosScreenState extends State<PosScreen> {
                             ),
                           ),
 
-                          // Quantity Stepper (Light Gray Box)
-                          Expanded(
-                            flex: 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.canvas,
-                                border: Border.all(color: AppColors.border),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    onTap: () => _updateQuantity(index, -1),
-                                    child: const Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                                      child: Icon(Icons.remove, size: 12),
+                          // Compact Segmented Stepper Box
+                          SizedBox(
+                            width: 78,
+                            child: Center(
+                              child: Container(
+                                height: 26,
+                                decoration: BoxDecoration(
+                                  color: AppColors.canvas,
+                                  border: Border.all(color: AppColors.border),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    InkWell(
+                                      onTap: () => _updateQuantity(index, -1),
+                                      borderRadius: const BorderRadius.horizontal(left: Radius.circular(3)),
+                                      child: const SizedBox(
+                                        width: 24,
+                                        height: 26,
+                                        child: Center(
+                                          child: Icon(Icons.remove, size: 12, color: AppColors.pitchBlack),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    '${item.quantity}',
-                                    style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 11),
-                                  ),
-                                  InkWell(
-                                    onTap: () => _updateQuantity(index, 1),
-                                    child: const Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                                      child: Icon(Icons.add, size: 12),
+                                    Container(width: 1, height: 26, color: AppColors.border),
+                                    SizedBox(
+                                      width: 26,
+                                      child: Center(
+                                        child: Text(
+                                          '${item.quantity}',
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 11,
+                                            color: AppColors.pitchBlack,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    Container(width: 1, height: 26, color: AppColors.border),
+                                    InkWell(
+                                      onTap: () => _updateQuantity(index, 1),
+                                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(3)),
+                                      child: const SizedBox(
+                                        width: 24,
+                                        height: 26,
+                                        child: Center(
+                                          child: Icon(Icons.add, size: 12, color: AppColors.pitchBlack),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
 
                           // Line Total
-                          Expanded(
-                            flex: 3,
+                          SizedBox(
+                            width: 65,
                             child: Text(
                               currencyFormatter.format(item.subtotal),
                               textAlign: TextAlign.right,
@@ -973,11 +914,14 @@ class _PosScreenState extends State<PosScreen> {
                           ),
 
                           // Remove Button
-                          IconButton(
-                            icon: const Icon(Icons.close, size: 14, color: AppColors.zinc500),
-                            onPressed: () => _removeFromCart(index),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(minWidth: 24),
+                          SizedBox(
+                            width: 28,
+                            child: IconButton(
+                              icon: const Icon(Icons.close, size: 14, color: AppColors.zinc500),
+                              onPressed: () => _removeFromCart(index),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(minWidth: 24),
+                            ),
                           ),
                         ],
                       ),
