@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -584,7 +585,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // CLEAN INDUSTRIAL WHITE PRODUCT CARD (No dark blur, crystal clear white bottom, fast & responsive)
+  // ULTRA-CHIC FULL-BLEED IMAGE PRODUCT CARD WITH FROSTED WHITE GLASS PANEL
   Widget _buildProductCard(Product product) {
     final isLowStock = product.stock <= 6;
 
@@ -597,195 +598,206 @@ class _PosScreenState extends State<PosScreen> {
         onTap: () => _addToCart(product),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: AppColors.border),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              // Product Image Header (Proportional ~52% card height)
-              Expanded(
-                flex: 52,
-                child: SizedBox(
+              // 1. FULL CARD PRODUCT IMAGE (100% Full-bleed background)
+              if (product.imageUrl.isNotEmpty)
+                Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
                   width: double.infinity,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if (product.imageUrl.isNotEmpty)
-                        Image.network(
-                          product.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: AppColors.canvas,
-                            child: const Center(
-                              child: Icon(Icons.inventory_2_outlined, size: 24, color: AppColors.zinc400),
-                            ),
-                          ),
-                          loadingBuilder: (ctx, child, progress) {
-                            if (progress == null) return child;
-                            return Container(
-                              color: AppColors.canvas,
-                              child: const Center(
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      else
-                        Container(
-                          color: AppColors.canvas,
-                          child: const Center(
-                            child: Icon(Icons.inventory_2_outlined, size: 24, color: AppColors.zinc400),
-                          ),
-                        ),
-                      // Floating Category Pill (Black badge on top-left)
-                      Positioned(
-                        top: 6,
-                        left: 6,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.pitchBlack.withValues(alpha: 0.85),
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                          child: Text(
-                            product.category.toUpperCase(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              letterSpacing: 0.4,
-                            ),
-                          ),
+                  height: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: AppColors.canvas,
+                    child: const Center(
+                      child: Icon(Icons.inventory_2_outlined, size: 28, color: AppColors.zinc400),
+                    ),
+                  ),
+                  loadingBuilder: (ctx, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      color: AppColors.canvas,
+                      child: const Center(
+                        child: SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
                         ),
                       ),
-                      // Low Stock Badge (Red pill on top-right)
-                      if (isLowStock)
-                        Positioned(
-                          top: 6,
-                          right: 6,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFDC2626),
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                            child: Text(
-                              'Low: ${product.stock}',
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+                    );
+                  },
+                )
+              else
+                Container(
+                  color: AppColors.canvas,
+                  child: const Center(
+                    child: Icon(Icons.inventory_2_outlined, size: 28, color: AppColors.zinc400),
                   ),
                 ),
-              ),
 
-              // Product Info Area (Clean White, crisp black text, ~48% card height)
-              Expanded(
-                flex: 48,
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Product Name
-                      Text(
-                        product.name,
-                        maxLines: 2,
+              // 2. TOP FLOATING BADGES (Category & Low Stock)
+              Positioned(
+                top: 6,
+                left: 6,
+                right: 6,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Category Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.pitchBlack.withValues(alpha: 0.85),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: Text(
+                        product.category.toUpperCase(),
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontFamily: 'Poppins',
+                          fontSize: 9,
                           fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                          color: AppColors.pitchBlack,
-                          height: 1.25,
+                          color: Colors.white,
+                          letterSpacing: 0.4,
                         ),
                       ),
-                      const Spacer(),
-
-                      // SKU & Stock Level Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              product.barcode,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 10,
-                                color: AppColors.zinc500,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
+                    ),
+                    // Low Stock Alert Badge
+                    if (isLowStock)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDC2626),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        child: Text(
+                          'Low: ${product.stock}',
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              // 3. BOTTOM FROSTED WHITE GLASS BLUR PANEL
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(6)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.88), // Translucent Frosted White
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Product Name (Bold pitch black text on frosted white)
                           Text(
-                            isLowStock ? '${product.stock} (Low)' : '${product.stock} left',
-                            style: TextStyle(
+                            product.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
                               fontFamily: 'Poppins',
-                              fontSize: 10,
-                              fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w400,
-                              color: isLowStock ? const Color(0xFFD97706) : AppColors.zinc600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5),
-
-                      // Selling Price & Add (+) Button Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              currencyFormatter.format(product.price),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14,
-                                color: AppColors.pitchBlack,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            width: 26,
-                            height: 26,
-                            decoration: BoxDecoration(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
                               color: AppColors.pitchBlack,
-                              borderRadius: BorderRadius.circular(4),
+                              height: 1.25,
                             ),
-                            child: const Icon(Icons.add, color: AppColors.textOnDark, size: 15),
+                          ),
+                          const SizedBox(height: 5),
+
+                          // Barcode / SKU & Stock Count
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  product.barcode,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 10,
+                                    color: AppColors.zinc700,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                isLowStock ? '${product.stock} (Low)' : '${product.stock} left',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 10,
+                                  fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w500,
+                                  color: isLowStock ? const Color(0xFFDC2626) : AppColors.zinc700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5),
+
+                          // Price & Quick Add (+) Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  currencyFormatter.format(product.price),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: AppColors.pitchBlack,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 26,
+                                height: 26,
+                                decoration: BoxDecoration(
+                                  color: AppColors.pitchBlack,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Icon(Icons.add, color: AppColors.textOnDark, size: 15),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
