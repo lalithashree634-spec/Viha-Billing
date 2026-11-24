@@ -578,7 +578,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
     return AntdModal(
       title: isEdit ? 'Edit Category' : 'New Category',
       titleIcon: Icons.category_outlined,
-      maxWidth: 480,
+      maxWidth: 520,
       content: Form(
         key: _formKey,
         child: Column(

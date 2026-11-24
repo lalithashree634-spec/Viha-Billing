@@ -89,7 +89,8 @@ class ErpFormWidgets {
                   ? Icon(prefixIcon, size: 16, color: const Color(0xFF8C8C8C))
                   : null,
               suffixIcon: suffix,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
                 borderSide: const BorderSide(color: borderNeutral, width: 1),
@@ -183,7 +184,8 @@ class ErpFormWidgets {
               ),
               filled: true,
               fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
                 borderSide: const BorderSide(color: borderNeutral, width: 1),
