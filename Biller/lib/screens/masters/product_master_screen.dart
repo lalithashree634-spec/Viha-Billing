@@ -269,16 +269,17 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
                       ),
                       child: const Row(
                         children: [
-                          SizedBox(width: 110, child: Text('BARCODE / SKU', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 44, child: Center(child: Text('IMAGE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                          SizedBox(width: 105, child: Text('BARCODE / SKU', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           Expanded(flex: 3, child: Text('PRODUCT NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 120, child: Text('CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 130, child: Text('SUB-CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 60, child: Text('UOM', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('COST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 100, child: Align(alignment: Alignment.centerRight, child: Text('SELLING (MRP)', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 70, child: Center(child: Text('GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 80, child: Center(child: Text('STOCK', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 80, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                          SizedBox(width: 110, child: Text('CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 120, child: Text('SUB-CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 55, child: Text('UOM', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 80, child: Align(alignment: Alignment.centerRight, child: Text('COST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                          SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('SELLING', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                          SizedBox(width: 60, child: Center(child: Text('GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                          SizedBox(width: 70, child: Center(child: Text('STOCK', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                          SizedBox(width: 75, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
                         ],
                       ),
                     ),
@@ -316,9 +317,40 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
                                   color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
                                   child: Row(
                                     children: [
+                                      // Thumbnail Image (32x32)
+                                      SizedBox(
+                                        width: 44,
+                                        child: Center(
+                                          child: Container(
+                                            width: 32,
+                                            height: 32,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.canvas,
+                                              borderRadius: BorderRadius.circular(4),
+                                              border: Border.all(color: AppColors.border),
+                                            ),
+                                            clipBehavior: Clip.antiAlias,
+                                            child: p.imageUrl.isNotEmpty
+                                                ? Image.network(
+                                                    p.imageUrl,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) => const Icon(
+                                                      Icons.inventory_2_outlined,
+                                                      size: 15,
+                                                      color: AppColors.zinc400,
+                                                    ),
+                                                  )
+                                                : const Icon(
+                                                    Icons.inventory_2_outlined,
+                                                    size: 15,
+                                                    color: AppColors.zinc400,
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
                                       // SKU
                                       SizedBox(
-                                        width: 110,
+                                        width: 105,
                                         child: Text(
                                           p.barcode,
                                           style: const TextStyle(
@@ -534,6 +566,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
   late TextEditingController _stockController;
   late TextEditingController _reorderController;
   late TextEditingController _hsnController;
+  late TextEditingController _imageUrlController;
 
   late String _selectedCategory;
   String? _selectedSubcategory;
@@ -559,6 +592,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     _stockController = TextEditingController(text: isEdit ? p.stock.toString() : '50');
     _reorderController = TextEditingController(text: isEdit ? p.reorderLevel.toString() : '10');
     _hsnController = TextEditingController(text: isEdit ? p.hsnCode : '');
+    _imageUrlController = TextEditingController(text: isEdit ? p.imageUrl : '');
 
     _selectedCategory = isEdit ? p.category : widget.repo.categories.first.name;
 
@@ -583,6 +617,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     _stockController.dispose();
     _reorderController.dispose();
     _hsnController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -646,6 +681,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
         stock: stock,
         uom: _selectedUom,
         hsnCode: _hsnController.text.trim(),
+        imageUrl: _imageUrlController.text.trim(),
         reorderLevel: reorder,
         isActive: _isActive,
       );
@@ -666,6 +702,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
         stock: stock,
         uom: _selectedUom,
         hsnCode: _hsnController.text.trim(),
+        imageUrl: _imageUrlController.text.trim(),
         reorderLevel: reorder,
         isActive: _isActive,
       );
@@ -862,6 +899,80 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                         ),
                         const SizedBox(height: 18),
 
+                        // SECTION: Product Image
+                        _buildSectionHeader('Product Image & Visuals'),
+                        const SizedBox(height: 8),
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Live Preview Box (64x64)
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                color: AppColors.canvas,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: AppColors.border),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: _imageUrlController.text.trim().isNotEmpty
+                                  ? Image.network(
+                                      _imageUrlController.text.trim(),
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) => const Center(
+                                        child: Icon(Icons.broken_image_outlined, size: 20, color: AppColors.zinc400),
+                                      ),
+                                      loadingBuilder: (ctx, child, progress) {
+                                        if (progress == null) return child;
+                                        return const Center(
+                                          child: SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : const Center(
+                                      child: Icon(Icons.image_outlined, size: 22, color: AppColors.zinc400),
+                                    ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Image URL input & Quick Presets
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ErpFormWidgets.textField(
+                                    controller: _imageUrlController,
+                                    label: 'Image URL',
+                                    hintText: 'https://images.unsplash.com/... or paste web image link',
+                                    prefixIcon: Icons.link_rounded,
+                                    onChanged: (_) => setState(() {}),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 4,
+                                    children: [
+                                      _buildPresetChip('Coffee', 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80'),
+                                      _buildPresetChip('Tea', 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80'),
+                                      _buildPresetChip('Bread', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80'),
+                                      _buildPresetChip('Pastry', 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80'),
+                                      _buildPresetChip('Ghee', 'https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=400&q=80'),
+                                      _buildPresetChip('Nuts', 'https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=400&q=80'),
+                                      _buildPresetChip('Spices', 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80'),
+                                      _buildPresetChip('Oil', 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80'),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 18),
+
                         // SECTION 2: Pricing & Taxation
                         _buildSectionHeader('Pricing, Margin & GST Taxation'),
                         const SizedBox(height: 8),
@@ -1024,6 +1135,35 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                 ],
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPresetChip(String label, String url) {
+    final isSelected = _imageUrlController.text.trim() == url;
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _imageUrlController.text = url;
+        });
+      },
+      borderRadius: BorderRadius.circular(4),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.pitchBlack : AppColors.canvas,
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: isSelected ? AppColors.pitchBlack : AppColors.border),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+            color: isSelected ? Colors.white : AppColors.zinc700,
           ),
         ),
       ),

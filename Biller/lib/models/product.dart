@@ -10,6 +10,7 @@ class Product {
   final int stock;
   final String uom;
   final String hsnCode;
+  final String imageUrl;
   final int reorderLevel;
   final bool isActive;
 
@@ -25,6 +26,7 @@ class Product {
     required this.stock,
     this.uom = 'Pcs',
     this.hsnCode = '',
+    this.imageUrl = '',
     this.reorderLevel = 10,
     this.isActive = true,
   });
@@ -41,6 +43,7 @@ class Product {
     int? stock,
     String? uom,
     String? hsnCode,
+    String? imageUrl,
     int? reorderLevel,
     bool? isActive,
   }) {
@@ -56,6 +59,7 @@ class Product {
       stock: stock ?? this.stock,
       uom: uom ?? this.uom,
       hsnCode: hsnCode ?? this.hsnCode,
+      imageUrl: imageUrl ?? this.imageUrl,
       reorderLevel: reorderLevel ?? this.reorderLevel,
       isActive: isActive ?? this.isActive,
     );
