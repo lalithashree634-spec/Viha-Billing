@@ -9,25 +9,25 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.offWhite,
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
-        primary: AppColors.darkBrown,
+        primary: AppColors.pitchBlack,
         onPrimary: AppColors.white,
-        secondary: AppColors.brown,
+        secondary: AppColors.black,
         onSecondary: AppColors.white,
         error: Colors.redAccent,
         onError: AppColors.white,
         surface: AppColors.white,
-        onSurface: AppColors.black,
+        onSurface: AppColors.pitchBlack,
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.white,
-        foregroundColor: AppColors.black,
+        foregroundColor: AppColors.pitchBlack,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
           fontFamily: 'Poppins',
           fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: AppColors.black,
+          fontWeight: FontWeight.w700,
+          color: AppColors.pitchBlack,
         ),
       ),
       cardTheme: CardThemeData(
@@ -51,7 +51,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.brown, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5),
         ),
         hintStyle: const TextStyle(
           fontFamily: 'Poppins',
@@ -61,7 +61,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.darkBrown,
+          backgroundColor: AppColors.pitchBlack,
           foregroundColor: AppColors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -77,8 +77,8 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.darkBrown,
-          side: const BorderSide(color: AppColors.brownBorder, width: 1.2),
+          foregroundColor: AppColors.pitchBlack,
+          side: const BorderSide(color: AppColors.border, width: 1.2),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -86,7 +86,7 @@ class AppTheme {
           textStyle: const TextStyle(
             fontFamily: 'Poppins',
             fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

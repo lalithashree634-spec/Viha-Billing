@@ -54,27 +54,27 @@ class _MainShellState extends State<MainShell> {
             selectedIndex: _selectedIndex,
             onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
             backgroundColor: AppColors.white,
-            indicatorColor: AppColors.lightBrown,
+            indicatorColor: AppColors.lightGray,
             elevation: 0,
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.point_of_sale_outlined, color: AppColors.darkGray),
-                selectedIcon: Icon(Icons.point_of_sale_rounded, color: AppColors.darkBrown),
+                selectedIcon: Icon(Icons.point_of_sale_rounded, color: AppColors.pitchBlack),
                 label: 'POS',
               ),
               NavigationDestination(
                 icon: Icon(Icons.inventory_2_outlined, color: AppColors.darkGray),
-                selectedIcon: Icon(Icons.inventory_2_rounded, color: AppColors.darkBrown),
+                selectedIcon: Icon(Icons.inventory_2_rounded, color: AppColors.pitchBlack),
                 label: 'Stock',
               ),
               NavigationDestination(
                 icon: Icon(Icons.bar_chart_outlined, color: AppColors.darkGray),
-                selectedIcon: Icon(Icons.bar_chart_rounded, color: AppColors.darkBrown),
+                selectedIcon: Icon(Icons.bar_chart_rounded, color: AppColors.pitchBlack),
                 label: 'Reports',
               ),
               NavigationDestination(
                 icon: Icon(Icons.tune_outlined, color: AppColors.darkGray),
-                selectedIcon: Icon(Icons.tune_rounded, color: AppColors.darkBrown),
+                selectedIcon: Icon(Icons.tune_rounded, color: AppColors.pitchBlack),
                 label: 'Settings',
               ),
             ],
@@ -98,7 +98,7 @@ class _MainShellState extends State<MainShell> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.darkBrown,
+                color: AppColors.pitchBlack,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Center(
@@ -112,7 +112,7 @@ class _MainShellState extends State<MainShell> {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: AppColors.darkBrown,
+                    color: AppColors.pitchBlack,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Center(
@@ -124,17 +124,17 @@ class _MainShellState extends State<MainShell> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'BILLER',
+                      'VIHA BILLER',
                       style: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w800,
-                        letterSpacing: 1.2,
-                        color: AppColors.black,
+                        letterSpacing: 1.1,
+                        color: AppColors.pitchBlack,
                       ),
                     ),
                     Text(
-                      'Retail POS & Invoicing',
+                      'POS & Invoicing Pro',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 10,
@@ -172,7 +172,7 @@ class _MainShellState extends State<MainShell> {
                     width: 8,
                     height: 8,
                     decoration: const BoxDecoration(
-                      color: AppColors.brown,
+                      color: AppColors.pitchBlack,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -187,7 +187,7 @@ class _MainShellState extends State<MainShell> {
                             fontFamily: 'Poppins',
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.black,
+                            color: AppColors.pitchBlack,
                           ),
                         ),
                         Text(
@@ -222,7 +222,7 @@ class _MainShellState extends State<MainShell> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: isCompact ? 10 : 14, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.darkBrown : Colors.transparent,
+              color: isSelected ? AppColors.pitchBlack : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -329,7 +329,7 @@ class _SettingsScreenPlaceholder extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.print_outlined, size: 64, color: AppColors.gray.withAlpha(120)),
+            Icon(Icons.tune_outlined, size: 64, color: AppColors.gray.withAlpha(120)),
             const SizedBox(height: 16),
             const Text(
               'Thermal Printer & POS Settings',
