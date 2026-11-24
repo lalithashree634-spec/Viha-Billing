@@ -587,7 +587,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // CLEAN INDUSTRIAL PRODUCT CARD (Exact match to User Reference & Image 2)
+  // CLEAN INDUSTRIAL WHITE PRODUCT CARD (No dark blur, crystal clear white bottom, fast & responsive)
   Widget _buildProductCard(Product product) {
     final isLowStock = product.stock <= 6;
 
@@ -603,81 +603,114 @@ class _PosScreenState extends State<PosScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: AppColors.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Product Image Header (85px) with Floating Category Badge
-              SizedBox(
-                height: 85,
-                width: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    if (product.imageUrl.isNotEmpty)
-                      Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
+              // Product Image Header (Proportional ~52% card height)
+              Expanded(
+                flex: 52,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (product.imageUrl.isNotEmpty)
+                        Image.network(
+                          product.imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: AppColors.canvas,
+                            child: const Center(
+                              child: Icon(Icons.inventory_2_outlined, size: 24, color: AppColors.zinc400),
+                            ),
+                          ),
+                          loadingBuilder: (ctx, child, progress) {
+                            if (progress == null) return child;
+                            return Container(
+                              color: AppColors.canvas,
+                              child: const Center(
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      else
+                        Container(
                           color: AppColors.canvas,
                           child: const Center(
                             child: Icon(Icons.inventory_2_outlined, size: 24, color: AppColors.zinc400),
                           ),
                         ),
-                        loadingBuilder: (ctx, child, progress) {
-                          if (progress == null) return child;
-                          return Container(
-                            color: AppColors.canvas,
-                            child: const Center(
-                              child: SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
-                              ),
+                      // Floating Category Pill (Black badge on top-left)
+                      Positioned(
+                        top: 6,
+                        left: 6,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.pitchBlack.withValues(alpha: 0.85),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                          child: Text(
+                            product.category.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: 0.4,
                             ),
-                          );
-                        },
-                      )
-                    else
-                      Container(
-                        color: AppColors.canvas,
-                        child: const Center(
-                          child: Icon(Icons.inventory_2_outlined, size: 24, color: AppColors.zinc400),
-                        ),
-                      ),
-                    // Floating Category Pill (Black badge on top-left)
-                    Positioned(
-                      top: 6,
-                      left: 6,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.pitchBlack.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        child: Text(
-                          product.category.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            letterSpacing: 0.4,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      // Low Stock Badge (Red pill on top-right)
+                      if (isLowStock)
+                        Positioned(
+                          top: 6,
+                          right: 6,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDC2626),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: Text(
+                              'Low: ${product.stock}',
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
 
-              // Product Info Area
+              // Product Info Area (Clean White, crisp black text, ~48% card height)
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                flex: 48,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -724,7 +757,7 @@ class _PosScreenState extends State<PosScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 5),
 
                       // Selling Price & Add (+) Button Row
                       Row(
