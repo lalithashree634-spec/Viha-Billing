@@ -883,7 +883,7 @@ class _PosScreenState extends State<PosScreen> {
               : ListView.separated(
                   physics: const BouncingScrollPhysics(),
                   itemCount: _cart.length,
-                  separatorBuilder: (_, __) => const Divider(color: AppColors.border, height: 1),
+                  separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 1),
                   itemBuilder: (context, index) {
                     final item = _cart[index];
                     return Padding(
