@@ -114,17 +114,12 @@ class _MainShellState extends State<MainShell> {
         children: [
           // Brand Logo
           if (isCompact) ...[
-            Container(
-              width: 36,
-              height: 36,
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: AppColors.border),
-              ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
               child: Image.asset(
                 'assets/images/logo.png',
+                width: 36,
+                height: 36,
                 fit: BoxFit.contain,
               ),
             ),
@@ -133,17 +128,12 @@ class _MainShellState extends State<MainShell> {
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Row(
                 children: [
-                  Container(
-                    width: 34,
-                    height: 34,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: AppColors.border),
-                    ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
                     child: Image.asset(
                       'assets/images/logo.png',
+                      width: 34,
+                      height: 34,
                       fit: BoxFit.contain,
                     ),
                   ),
