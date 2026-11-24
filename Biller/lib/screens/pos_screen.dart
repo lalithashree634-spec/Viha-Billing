@@ -1125,11 +1125,41 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // PAYMENT MODAL (In Light Gray)
+  // COMPLETELY REDESIGNED 2-COLUMN COMMERCIAL POS PAYMENT TERMINAL
   void _showPaymentModal() {
-    String selectedMethod = 'UPI';
+    String selectedMethod = 'Cash';
     double cashReceived = _grandTotal.ceilToDouble();
     final cashController = TextEditingController(text: cashReceived.toStringAsFixed(0));
+    String cardType = 'Visa';
+    final cardRefController = TextEditingController();
+
+    void addNumpadDigit(String digit, StateSetter setDialogState) {
+      setDialogState(() {
+        if (digit == 'C') {
+          cashController.text = '0';
+        } else if (digit == '00') {
+          if (cashController.text != '0') {
+            cashController.text += '00';
+          }
+        } else {
+          if (cashController.text == '0') {
+            cashController.text = digit;
+          } else {
+            cashController.text += digit;
+          }
+        }
+      });
+    }
+
+    void backspaceNumpad(StateSetter setDialogState) {
+      setDialogState(() {
+        if (cashController.text.length > 1) {
+          cashController.text = cashController.text.substring(0, cashController.text.length - 1);
+        } else {
+          cashController.text = '0';
+        }
+      });
+    }
 
     showDialog(
       context: context,
@@ -1137,218 +1167,707 @@ class _PosScreenState extends State<PosScreen> {
         builder: (context, setDialogState) {
           final double parsedCash = double.tryParse(cashController.text) ?? 0.0;
           final double changeDue = parsedCash - _grandTotal;
+          final screenWidth = MediaQuery.of(context).size.width;
+          final isWide = screenWidth >= 800;
 
-          return AlertDialog(
+          return Dialog(
             backgroundColor: AppColors.lightGray,
             surfaceTintColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-            titlePadding: const EdgeInsets.fromLTRB(20, 16, 16, 0),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Payment & Print',
-                  style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 16),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 18),
-                  onPressed: () => Navigator.pop(ctx),
-                ),
-              ],
-            ),
-            content: SizedBox(
-              width: 380,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Amount Banner
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: AppColors.canvas,
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: Column(
+            insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: SizedBox(
+              width: isWide ? 760 : 420,
+              height: isWide ? 560 : null,
+              child: isWide
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
-                          'Total Payable',
-                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          currencyFormatter.format(_grandTotal),
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 22,
-                            color: AppColors.pitchBlack,
+                        // Left 40%: Bill Receipt Summary Column
+                        Expanded(
+                          flex: 40,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: AppColors.canvas,
+                              borderRadius: BorderRadius.horizontal(left: Radius.circular(6)),
+                              border: Border(right: BorderSide(color: AppColors.border, width: 1)),
+                            ),
+                            padding: const EdgeInsets.all(20),
+                            child: _buildTerminalBillSummary(),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 14),
 
-                  // Method Selector
-                  Row(
-                    children: ['UPI', 'Cash', 'Card'].map((method) {
-                      final isSelected = selectedMethod == method;
-                      return Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 3),
-                          child: InkWell(
-                            onTap: () => setDialogState(() => selectedMethod = method),
-                            borderRadius: BorderRadius.circular(4),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              decoration: BoxDecoration(
-                                color: isSelected ? AppColors.pitchBlack : AppColors.canvas,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(
-                                  color: isSelected ? AppColors.pitchBlack : AppColors.border,
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    method == 'UPI'
-                                        ? Icons.qr_code_scanner_outlined
-                                        : method == 'Cash'
-                                            ? Icons.payments_outlined
-                                            : Icons.credit_card_outlined,
-                                    color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    method,
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        // Right 60%: Interactive Payment & Numpad Controller
+                        Expanded(
+                          flex: 60,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: _buildTerminalPaymentControls(
+                              selectedMethod: selectedMethod,
+                              cashController: cashController,
+                              changeDue: changeDue,
+                              cardType: cardType,
+                              cardRefController: cardRefController,
+                              onMethodChanged: (method) => setDialogState(() => selectedMethod = method),
+                              onCardTypeChanged: (type) => setDialogState(() => cardType = type),
+                              onNumpadTap: (val) => addNumpadDigit(val, setDialogState),
+                              onNumpadBackspace: () => backspaceNumpad(setDialogState),
+                              setDialogState: setDialogState,
+                              onComplete: () {
+                                Navigator.pop(ctx);
+                                _showReceiptCompletedModal();
+                              },
+                              onClose: () => Navigator.pop(ctx),
                             ),
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Cash Calculation
-                  if (selectedMethod == 'Cash') ...[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Cash Given by Customer', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w500)),
-                        const SizedBox(height: 6),
-                        TextField(
-                          controller: cashController,
-                          keyboardType: TextInputType.number,
-                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.w600),
-                          onChanged: (_) => setDialogState(() {}),
-                          decoration: InputDecoration(
-                            prefixText: '₹ ',
-                            isDense: true,
-                            fillColor: AppColors.canvas,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            _buildTenderChip('Exact', _grandTotal, cashController, setDialogState),
-                            _buildTenderChip('₹100', 100, cashController, setDialogState),
-                            _buildTenderChip('₹200', 200, cashController, setDialogState),
-                            _buildTenderChip('₹500', 500, cashController, setDialogState),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: changeDue >= 0 ? AppColors.canvas : Colors.red.withAlpha(20),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                changeDue >= 0 ? 'Change to Return:' : 'Shortage:',
-                                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: changeDue >= 0 ? AppColors.pitchBlack : Colors.red),
-                              ),
-                              Text(
-                                currencyFormatter.format(changeDue.abs()),
-                                style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600, color: changeDue >= 0 ? AppColors.pitchBlack : Colors.red),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
-                    ),
-                  ] else if (selectedMethod == 'UPI') ...[
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.canvas,
-                        border: Border.all(color: AppColors.border),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(Icons.qr_code_2, size: 90, color: AppColors.pitchBlack),
-                          const SizedBox(height: 6),
-                          const Text('Scan using any UPI App (GPay, PhonePe, Paytm)', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc600)),
-                          const Text('VPA: vihabiller@icici', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                    ),
-                  ] else ...[
-                    Container(
+                    )
+                  : SingleChildScrollView(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: AppColors.canvas, borderRadius: BorderRadius.circular(4)),
-                      child: const Column(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.contactless_outlined, size: 32),
-                          SizedBox(height: 6),
-                          Text('Swipe / Tap Card on POS Terminal', style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500)),
+                          _buildTerminalBillSummary(compact: true),
+                          const SizedBox(height: 16),
+                          _buildTerminalPaymentControls(
+                            selectedMethod: selectedMethod,
+                            cashController: cashController,
+                            changeDue: changeDue,
+                            cardType: cardType,
+                            cardRefController: cardRefController,
+                            onMethodChanged: (method) => setDialogState(() => selectedMethod = method),
+                            onCardTypeChanged: (type) => setDialogState(() => cardType = type),
+                            onNumpadTap: (val) => addNumpadDigit(val, setDialogState),
+                            onNumpadBackspace: () => backspaceNumpad(setDialogState),
+                            setDialogState: setDialogState,
+                            onComplete: () {
+                              Navigator.pop(ctx);
+                              _showReceiptCompletedModal();
+                            },
+                            onClose: () => Navigator.pop(ctx),
+                          ),
                         ],
+                      ),
+                    ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // LEFT COLUMN: TICKET RECEIPT OVERVIEW
+  Widget _buildTerminalBillSummary({bool compact = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Order Summary',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.pitchBlack,
+                  ),
+                ),
+                Text(
+                  _billNumber,
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.zinc600,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.pitchBlack,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                '${_cart.length} ITEMS',
+                style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textOnDark,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        const Divider(color: AppColors.border, height: 1),
+        const SizedBox(height: 8),
+
+        // Scrollable itemized lines
+        if (!compact)
+          Expanded(
+            child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              itemCount: _cart.length,
+              separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 10),
+              itemBuilder: (context, index) {
+                final item = _cart[index];
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.product.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.pitchBlack,
+                            ),
+                          ),
+                          Text(
+                            '${currencyFormatter.format(item.unitPrice)} × ${item.quantity}',
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 10,
+                              color: AppColors.zinc500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      currencyFormatter.format(item.subtotal),
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.pitchBlack,
                       ),
                     ),
                   ],
-                ],
-              ),
+                );
+              },
             ),
-            actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-            actions: [
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    _showReceiptCompletedModal();
-                  },
-                  icon: const Icon(Icons.print_outlined, size: 16),
-                  label: const Text('Complete & Print Receipt'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.pitchBlack,
-                    foregroundColor: AppColors.textOnDark,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                  ),
+          ),
+
+        const Divider(color: AppColors.border, height: 14),
+
+        // Net Amount Card
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.pitchBlack,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'TOTAL PAYABLE',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
+                  color: AppColors.zinc400,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                currencyFormatter.format(_grandTotal),
+                style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textOnDark,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Subtotal: ${currencyFormatter.format(_cartSubtotal)} • GST: ${currencyFormatter.format(_cartTax)}',
+                style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 10,
+                  color: AppColors.zinc400,
                 ),
               ),
             ],
-          );
-        },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // RIGHT COLUMN: INTERACTIVE TENDER CONTROLS & TOUCH NUMPAD
+  Widget _buildTerminalPaymentControls({
+    required String selectedMethod,
+    required TextEditingController cashController,
+    required double changeDue,
+    required String cardType,
+    required TextEditingController cardRefController,
+    required ValueChanged<String> onMethodChanged,
+    required ValueChanged<String> onCardTypeChanged,
+    required ValueChanged<String> onNumpadTap,
+    required VoidCallback onNumpadBackspace,
+    required StateSetter setDialogState,
+    required VoidCallback onComplete,
+    required VoidCallback onClose,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header with Close
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Select Payment Tender',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: AppColors.pitchBlack,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.close, size: 18),
+              onPressed: onClose,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Method Selector Tabs (Cash, UPI, Card)
+        Row(
+          children: [
+            _buildTenderMethodTab('Cash', Icons.payments_outlined, selectedMethod == 'Cash', onMethodChanged),
+            const SizedBox(width: 8),
+            _buildTenderMethodTab('UPI', Icons.qr_code_scanner_outlined, selectedMethod == 'UPI', onMethodChanged),
+            const SizedBox(width: 8),
+            _buildTenderMethodTab('Card', Icons.credit_card_outlined, selectedMethod == 'Card', onMethodChanged),
+          ],
+        ),
+        const SizedBox(height: 14),
+
+        // Dynamic Method Content
+        Expanded(
+          child: selectedMethod == 'Cash'
+              ? _buildCashNumpadView(
+                  cashController: cashController,
+                  changeDue: changeDue,
+                  onNumpadTap: onNumpadTap,
+                  onNumpadBackspace: onNumpadBackspace,
+                  setDialogState: setDialogState,
+                )
+              : selectedMethod == 'UPI'
+                  ? _buildUpiTerminalView()
+                  : _buildCardTerminalView(
+                      cardType: cardType,
+                      cardRefController: cardRefController,
+                      onCardTypeChanged: onCardTypeChanged,
+                    ),
+        ),
+
+        const SizedBox(height: 12),
+
+        // Full Width Finish Button
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: onComplete,
+            icon: const Icon(Icons.print_outlined, size: 16),
+            label: const Text('Complete & Print Receipt [Enter]'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.pitchBlack,
+              foregroundColor: AppColors.textOnDark,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTenderMethodTab(String label, IconData icon, bool isSelected, ValueChanged<String> onChanged) {
+    return Expanded(
+      child: InkWell(
+        onTap: () => onChanged(label),
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.pitchBlack : AppColors.canvas,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: isSelected ? AppColors.pitchBlack : AppColors.border,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 16,
+                color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // CASH NUMPAD INTERACTIVE REGISTER
+  Widget _buildCashNumpadView({
+    required TextEditingController cashController,
+    required double changeDue,
+    required ValueChanged<String> onNumpadTap,
+    required VoidCallback onNumpadBackspace,
+    required StateSetter setDialogState,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left Side: Tender Inputs & Change Due (55% width)
+        Expanded(
+          flex: 55,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Cash Tendered (₹)',
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.zinc600),
+              ),
+              const SizedBox(height: 4),
+
+              // Digital Tender Display Box
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.canvas,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Text(
+                  '₹ ${cashController.text}',
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.pitchBlack,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Quick Note Pills
+              Row(
+                children: [
+                  _buildTenderChip('Exact', _grandTotal, cashController, setDialogState),
+                  _buildTenderChip('₹100', 100, cashController, setDialogState),
+                  _buildTenderChip('₹500', 500, cashController, setDialogState),
+                  _buildTenderChip('₹2000', 2000, cashController, setDialogState),
+                ],
+              ),
+              const Spacer(),
+
+              // Change Return Status Box
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: changeDue >= 0 ? AppColors.canvas : Colors.red.withAlpha(20),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: changeDue >= 0 ? AppColors.border : Colors.redAccent,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      changeDue >= 0 ? 'BALANCE RETURN' : 'AMOUNT SHORTAGE',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.6,
+                        color: changeDue >= 0 ? AppColors.zinc600 : Colors.red,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      currencyFormatter.format(changeDue.abs()),
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: changeDue >= 0 ? AppColors.pitchBlack : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 14),
+
+        // Right Side: Commercial Touch Numpad (45% width)
+        Expanded(
+          flex: 45,
+          child: Column(
+            children: [
+              _buildNumpadRow(['1', '2', '3'], onNumpadTap),
+              const SizedBox(height: 6),
+              _buildNumpadRow(['4', '5', '6'], onNumpadTap),
+              const SizedBox(height: 6),
+              _buildNumpadRow(['7', '8', '9'], onNumpadTap),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  _buildNumpadKey('C', onNumpadTap),
+                  const SizedBox(width: 6),
+                  _buildNumpadKey('0', onNumpadTap),
+                  const SizedBox(width: 6),
+                  _buildNumpadBackspaceKey(onNumpadBackspace),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNumpadRow(List<String> keys, ValueChanged<String> onKey) {
+    return Row(
+      children: keys.map((k) {
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: _buildNumpadKey(k, onKey),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildNumpadKey(String label, ValueChanged<String> onKey) {
+    return Expanded(
+      child: InkWell(
+        onTap: () => onKey(label),
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          height: 38,
+          decoration: BoxDecoration(
+            color: AppColors.canvas,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.pitchBlack,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNumpadBackspaceKey(VoidCallback onBackspace) {
+    return Expanded(
+      child: InkWell(
+        onTap: onBackspace,
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          height: 38,
+          decoration: BoxDecoration(
+            color: AppColors.canvas,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: const Center(
+            child: Icon(Icons.backspace_outlined, size: 16, color: AppColors.pitchBlack),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // DYNAMIC UPI TERMINAL VIEW
+  Widget _buildUpiTerminalView() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.canvas,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.lightGray,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: const Icon(Icons.qr_code_2_rounded, size: 100, color: AppColors.pitchBlack),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Dynamic UPI QR',
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Scan with GPay, PhonePe, or Paytm',
+                  style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightGray,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: const Text(
+                    'VPA: vihabiller@icici',
+                    style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Amount: ${currencyFormatter.format(_grandTotal)}',
+                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // CARD TERMINAL VIEW
+  Widget _buildCardTerminalView({
+    required String cardType,
+    required TextEditingController cardRefController,
+    required ValueChanged<String> onCardTypeChanged,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.canvas,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.contactless_outlined, size: 24, color: AppColors.pitchBlack),
+              SizedBox(width: 8),
+              Text(
+                'POS EDC Machine Connected',
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Insert, swipe, or tap customer card on EDC pin-pad.',
+            style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
+          ),
+          const SizedBox(height: 14),
+
+          // Card Brand Selector
+          Row(
+            children: ['Visa', 'Mastercard', 'RuPay'].map((brand) {
+              final isSel = cardType == brand;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: InkWell(
+                  onTap: () => onCardTypeChanged(brand),
+                  borderRadius: BorderRadius.circular(4),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isSel ? AppColors.pitchBlack : AppColors.lightGray,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: isSel ? AppColors.pitchBlack : AppColors.border),
+                    ),
+                    child: Text(
+                      brand,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: isSel ? AppColors.textOnDark : AppColors.zinc700,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 12),
+
+          // Transaction Auth / Ref ID
+          TextField(
+            controller: cardRefController,
+            style: const TextStyle(fontFamily: 'Poppins', fontSize: 12),
+            decoration: InputDecoration(
+              hintText: 'Card Approval / Auth Code (Optional)...',
+              isDense: true,
+              fillColor: AppColors.lightGray,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+            ),
+          ),
+        ],
       ),
     );
   }
