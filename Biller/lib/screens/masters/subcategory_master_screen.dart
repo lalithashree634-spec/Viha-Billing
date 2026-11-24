@@ -459,6 +459,7 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
   late TextEditingController _descController;
   late String _selectedCategoryId;
   late bool _isActive;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -483,13 +484,16 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
     super.dispose();
   }
 
-  void _saveSubcategory() {
+  Future<void> _saveSubcategory() async {
     final name = _nameController.text.trim();
 
     if (name.isEmpty) {
       AntdMessage.error(context, 'Please enter Sub-Category Name');
       return;
     }
+
+    setState(() => _isSaving = true);
+    await Future.delayed(const Duration(milliseconds: 200));
 
     final parentCat = widget.repo.categories.firstWhere(
       (c) => c.id == _selectedCategoryId,
@@ -506,8 +510,10 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
         isActive: _isActive,
       );
       widget.repo.addSubcategory(newSub);
-      Navigator.pop(context);
-      AntdMessage.success(context, 'Sub-Category "$name" created successfully');
+      if (mounted) {
+        Navigator.pop(context);
+        AntdMessage.success(context, 'Sub-Category "$name" created successfully');
+      }
     } else {
       final updated = widget.subcategory!.copyWith(
         categoryId: parentCat.id,
@@ -517,8 +523,10 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
         isActive: _isActive,
       );
       widget.repo.updateSubcategory(updated);
-      Navigator.pop(context);
-      AntdMessage.success(context, 'Sub-Category "$name" updated successfully');
+      if (mounted) {
+        Navigator.pop(context);
+        AntdMessage.success(context, 'Sub-Category "$name" updated successfully');
+      }
     }
   }
 
@@ -638,6 +646,7 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
                     onPressed: _saveSubcategory,
                     text: isEdit ? 'Update Sub-Category' : 'Save Sub-Category',
                     icon: Icons.check,
+                    isLoading: _isSaving,
                   ),
                 ],
               ),

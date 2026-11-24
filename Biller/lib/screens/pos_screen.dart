@@ -186,22 +186,24 @@ class _PosScreenState extends State<PosScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Catalog Area (60% width)
+        // Catalog Area (60% width) - RepaintBoundary for 60fps rendering
         Expanded(
           flex: 60,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeaderBar(),
-                const SizedBox(height: 12),
-                _buildSearchBar(),
-                const SizedBox(height: 10),
-                _buildCategoryTabs(),
-                const SizedBox(height: 12),
-                Expanded(child: _buildProductGrid(crossAxisCount: 3)),
-              ],
+          child: RepaintBoundary(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeaderBar(),
+                  const SizedBox(height: 12),
+                  _buildSearchBar(),
+                  const SizedBox(height: 10),
+                  _buildCategoryTabs(),
+                  const SizedBox(height: 12),
+                  Expanded(child: _buildProductGrid(crossAxisCount: 3)),
+                ],
+              ),
             ),
           ),
         ),
@@ -209,13 +211,15 @@ class _PosScreenState extends State<PosScreen> {
         // Vertical Divider
         Container(width: 1, color: AppColors.border),
 
-        // Right Invoice Table Register (40% width) in Sleek Light Gray
+        // Right Invoice Table Register (40% width) - Isolated RepaintBoundary
         Expanded(
           flex: 40,
-          child: Container(
-            color: AppColors.lightGray,
-            padding: const EdgeInsets.all(16),
-            child: _buildInvoiceTablePanel(),
+          child: RepaintBoundary(
+            child: Container(
+              color: AppColors.lightGray,
+              padding: const EdgeInsets.all(16),
+              child: _buildInvoiceTablePanel(),
+            ),
           ),
         ),
       ],
@@ -228,28 +232,32 @@ class _PosScreenState extends State<PosScreen> {
       children: [
         Expanded(
           flex: 52,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                _buildHeaderBar(),
-                const SizedBox(height: 10),
-                _buildSearchBar(),
-                const SizedBox(height: 10),
-                _buildCategoryTabs(),
-                const SizedBox(height: 10),
-                Expanded(child: _buildProductGrid(crossAxisCount: 2)),
-              ],
+          child: RepaintBoundary(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  _buildHeaderBar(),
+                  const SizedBox(height: 10),
+                  _buildSearchBar(),
+                  const SizedBox(height: 10),
+                  _buildCategoryTabs(),
+                  const SizedBox(height: 10),
+                  Expanded(child: _buildProductGrid(crossAxisCount: 2)),
+                ],
+              ),
             ),
           ),
         ),
         Container(width: 1, color: AppColors.border),
         Expanded(
           flex: 48,
-          child: Container(
-            color: AppColors.lightGray,
-            padding: const EdgeInsets.all(12),
-            child: _buildInvoiceTablePanel(),
+          child: RepaintBoundary(
+            child: Container(
+              color: AppColors.lightGray,
+              padding: const EdgeInsets.all(12),
+              child: _buildInvoiceTablePanel(),
+            ),
           ),
         ),
       ],
@@ -542,6 +550,8 @@ class _PosScreenState extends State<PosScreen> {
 
     return GridView.builder(
       physics: const BouncingScrollPhysics(),
+      cacheExtent: 1000,
+      addRepaintBoundaries: true,
       itemCount: products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
@@ -561,6 +571,7 @@ class _PosScreenState extends State<PosScreen> {
     final isLowStock = product.stock <= 6;
 
     return Material(
+      key: ValueKey(product.id),
       color: AppColors.lightGray,
       borderRadius: BorderRadius.circular(6),
       child: InkWell(
@@ -799,7 +810,8 @@ class _PosScreenState extends State<PosScreen> {
                   itemBuilder: (context, index) {
                     final item = _cart[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                      key: ValueKey(item.product.id),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                       child: Row(
                         children: [
                           // Item Name & Rate
@@ -1068,6 +1080,7 @@ class _PosScreenState extends State<PosScreen> {
     final cashController = TextEditingController(text: cashReceived.toStringAsFixed(0));
     String cardType = 'Visa';
     final cardRefController = TextEditingController();
+    bool isCompleting = false;
 
     void addNumpadDigit(String digit, StateSetter setDialogState) {
       setDialogState(() {
@@ -1148,9 +1161,15 @@ class _PosScreenState extends State<PosScreen> {
                               onNumpadTap: (val) => addNumpadDigit(val, setDialogState),
                               onNumpadBackspace: () => backspaceNumpad(setDialogState),
                               setDialogState: setDialogState,
-                              onComplete: () {
-                                Navigator.pop(ctx);
-                                _showReceiptCompletedModal();
+                              isCompleting: isCompleting,
+                              onComplete: () async {
+                                if (isCompleting) return;
+                                setDialogState(() => isCompleting = true);
+                                await Future.delayed(const Duration(milliseconds: 300));
+                                if (ctx.mounted) {
+                                  Navigator.pop(ctx);
+                                  _showReceiptCompletedModal();
+                                }
                               },
                               onClose: () => Navigator.pop(ctx),
                             ),
@@ -1176,9 +1195,15 @@ class _PosScreenState extends State<PosScreen> {
                             onNumpadTap: (val) => addNumpadDigit(val, setDialogState),
                             onNumpadBackspace: () => backspaceNumpad(setDialogState),
                             setDialogState: setDialogState,
-                            onComplete: () {
-                              Navigator.pop(ctx);
-                              _showReceiptCompletedModal();
+                            isCompleting: isCompleting,
+                            onComplete: () async {
+                              if (isCompleting) return;
+                              setDialogState(() => isCompleting = true);
+                              await Future.delayed(const Duration(milliseconds: 300));
+                              if (ctx.mounted) {
+                                Navigator.pop(ctx);
+                                _showReceiptCompletedModal();
+                              }
                             },
                             onClose: () => Navigator.pop(ctx),
                           ),
@@ -1360,6 +1385,7 @@ class _PosScreenState extends State<PosScreen> {
     required StateSetter setDialogState,
     required VoidCallback onComplete,
     required VoidCallback onClose,
+    bool isCompleting = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1420,19 +1446,34 @@ class _PosScreenState extends State<PosScreen> {
 
         const SizedBox(height: 12),
 
-        // Full Width Finish Button
+        // Full Width Finish Button with Loader
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: onComplete,
-            icon: const Icon(Icons.print_outlined, size: 16),
-            label: const Text('Complete & Print Receipt [Enter]'),
+          height: 44,
+          child: ElevatedButton(
+            onPressed: isCompleting ? null : onComplete,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.pitchBlack,
               foregroundColor: AppColors.textOnDark,
-              padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             ),
+            child: isCompleting
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.print_outlined, size: 16),
+                      SizedBox(width: 8),
+                      Text(
+                        'Complete & Print Receipt [Enter]',
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
           ),
         ),
       ],

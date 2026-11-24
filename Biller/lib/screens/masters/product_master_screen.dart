@@ -540,6 +540,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
   late String _selectedUom;
   late double _selectedGst;
   late bool _isActive;
+  bool _isSaving = false;
 
   final List<String> _uomOptions = ['Pcs', 'Kg', 'Litre', 'Pack', 'Jar', 'Loaf', 'Bottle', 'Box', 'Grams', 'Pouch'];
 
@@ -606,7 +607,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     });
   }
 
-  void _saveProduct() {
+  Future<void> _saveProduct() async {
     final name = _nameController.text.trim();
     final barcode = _barcodeController.text.trim();
     final cost = double.tryParse(_costPriceController.text.trim()) ?? 0.0;
@@ -629,6 +630,9 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
       return;
     }
 
+    setState(() => _isSaving = true);
+    await Future.delayed(const Duration(milliseconds: 200));
+
     if (widget.product == null) {
       final newProd = Product(
         id: 'p_${DateTime.now().millisecondsSinceEpoch}',
@@ -646,8 +650,10 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
         isActive: _isActive,
       );
       widget.repo.addProduct(newProd);
-      Navigator.pop(context);
-      AntdMessage.success(context, 'Product "$name" added to inventory');
+      if (mounted) {
+        Navigator.pop(context);
+        AntdMessage.success(context, 'Product "$name" added to inventory');
+      }
     } else {
       final updated = widget.product!.copyWith(
         name: name,
@@ -664,8 +670,10 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
         isActive: _isActive,
       );
       widget.repo.updateProduct(updated);
-      Navigator.pop(context);
-      AntdMessage.success(context, 'Product "$name" updated successfully');
+      if (mounted) {
+        Navigator.pop(context);
+        AntdMessage.success(context, 'Product "$name" updated successfully');
+      }
     }
   }
 
@@ -1011,6 +1019,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                     onPressed: _saveProduct,
                     text: isEdit ? 'Update Product' : 'Save Product',
                     icon: Icons.check,
+                    isLoading: _isSaving,
                   ),
                 ],
               ),

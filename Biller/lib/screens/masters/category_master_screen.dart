@@ -440,6 +440,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
   late TextEditingController _descController;
   late double _selectedGst;
   late bool _isActive;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -460,13 +461,16 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
     super.dispose();
   }
 
-  void _saveCategory() {
+  Future<void> _saveCategory() async {
     final name = _nameController.text.trim();
 
     if (name.isEmpty) {
       AntdMessage.error(context, 'Please enter Category Name');
       return;
     }
+
+    setState(() => _isSaving = true);
+    await Future.delayed(const Duration(milliseconds: 200));
 
     if (widget.category == null) {
       final newCat = ProductCategory(
@@ -478,8 +482,10 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
         isActive: _isActive,
       );
       widget.repo.addCategory(newCat);
-      Navigator.pop(context);
-      AntdMessage.success(context, 'Category "$name" created successfully');
+      if (mounted) {
+        Navigator.pop(context);
+        AntdMessage.success(context, 'Category "$name" created successfully');
+      }
     } else {
       final updated = widget.category!.copyWith(
         name: name,
@@ -489,8 +495,10 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
         isActive: _isActive,
       );
       widget.repo.updateCategory(updated);
-      Navigator.pop(context);
-      AntdMessage.success(context, 'Category "$name" updated successfully');
+      if (mounted) {
+        Navigator.pop(context);
+        AntdMessage.success(context, 'Category "$name" updated successfully');
+      }
     }
   }
 
@@ -625,6 +633,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                     onPressed: _saveCategory,
                     text: isEdit ? 'Update Category' : 'Save Category',
                     icon: Icons.check,
+                    isLoading: _isSaving,
                   ),
                 ],
               ),
