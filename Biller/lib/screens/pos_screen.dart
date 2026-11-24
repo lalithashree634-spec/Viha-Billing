@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -519,8 +520,8 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // DENSE PRODUCT GRID (Light Gray)
-  Widget _buildProductGrid({required int crossAxisCount}) {
+  // DENSE PRODUCT GRID (Adaptive & Responsive)
+  Widget _buildProductGrid({int? crossAxisCount}) {
     final products = _filteredProducts;
     if (products.isEmpty) {
       return Center(
@@ -548,171 +549,137 @@ class _PosScreenState extends State<PosScreen> {
       );
     }
 
-    return GridView.builder(
-      physics: const BouncingScrollPhysics(),
-      cacheExtent: 1000,
-      addRepaintBoundaries: true,
-      itemCount: products.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: crossAxisCount >= 3 ? 0.95 : 0.92,
-      ),
-      itemBuilder: (context, index) {
-        final product = products[index];
-        return _buildProductCard(product);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int cols = crossAxisCount ?? 3;
+        double ratio = 0.82;
+        if (constraints.maxWidth >= 1100) {
+          cols = crossAxisCount != null ? max(crossAxisCount, 4) : 4;
+          ratio = 0.82;
+        } else if (constraints.maxWidth >= 720) {
+          cols = 3;
+          ratio = 0.82;
+        } else if (constraints.maxWidth >= 440) {
+          cols = 2;
+          ratio = 0.80;
+        } else {
+          cols = 2;
+          ratio = 0.74;
+        }
+
+        return GridView.builder(
+          physics: const BouncingScrollPhysics(),
+          cacheExtent: 1000,
+          addRepaintBoundaries: true,
+          itemCount: products.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: cols,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: ratio,
+          ),
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return _buildProductCard(product);
+          },
+        );
       },
     );
   }
 
-  // ULTRA-MODERN FULL BLEED PRODUCT CARD WITH FROSTED GLASS BLURRED PANEL
+  // CLEAN INDUSTRIAL PRODUCT CARD (Exact match to User Reference & Image 2)
   Widget _buildProductCard(Product product) {
     final isLowStock = product.stock <= 6;
 
     return Material(
       key: ValueKey(product.id),
-      color: Colors.transparent,
+      color: Colors.white,
       borderRadius: BorderRadius.circular(6),
       child: InkWell(
         borderRadius: BorderRadius.circular(6),
         onTap: () => _addToCart(product),
         child: Container(
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: AppColors.border),
           ),
           clipBehavior: Clip.antiAlias,
-          child: Stack(
-            fit: StackFit.expand,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. FULL CARD PRODUCT IMAGE (100% Bleed)
-              if (product.imageUrl.isNotEmpty)
-                Image.network(
-                  product.imageUrl,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: AppColors.surfaceInput,
-                    child: const Center(
-                      child: Icon(Icons.inventory_2_outlined, size: 32, color: AppColors.zinc400),
-                    ),
-                  ),
-                  loadingBuilder: (ctx, child, progress) {
-                    if (progress == null) return child;
-                    return Container(
-                      color: AppColors.surfaceInput,
-                      child: const Center(
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
-                        ),
-                      ),
-                    );
-                  },
-                )
-              else
-                Container(
-                  color: AppColors.surfaceInput,
-                  child: const Center(
-                    child: Icon(Icons.inventory_2_outlined, size: 32, color: AppColors.zinc400),
-                  ),
-                ),
-
-              // 2. TOP VIGNETTE GRADIENT (Ensures top badges stand out)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 48,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withValues(alpha: 0.45),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              // 3. TOP FLOATING BADGES (Category & Stock Alert)
-              Positioned(
-                top: 8,
-                left: 8,
-                right: 8,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Product Image Header (85px) with Floating Category Badge
+              SizedBox(
+                height: 85,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    // Glass Category Pill
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.70),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
-                      ),
-                      child: Text(
-                        product.category.toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          letterSpacing: 0.4,
+                    if (product.imageUrl.isNotEmpty)
+                      Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: AppColors.canvas,
+                          child: const Center(
+                            child: Icon(Icons.inventory_2_outlined, size: 24, color: AppColors.zinc400),
+                          ),
+                        ),
+                        loadingBuilder: (ctx, child, progress) {
+                          if (progress == null) return child;
+                          return Container(
+                            color: AppColors.canvas,
+                            child: const Center(
+                              child: SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
+                              ),
+                            ),
+                          );
+                        },
+                      )
+                    else
+                      Container(
+                        color: AppColors.canvas,
+                        child: const Center(
+                          child: Icon(Icons.inventory_2_outlined, size: 24, color: AppColors.zinc400),
                         ),
                       ),
-                    ),
-
-                    // Low Stock Alert Badge
-                    if (isLowStock)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    // Floating Category Pill (Black badge on top-left)
+                    Positioned(
+                      top: 6,
+                      left: 6,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.red.shade900.withValues(alpha: 0.85),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.red.shade300.withValues(alpha: 0.4)),
+                          color: AppColors.pitchBlack.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(3),
                         ),
                         child: Text(
-                          'Low: ${product.stock}',
+                          product.category.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 9,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
+                            letterSpacing: 0.4,
                           ),
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),
 
-              // 4. BOTTOM HIGH-PERFORMANCE DARK GLASS PANEL
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xEB000000), // 92% pitch black glass for high contrast & speed
-                    border: Border(
-                      top: BorderSide(
-                        color: Colors.white.withValues(alpha: 0.18),
-                        width: 1,
-                      ),
-                    ),
-                  ),
+              // Product Info Area
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       // Product Name
                       Text(
@@ -723,56 +690,68 @@ class _PosScreenState extends State<PosScreen> {
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
-                          color: Colors.white,
+                          color: AppColors.pitchBlack,
                           height: 1.25,
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const Spacer(),
 
-                      // Price, Stock & Quick Add (+) Button
+                      // SKU & Stock Level Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  currencyFormatter.format(product.price),
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Text(
-                                  isLowStock ? '${product.barcode} • ${product.stock} left' : '${product.barcode} • In stock',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 9,
-                                    color: Colors.white.withValues(alpha: 0.75),
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              product.barcode,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 10,
+                                color: AppColors.zinc500,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          Text(
+                            isLowStock ? '${product.stock} (Low)' : '${product.stock} left',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 10,
+                              fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w400,
+                              color: isLowStock ? const Color(0xFFD97706) : AppColors.zinc600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
 
-                          // Quick Add Button (Pitch Black with border)
+                      // Selling Price & Add (+) Button Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              currencyFormatter.format(product.price),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                                color: AppColors.pitchBlack,
+                              ),
+                            ),
+                          ),
                           Container(
                             width: 26,
                             height: 26,
                             decoration: BoxDecoration(
                               color: AppColors.pitchBlack,
                               borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
                             ),
-                            child: const Icon(Icons.add, color: Colors.white, size: 15),
+                            child: const Icon(Icons.add, color: AppColors.textOnDark, size: 15),
                           ),
                         ],
                       ),
@@ -1229,7 +1208,7 @@ class _PosScreenState extends State<PosScreen> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: SizedBox(
-              width: isWide ? 760 : 420,
+              width: isWide ? 760 : min(440.0, screenWidth * 0.94),
               height: isWide ? 560 : null,
               child: isWide
                   ? Row(
@@ -1529,8 +1508,9 @@ class _PosScreenState extends State<PosScreen> {
         ),
         const SizedBox(height: 14),
 
-        // Dynamic Method Content
-        Expanded(
+        // Dynamic Method Content (Bounded height for responsive desktop & mobile support)
+        SizedBox(
+          height: 270,
           child: selectedMethod == 'Cash'
               ? _buildCashNumpadView(
                   cashController: cashController,

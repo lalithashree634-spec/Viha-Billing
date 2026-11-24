@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../models/category.dart';
 import '../../services/inventory_repository.dart';
@@ -121,102 +122,192 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Bar: Title & Stats
-            Row(
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            // Top Bar: Responsive Title & Stats
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 700;
+                if (isCompact) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Category Master',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.pitchBlack,
+                        ),
+                      ),
+                      const Text(
+                        'Classification of goods, HSN prefix & default GST rates',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 11,
+                          color: AppColors.zinc500,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _buildStatPill('Total', '$totalCount', Icons.category_outlined),
+                          _buildStatPill('Active', '$activeCount', Icons.check_circle_outline),
+                          ErpFormWidgets.primaryButton(
+                            onPressed: () => _openCategoryForm(),
+                            text: 'Add Category',
+                            icon: Icons.add,
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }
+                return Row(
                   children: [
-                    Text(
-                      'Category Master',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.pitchBlack,
-                      ),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Category Master',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.pitchBlack,
+                          ),
+                        ),
+                        Text(
+                          'Classification of goods, HSN prefix & default GST rates',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 11,
+                            color: AppColors.zinc500,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Classification of goods, HSN prefix & default GST rates',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 11,
-                        color: AppColors.zinc500,
-                      ),
+                    const Spacer(),
+                    _buildStatPill('Total', '$totalCount', Icons.category_outlined),
+                    const SizedBox(width: 8),
+                    _buildStatPill('Active', '$activeCount', Icons.check_circle_outline),
+                    const SizedBox(width: 16),
+                    ErpFormWidgets.primaryButton(
+                      onPressed: () => _openCategoryForm(),
+                      text: 'Add Category',
+                      icon: Icons.add,
                     ),
                   ],
-                ),
-                const Spacer(),
-                // Metric Pills
-                _buildStatPill('Total', '$totalCount', Icons.category_outlined),
-                const SizedBox(width: 8),
-                _buildStatPill('Active', '$activeCount', Icons.check_circle_outline),
-                const SizedBox(width: 16),
-                // Add New Category Button (35px)
-                ErpFormWidgets.primaryButton(
-                  onPressed: () => _openCategoryForm(),
-                  text: 'Add Category',
-                  icon: Icons.add,
-                ),
-              ],
+                );
+              },
             ),
             const SizedBox(height: 14),
 
-            // Filter Bar (All inputs strictly 35px)
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: AppColors.lightGray,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Row(
-                children: [
-                  // Search Input (35px height)
-                  Expanded(
-                    flex: 3,
-                    child: ErpFormWidgets.textField(
-                      controller: _searchController,
-                      hintText: 'Search by category name or HSN...',
-                      prefixIcon: Icons.search,
-                      onChanged: (val) => setState(() => _searchQuery = val),
+            // Filter Bar: Responsive Filter Area
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 620;
+                if (isNarrow) {
+                  return Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightGray,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: AppColors.border),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-
-                  // Status Filter Dropdown (35px height)
-                  SizedBox(
-                    width: 150,
-                    child: ErpFormWidgets.dropdownField<String>(
-                      value: _statusFilter,
-                      items: const [
-                        DropdownMenuItem(value: 'All', child: Text('Status: All')),
-                        DropdownMenuItem(value: 'Active', child: Text('Status: Active')),
-                        DropdownMenuItem(value: 'Inactive', child: Text('Status: Inactive')),
+                    child: Column(
+                      children: [
+                        ErpFormWidgets.textField(
+                          controller: _searchController,
+                          hintText: 'Search by category name or HSN...',
+                          prefixIcon: Icons.search,
+                          onChanged: (val) => setState(() => _searchQuery = val),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ErpFormWidgets.dropdownField<String>(
+                                value: _statusFilter,
+                                items: const [
+                                  DropdownMenuItem(value: 'All', child: Text('Status: All')),
+                                  DropdownMenuItem(value: 'Active', child: Text('Status: Active')),
+                                  DropdownMenuItem(value: 'Inactive', child: Text('Status: Inactive')),
+                                ],
+                                onChanged: (val) => setState(() => _statusFilter = val ?? 'All'),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ErpFormWidgets.secondaryButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchQuery = '';
+                                  _statusFilter = 'All';
+                                });
+                              },
+                              text: 'Reset',
+                              icon: Icons.refresh,
+                            ),
+                          ],
+                        ),
                       ],
-                      onChanged: (val) => setState(() => _statusFilter = val ?? 'All'),
                     ),
+                  );
+                }
+                return Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightGray,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: AppColors.border),
                   ),
-                  const SizedBox(width: 10),
-
-                  // Reset Filter Button (35px height)
-                  ErpFormWidgets.secondaryButton(
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() {
-                        _searchQuery = '';
-                        _statusFilter = 'All';
-                      });
-                    },
-                    text: 'Reset',
-                    icon: Icons.refresh,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: ErpFormWidgets.textField(
+                          controller: _searchController,
+                          hintText: 'Search by category name or HSN...',
+                          prefixIcon: Icons.search,
+                          onChanged: (val) => setState(() => _searchQuery = val),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 150,
+                        child: ErpFormWidgets.dropdownField<String>(
+                          value: _statusFilter,
+                          items: const [
+                            DropdownMenuItem(value: 'All', child: Text('Status: All')),
+                            DropdownMenuItem(value: 'Active', child: Text('Status: Active')),
+                            DropdownMenuItem(value: 'Inactive', child: Text('Status: Inactive')),
+                          ],
+                          onChanged: (val) => setState(() => _statusFilter = val ?? 'All'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      ErpFormWidgets.secondaryButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                            _statusFilter = 'All';
+                          });
+                        },
+                        text: 'Reset',
+                        icon: Icons.refresh,
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
             const SizedBox(height: 12),
 
-            // Enterprise Data Table
+            // Enterprise Data Table (Responsive with minWidth & horizontal scroll)
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -224,168 +315,179 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: AppColors.border),
                 ),
-                child: Column(
-                  children: [
-                    // Table Header
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: const BoxDecoration(
-                        color: AppColors.canvas,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
-                        border: Border(bottom: BorderSide(color: AppColors.border)),
-                      ),
-                      child: const Row(
-                        children: [
-                          Expanded(flex: 3, child: Text('CATEGORY NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 110, child: Text('HSN CODE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 120, child: Text('DEFAULT GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 130, child: Text('SUB-CATEGORIES', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 120, child: Text('PRODUCTS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 100, child: Text('STATUS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                        ],
-                      ),
-                    ),
-
-                    // Table Rows
-                    Expanded(
-                      child: categories.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                child: LayoutBuilder(
+                  builder: (context, tableConstraints) {
+                    final tableWidth = max(tableConstraints.maxWidth, 780.0);
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: tableWidth,
+                        child: Column(
+                          children: [
+                            // Table Header
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              decoration: const BoxDecoration(
+                                color: AppColors.canvas,
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                                border: Border(bottom: BorderSide(color: AppColors.border)),
+                              ),
+                              child: const Row(
                                 children: [
-                                  const Icon(Icons.category_outlined, size: 36, color: AppColors.zinc400),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'No categories found',
-                                    style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.pitchBlack),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    'Try adjusting search or add a new category above',
-                                    style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
-                                  ),
+                                  Expanded(flex: 3, child: Text('CATEGORY NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 110, child: Text('HSN CODE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 120, child: Text('DEFAULT GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 130, child: Text('SUB-CATEGORIES', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 120, child: Text('PRODUCTS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 100, child: Text('STATUS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
                                 ],
                               ),
-                            )
-                          : ListView.separated(
-                              itemCount: categories.length,
-                              separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 1),
-                              itemBuilder: (context, index) {
-                                final cat = categories[index];
-                                final subCount = _repo.getSubcategoriesForCategory(cat.name).length;
-                                final prodCount = _repo.getProductCountForCategory(cat.name);
+                            ),
 
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
-                                  child: Row(
-                                    children: [
-                                      // Name & Description
-                                      Expanded(
-                                        flex: 3,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              cat.name,
-                                              style: const TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 12,
-                                                color: AppColors.pitchBlack,
-                                              ),
-                                            ),
-                                            if (cat.description.isNotEmpty)
-                                              Text(
-                                                cat.description,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 10,
-                                                  color: AppColors.zinc500,
+                            // Table Rows
+                            Expanded(
+                              child: categories.isEmpty
+                                  ? Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.category_outlined, size: 36, color: AppColors.zinc400),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'No categories found',
+                                            style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.pitchBlack),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          const Text(
+                                            'Try adjusting search or add a new category above',
+                                            style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : ListView.separated(
+                                      itemCount: categories.length,
+                                      separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 1),
+                                      itemBuilder: (context, index) {
+                                        final cat = categories[index];
+                                        final subCount = _repo.getSubcategoriesForCategory(cat.name).length;
+                                        final prodCount = _repo.getProductCountForCategory(cat.name);
+
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                          color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
+                                          child: Row(
+                                            children: [
+                                              // Name & Description
+                                              Expanded(
+                                                flex: 3,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      cat.name,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 12,
+                                                        color: AppColors.pitchBlack,
+                                                      ),
+                                                    ),
+                                                    if (cat.description.isNotEmpty)
+                                                      Text(
+                                                        cat.description,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Poppins',
+                                                          fontSize: 10,
+                                                          color: AppColors.zinc500,
+                                                        ),
+                                                      ),
+                                                  ],
                                                 ),
                                               ),
-                                          ],
-                                        ),
-                                      ),
-                                      // HSN
-                                      SizedBox(
-                                        width: 110,
-                                        child: Text(
-                                          cat.hsnCode.isEmpty ? '—' : cat.hsnCode,
-                                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
-                                        ),
-                                      ),
-                                      // GST
-                                      SizedBox(
-                                        width: 120,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.canvas,
-                                            borderRadius: BorderRadius.circular(3),
-                                            border: Border.all(color: AppColors.border),
+                                              // HSN
+                                              SizedBox(
+                                                width: 110,
+                                                child: Text(
+                                                  cat.hsnCode.isEmpty ? '—' : cat.hsnCode,
+                                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
+                                                ),
+                                              ),
+                                              // GST
+                                              SizedBox(
+                                                width: 120,
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.canvas,
+                                                    borderRadius: BorderRadius.circular(3),
+                                                    border: Border.all(color: AppColors.border),
+                                                  ),
+                                                  child: Text(
+                                                    '${cat.gstPercent.toStringAsFixed(0)}% GST',
+                                                    style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Subcategories count
+                                              SizedBox(
+                                                width: 130,
+                                                child: Text(
+                                                  '$subCount sub-types',
+                                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
+                                                ),
+                                              ),
+                                              // Products count
+                                              SizedBox(
+                                                width: 120,
+                                                child: Text(
+                                                  '$prodCount items',
+                                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
+                                                ),
+                                              ),
+                                              // Status
+                                              SizedBox(
+                                                width: 100,
+                                                child: ErpFormWidgets.statusBadge(cat.isActive),
+                                              ),
+                                              // Actions (Edit / Delete)
+                                              SizedBox(
+                                                width: 90,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.zinc700),
+                                                      tooltip: 'Edit Category',
+                                                      onPressed: () => _openCategoryForm(cat),
+                                                      padding: EdgeInsets.zero,
+                                                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    IconButton(
+                                                      icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
+                                                      tooltip: 'Delete Category',
+                                                      onPressed: () => _confirmDelete(cat),
+                                                      padding: EdgeInsets.zero,
+                                                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          child: Text(
-                                            '${cat.gstPercent.toStringAsFixed(0)}% GST',
-                                            style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
-                                          ),
-                                        ),
-                                      ),
-                                      // Subcategories count
-                                      SizedBox(
-                                        width: 130,
-                                        child: Text(
-                                          '$subCount sub-types',
-                                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
-                                        ),
-                                      ),
-                                      // Products count
-                                      SizedBox(
-                                        width: 120,
-                                        child: Text(
-                                          '$prodCount items',
-                                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
-                                        ),
-                                      ),
-                                      // Status
-                                      SizedBox(
-                                        width: 100,
-                                        child: ErpFormWidgets.statusBadge(cat.isActive),
-                                      ),
-                                      // Actions (Edit / Delete)
-                                      SizedBox(
-                                        width: 90,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.zinc700),
-                                              tooltip: 'Edit Category',
-                                              onPressed: () => _openCategoryForm(cat),
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                            ),
-                                            const SizedBox(width: 4),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
-                                              tooltip: 'Delete Category',
-                                              onPressed: () => _confirmDelete(cat),
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                                        );
+                                      },
+                                    ),
                             ),
-                    ),
-                  ],
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -513,7 +615,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
         side: const BorderSide(color: AppColors.border),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 460),
+        constraints: BoxConstraints(maxWidth: min(460.0, MediaQuery.of(context).size.width * 0.94)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(

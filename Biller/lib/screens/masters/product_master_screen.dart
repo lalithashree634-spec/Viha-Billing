@@ -134,50 +134,93 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Bar
-            Row(
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            // Top Bar: Responsive Title & Stats
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 800;
+                if (isCompact) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Product Master',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.pitchBlack,
+                        ),
+                      ),
+                      const Text(
+                        'Inventory items, barcode indexing, pricing, and GST configurations',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 11,
+                          color: AppColors.zinc500,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _buildStatPill('Total SKUs', '$totalSkus', Icons.inventory_2_outlined),
+                          _buildStatPill('In Stock', '$inStockCount', Icons.check_circle_outline),
+                          _buildStatPill('Low Stock', '$lowStockCount', Icons.warning_amber_outlined, isAlert: lowStockCount > 0),
+                          ErpFormWidgets.primaryButton(
+                            onPressed: () => _openProductForm(),
+                            text: 'Add Product',
+                            icon: Icons.add,
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }
+                return Row(
                   children: [
-                    Text(
-                      'Product Master',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.pitchBlack,
-                      ),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Product Master',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.pitchBlack,
+                          ),
+                        ),
+                        Text(
+                          'Inventory items, barcode indexing, pricing, and GST configurations',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 11,
+                            color: AppColors.zinc500,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Inventory items, barcode indexing, pricing, and GST configurations',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 11,
-                        color: AppColors.zinc500,
-                      ),
+                    const Spacer(),
+                    _buildStatPill('Total SKUs', '$totalSkus', Icons.inventory_2_outlined),
+                    const SizedBox(width: 8),
+                    _buildStatPill('In Stock', '$inStockCount', Icons.check_circle_outline),
+                    const SizedBox(width: 8),
+                    _buildStatPill('Low Stock', '$lowStockCount', Icons.warning_amber_outlined, isAlert: lowStockCount > 0),
+                    const SizedBox(width: 16),
+                    ErpFormWidgets.primaryButton(
+                      onPressed: () => _openProductForm(),
+                      text: 'Add Product',
+                      icon: Icons.add,
                     ),
                   ],
-                ),
-                const Spacer(),
-                // Metric Pills
-                _buildStatPill('Total SKUs', '$totalSkus', Icons.inventory_2_outlined),
-                const SizedBox(width: 8),
-                _buildStatPill('In Stock', '$inStockCount', Icons.check_circle_outline),
-                const SizedBox(width: 8),
-                _buildStatPill('Low Stock', '$lowStockCount', Icons.warning_amber_outlined, isAlert: lowStockCount > 0),
-                const SizedBox(width: 16),
-                // Add Product Button (35px)
-                ErpFormWidgets.primaryButton(
-                  onPressed: () => _openProductForm(),
-                  text: 'Add Product',
-                  icon: Icons.add,
-                ),
-              ],
+                );
+              },
             ),
             const SizedBox(height: 14),
 
-            // Filter Bar (Strict 35px height)
+            // Filter Bar (Responsive, strict 35px height)
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -185,71 +228,134 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: AppColors.border),
               ),
-              child: Row(
-                children: [
-                  // Search Input (35px)
-                  Expanded(
-                    flex: 3,
-                    child: ErpFormWidgets.textField(
-                      controller: _searchController,
-                      hintText: 'Search by SKU, barcode, product name or sub-category...',
-                      prefixIcon: Icons.search,
-                      onChanged: (val) => setState(() => _searchQuery = val),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-
-                  // Category Filter Dropdown (35px)
-                  SizedBox(
-                    width: 160,
-                    child: ErpFormWidgets.dropdownField<String>(
-                      value: _categoryFilter,
-                      items: [
-                        const DropdownMenuItem(value: 'All', child: Text('Category: All')),
-                        ..._repo.categories.map(
-                          (c) => DropdownMenuItem(value: c.name, child: Text(c.name)),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isCompact = constraints.maxWidth < 750;
+                  if (isCompact) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ErpFormWidgets.textField(
+                          controller: _searchController,
+                          hintText: 'Search by SKU, barcode, product name or sub-category...',
+                          prefixIcon: Icons.search,
+                          onChanged: (val) => setState(() => _searchQuery = val),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            SizedBox(
+                              width: 160,
+                              child: ErpFormWidgets.dropdownField<String>(
+                                value: _categoryFilter,
+                                items: [
+                                  const DropdownMenuItem(value: 'All', child: Text('Category: All')),
+                                  ..._repo.categories.map(
+                                    (c) => DropdownMenuItem(value: c.name, child: Text(c.name)),
+                                  ),
+                                ],
+                                onChanged: (val) => setState(() => _categoryFilter = val ?? 'All'),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 150,
+                              child: ErpFormWidgets.dropdownField<String>(
+                                value: _stockFilter,
+                                items: const [
+                                  DropdownMenuItem(value: 'All', child: Text('Stock: All')),
+                                  DropdownMenuItem(value: 'In Stock', child: Text('In Stock')),
+                                  DropdownMenuItem(value: 'Low Stock', child: Text('Low Stock Alert')),
+                                  DropdownMenuItem(value: 'Out of Stock', child: Text('Out of Stock')),
+                                ],
+                                onChanged: (val) => setState(() => _stockFilter = val ?? 'All'),
+                              ),
+                            ),
+                            ErpFormWidgets.secondaryButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchQuery = '';
+                                  _categoryFilter = 'All';
+                                  _stockFilter = 'All';
+                                });
+                              },
+                              text: 'Reset',
+                              icon: Icons.refresh,
+                            ),
+                          ],
                         ),
                       ],
-                      onChanged: (val) => setState(() => _categoryFilter = val ?? 'All'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
+                    );
+                  }
+                  return Row(
+                    children: [
+                      // Search Input (35px)
+                      Expanded(
+                        flex: 3,
+                        child: ErpFormWidgets.textField(
+                          controller: _searchController,
+                          hintText: 'Search by SKU, barcode, product name or sub-category...',
+                          prefixIcon: Icons.search,
+                          onChanged: (val) => setState(() => _searchQuery = val),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
 
-                  // Stock Level Filter (35px)
-                  SizedBox(
-                    width: 150,
-                    child: ErpFormWidgets.dropdownField<String>(
-                      value: _stockFilter,
-                      items: const [
-                        DropdownMenuItem(value: 'All', child: Text('Stock: All')),
-                        DropdownMenuItem(value: 'In Stock', child: Text('In Stock')),
-                        DropdownMenuItem(value: 'Low Stock', child: Text('Low Stock Alert')),
-                        DropdownMenuItem(value: 'Out of Stock', child: Text('Out of Stock')),
-                      ],
-                      onChanged: (val) => setState(() => _stockFilter = val ?? 'All'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
+                      // Category Filter Dropdown (35px)
+                      SizedBox(
+                        width: 160,
+                        child: ErpFormWidgets.dropdownField<String>(
+                          value: _categoryFilter,
+                          items: [
+                            const DropdownMenuItem(value: 'All', child: Text('Category: All')),
+                            ..._repo.categories.map(
+                              (c) => DropdownMenuItem(value: c.name, child: Text(c.name)),
+                            ),
+                          ],
+                          onChanged: (val) => setState(() => _categoryFilter = val ?? 'All'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
 
-                  // Reset Button (35px)
-                  ErpFormWidgets.secondaryButton(
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() {
-                        _searchQuery = '';
-                        _categoryFilter = 'All';
-                        _stockFilter = 'All';
-                      });
-                    },
-                    text: 'Reset',
-                    icon: Icons.refresh,
-                  ),
-                ],
+                      // Stock Level Filter (35px)
+                      SizedBox(
+                        width: 150,
+                        child: ErpFormWidgets.dropdownField<String>(
+                          value: _stockFilter,
+                          items: const [
+                            DropdownMenuItem(value: 'All', child: Text('Stock: All')),
+                            DropdownMenuItem(value: 'In Stock', child: Text('In Stock')),
+                            DropdownMenuItem(value: 'Low Stock', child: Text('Low Stock Alert')),
+                            DropdownMenuItem(value: 'Out of Stock', child: Text('Out of Stock')),
+                          ],
+                          onChanged: (val) => setState(() => _stockFilter = val ?? 'All'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+
+                      // Reset Button (35px)
+                      ErpFormWidgets.secondaryButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                            _categoryFilter = 'All';
+                            _stockFilter = 'All';
+                          });
+                        },
+                        text: 'Reset',
+                        icon: Icons.refresh,
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             const SizedBox(height: 12),
 
-            // Enterprise Data Table
+            // Enterprise Data Table (Horizontally Scrollable & Responsive)
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -257,252 +363,263 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: AppColors.border),
                 ),
-                child: Column(
-                  children: [
-                    // Table Header
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: const BoxDecoration(
-                        color: AppColors.canvas,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
-                        border: Border(bottom: BorderSide(color: AppColors.border)),
-                      ),
-                      child: const Row(
-                        children: [
-                          SizedBox(width: 44, child: Center(child: Text('IMAGE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 105, child: Text('BARCODE / SKU', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          Expanded(flex: 3, child: Text('PRODUCT NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 110, child: Text('CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 120, child: Text('SUB-CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 55, child: Text('UOM', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 80, child: Align(alignment: Alignment.centerRight, child: Text('COST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('SELLING', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 60, child: Center(child: Text('GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 70, child: Center(child: Text('STOCK', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                          SizedBox(width: 75, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                        ],
-                      ),
-                    ),
-
-                    // Table Rows
-                    Expanded(
-                      child: products.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double tableWidth = max(constraints.maxWidth, 1100.0);
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: tableWidth,
+                        child: Column(
+                          children: [
+                            // Table Header
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              decoration: const BoxDecoration(
+                                color: AppColors.canvas,
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                                border: Border(bottom: BorderSide(color: AppColors.border)),
+                              ),
+                              child: const Row(
                                 children: [
-                                  const Icon(Icons.inventory_2_outlined, size: 36, color: AppColors.zinc400),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'No products found',
-                                    style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.pitchBlack),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    'Try adjusting search or add a new product above',
-                                    style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
-                                  ),
+                                  SizedBox(width: 44, child: Center(child: Text('IMAGE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                                  SizedBox(width: 105, child: Text('BARCODE / SKU', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 220, child: Text('PRODUCT NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 120, child: Text('CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 130, child: Text('SUB-CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 60, child: Text('UOM', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('COST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                                  SizedBox(width: 100, child: Align(alignment: Alignment.centerRight, child: Text('SELLING', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                                  SizedBox(width: 70, child: Center(child: Text('GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                                  SizedBox(width: 80, child: Center(child: Text('STOCK', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
+                                  SizedBox(width: 80, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
                                 ],
                               ),
-                            )
-                          : ListView.separated(
-                              itemCount: products.length,
-                              separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 1),
-                              itemBuilder: (context, index) {
-                                final p = products[index];
-                                final isLowStock = p.stock <= p.reorderLevel;
-
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
-                                  child: Row(
-                                    children: [
-                                      // Thumbnail Image (32x32)
-                                      SizedBox(
-                                        width: 44,
-                                        child: Center(
-                                          child: Container(
-                                            width: 32,
-                                            height: 32,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.canvas,
-                                              borderRadius: BorderRadius.circular(4),
-                                              border: Border.all(color: AppColors.border),
-                                            ),
-                                            clipBehavior: Clip.antiAlias,
-                                            child: p.imageUrl.isNotEmpty
-                                                ? Image.network(
-                                                    p.imageUrl,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context, error, stackTrace) => const Icon(
-                                                      Icons.inventory_2_outlined,
-                                                      size: 15,
-                                                      color: AppColors.zinc400,
-                                                    ),
-                                                  )
-                                                : const Icon(
-                                                    Icons.inventory_2_outlined,
-                                                    size: 15,
-                                                    color: AppColors.zinc400,
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                      // SKU
-                                      SizedBox(
-                                        width: 105,
-                                        child: Text(
-                                          p.barcode,
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 11,
-                                            color: AppColors.pitchBlack,
-                                          ),
-                                        ),
-                                      ),
-                                      // Product Name
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          p.name,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12,
-                                            color: AppColors.pitchBlack,
-                                          ),
-                                        ),
-                                      ),
-                                      // Category
-                                      SizedBox(
-                                        width: 120,
-                                        child: Text(
-                                          p.category,
-                                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
-                                        ),
-                                      ),
-                                      // Subcategory
-                                      SizedBox(
-                                        width: 130,
-                                        child: Text(
-                                          p.subcategory.isEmpty ? '—' : p.subcategory,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
-                                        ),
-                                      ),
-                                      // UOM
-                                      SizedBox(
-                                        width: 60,
-                                        child: Text(
-                                          p.uom,
-                                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
-                                        ),
-                                      ),
-                                      // Cost Price
-                                      SizedBox(
-                                        width: 90,
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            _currencyFormatter.format(p.costPrice),
-                                            style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
-                                          ),
-                                        ),
-                                      ),
-                                      // Selling Price (MRP)
-                                      SizedBox(
-                                        width: 100,
-                                        child: Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            _currencyFormatter.format(p.price),
-                                            style: const TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 12,
-                                              color: AppColors.pitchBlack,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      // GST
-                                      SizedBox(
-                                        width: 70,
-                                        child: Center(
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.canvas,
-                                              borderRadius: BorderRadius.circular(3),
-                                              border: Border.all(color: AppColors.border),
-                                            ),
-                                            child: Text(
-                                              '${p.gstPercent.toStringAsFixed(0)}%',
-                                              style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      // Stock
-                                      SizedBox(
-                                        width: 80,
-                                        child: Center(
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: isLowStock ? Colors.red.withValues(alpha: 0.12) : AppColors.canvas,
-                                              borderRadius: BorderRadius.circular(3),
-                                              border: Border.all(
-                                                color: isLowStock ? Colors.red.shade400 : AppColors.border,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              '${p.stock}',
-                                              style: TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w600,
-                                                color: isLowStock ? Colors.red.shade800 : AppColors.pitchBlack,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      // Actions
-                                      SizedBox(
-                                        width: 80,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.zinc700),
-                                              tooltip: 'Edit Product',
-                                              onPressed: () => _openProductForm(p),
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                            ),
-                                            const SizedBox(width: 4),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
-                                              tooltip: 'Delete Product',
-                                              onPressed: () => _confirmDelete(p),
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
                             ),
-                    ),
-                  ],
+
+                            // Table Rows
+                            Expanded(
+                              child: products.isEmpty
+                                  ? Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.inventory_2_outlined, size: 36, color: AppColors.zinc400),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'No products found',
+                                            style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.pitchBlack),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          const Text(
+                                            'Try adjusting search or add a new product above',
+                                            style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : ListView.separated(
+                                      itemCount: products.length,
+                                      separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 1),
+                                      itemBuilder: (context, index) {
+                                        final p = products[index];
+                                        final isLowStock = p.stock <= p.reorderLevel;
+
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                          color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
+                                          child: Row(
+                                            children: [
+                                              // Thumbnail Image (32x32)
+                                              SizedBox(
+                                                width: 44,
+                                                child: Center(
+                                                  child: Container(
+                                                    width: 32,
+                                                    height: 32,
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.canvas,
+                                                      borderRadius: BorderRadius.circular(4),
+                                                      border: Border.all(color: AppColors.border),
+                                                    ),
+                                                    clipBehavior: Clip.antiAlias,
+                                                    child: p.imageUrl.isNotEmpty
+                                                        ? Image.network(
+                                                            p.imageUrl,
+                                                            fit: BoxFit.cover,
+                                                            errorBuilder: (context, error, stackTrace) => const Icon(
+                                                              Icons.inventory_2_outlined,
+                                                              size: 15,
+                                                              color: AppColors.zinc400,
+                                                            ),
+                                                          )
+                                                        : const Icon(
+                                                            Icons.inventory_2_outlined,
+                                                            size: 15,
+                                                            color: AppColors.zinc400,
+                                                          ),
+                                                  ),
+                                                ),
+                                              ),
+                                              // SKU
+                                              SizedBox(
+                                                width: 105,
+                                                child: Text(
+                                                  p.barcode,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 11,
+                                                    color: AppColors.pitchBlack,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Product Name
+                                              SizedBox(
+                                                width: 220,
+                                                child: Text(
+                                                  p.name,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 12,
+                                                    color: AppColors.pitchBlack,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Category
+                                              SizedBox(
+                                                width: 120,
+                                                child: Text(
+                                                  p.category,
+                                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
+                                                ),
+                                              ),
+                                              // Subcategory
+                                              SizedBox(
+                                                width: 130,
+                                                child: Text(
+                                                  p.subcategory.isEmpty ? '—' : p.subcategory,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
+                                                ),
+                                              ),
+                                              // UOM
+                                              SizedBox(
+                                                width: 60,
+                                                child: Text(
+                                                  p.uom,
+                                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
+                                                ),
+                                              ),
+                                              // Cost Price
+                                              SizedBox(
+                                                width: 90,
+                                                child: Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: Text(
+                                                    _currencyFormatter.format(p.costPrice),
+                                                    style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Selling Price (MRP)
+                                              SizedBox(
+                                                width: 100,
+                                                child: Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: Text(
+                                                    _currencyFormatter.format(p.price),
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Poppins',
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 12,
+                                                      color: AppColors.pitchBlack,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              // GST
+                                              SizedBox(
+                                                width: 70,
+                                                child: Center(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.canvas,
+                                                      borderRadius: BorderRadius.circular(3),
+                                                      border: Border.all(color: AppColors.border),
+                                                    ),
+                                                    child: Text(
+                                                      '${p.gstPercent.toStringAsFixed(0)}%',
+                                                      style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Stock
+                                              SizedBox(
+                                                width: 80,
+                                                child: Center(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      color: isLowStock ? Colors.red.withValues(alpha: 0.12) : AppColors.canvas,
+                                                      borderRadius: BorderRadius.circular(3),
+                                                      border: Border.all(
+                                                        color: isLowStock ? Colors.red.shade400 : AppColors.border,
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      '${p.stock}',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontSize: 11,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: isLowStock ? Colors.red.shade800 : AppColors.pitchBlack,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Actions
+                                              SizedBox(
+                                                width: 80,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.zinc700),
+                                                      tooltip: 'Edit Product',
+                                                      onPressed: () => _openProductForm(p),
+                                                      padding: EdgeInsets.zero,
+                                                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    IconButton(
+                                                      icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
+                                                      tooltip: 'Delete Product',
+                                                      onPressed: () => _confirmDelete(p),
+                                                      padding: EdgeInsets.zero,
+                                                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -730,7 +847,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
         side: const BorderSide(color: AppColors.border),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 680),
+        constraints: BoxConstraints(maxWidth: min(680.0, MediaQuery.of(context).size.width * 0.94)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -768,79 +885,294 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
 
               // Scrollable Form Sections
               Flexible(
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // SECTION 1: Item Identification
-                        _buildSectionHeader('Item Identification & Taxonomy'),
-                        const SizedBox(height: 8),
+                child: LayoutBuilder(
+                  builder: (context, formConstraints) {
+                    final isNarrow = formConstraints.maxWidth < 520;
 
-                        Row(
+                    return SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Product Name (35px)
-                            Expanded(
-                              flex: 3,
-                              child: ErpFormWidgets.textField(
-                                controller: _nameController,
-                                label: 'Product Name',
-                                hintText: 'e.g. Artisan Filter Coffee (250g)',
-                                isRequired: true,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Barcode / SKU (35px) with Generate Button
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Row(
+                            // SECTION 1: Item Identification
+                            _buildSectionHeader('Item Identification & Taxonomy'),
+                            const SizedBox(height: 8),
+
+                            Row(
+                              children: [
+                                // Product Name (35px)
+                                Expanded(
+                                  flex: 3,
+                                  child: ErpFormWidgets.textField(
+                                    controller: _nameController,
+                                    label: 'Product Name',
+                                    hintText: 'e.g. Artisan Filter Coffee (250g)',
+                                    isRequired: true,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Barcode / SKU (35px) with Generate Button
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Barcode / SKU',
-                                        style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                      const Row(
+                                        children: [
+                                          Text(
+                                            'Barcode / SKU',
+                                            style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                          ),
+                                          Text(' *', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: Colors.redAccent)),
+                                        ],
                                       ),
-                                      Text(' *', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: Colors.redAccent)),
+                                      const SizedBox(height: 5),
+                                      SizedBox(
+                                        height: 35,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                controller: _barcodeController,
+                                                style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.pitchBlack),
+                                                decoration: InputDecoration(
+                                                  isDense: true,
+                                                  hintText: '8901234...',
+                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                  filled: true,
+                                                  fillColor: AppColors.canvas,
+                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+                                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+                                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 6),
+                                            // Quick Generate Button (35px)
+                                            SizedBox(
+                                              height: 35,
+                                              child: OutlinedButton(
+                                                style: OutlinedButton.styleFrom(
+                                                  backgroundColor: AppColors.canvas,
+                                                  foregroundColor: AppColors.pitchBlack,
+                                                  side: const BorderSide(color: AppColors.border),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                ),
+                                                onPressed: _generateBarcode,
+                                                child: const Icon(Icons.qr_code, size: 16),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                  const SizedBox(height: 5),
-                                  SizedBox(
-                                    height: 35,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: TextField(
-                                            controller: _barcodeController,
-                                            style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.pitchBlack),
-                                            decoration: InputDecoration(
-                                              isDense: true,
-                                              hintText: '8901234...',
-                                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                              filled: true,
-                                              fillColor: AppColors.canvas,
-                                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-                                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-                                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
-                                            ),
-                                          ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+
+                            Row(
+                              children: [
+                                // Category (35px)
+                                Expanded(
+                                  child: ErpFormWidgets.dropdownField<String>(
+                                    label: 'Category',
+                                    value: _selectedCategory,
+                                    isRequired: true,
+                                    items: widget.repo.categories
+                                        .map((c) => DropdownMenuItem(value: c.name, child: Text(c.name)))
+                                        .toList(),
+                                    onChanged: _onCategoryChanged,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Sub-Category (35px)
+                                Expanded(
+                                  child: ErpFormWidgets.dropdownField<String>(
+                                    label: 'Sub-Category',
+                                    value: _selectedSubcategory,
+                                    hintText: currentSubcats.isEmpty ? 'No sub-categories' : 'Select sub-category',
+                                    items: currentSubcats
+                                        .map((s) => DropdownMenuItem(value: s.name, child: Text(s.name)))
+                                        .toList(),
+                                    onChanged: (val) => setState(() => _selectedSubcategory = val),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // UOM (35px)
+                                SizedBox(
+                                  width: 110,
+                                  child: ErpFormWidgets.dropdownField<String>(
+                                    label: 'UOM (Unit)',
+                                    value: _selectedUom,
+                                    items: _uomOptions
+                                        .map((u) => DropdownMenuItem(value: u, child: Text(u)))
+                                        .toList(),
+                                    onChanged: (val) {
+                                      if (val != null) setState(() => _selectedUom = val);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
+
+                            // SECTION: Product Image
+                            _buildSectionHeader('Product Image & Visuals'),
+                            const SizedBox(height: 8),
+
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Live Preview Box (64x64)
+                                Container(
+                                  width: 64,
+                                  height: 64,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.canvas,
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(color: AppColors.border),
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  child: _imageUrlController.text.trim().isNotEmpty
+                                    ? Image.network(
+                                        _imageUrlController.text.trim(),
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) => const Center(
+                                          child: Icon(Icons.broken_image_outlined, size: 20, color: AppColors.zinc400),
                                         ),
-                                        const SizedBox(width: 6),
-                                        // Quick Generate Button (35px)
-                                        SizedBox(
-                                          height: 35,
-                                          child: OutlinedButton(
-                                            style: OutlinedButton.styleFrom(
-                                              backgroundColor: AppColors.canvas,
-                                              foregroundColor: AppColors.pitchBlack,
-                                              side: const BorderSide(color: AppColors.border),
-                                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                        loadingBuilder: (ctx, child, progress) {
+                                          if (progress == null) return child;
+                                          return const Center(
+                                            child: SizedBox(
+                                              width: 16,
+                                              height: 16,
+                                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
                                             ),
-                                            onPressed: _generateBarcode,
-                                            child: const Icon(Icons.qr_code, size: 16),
+                                          );
+                                        },
+                                      )
+                                    : const Center(
+                                        child: Icon(Icons.image_outlined, size: 22, color: AppColors.zinc400),
+                                      ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Image URL input & Quick Presets
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ErpFormWidgets.textField(
+                                        controller: _imageUrlController,
+                                        label: 'Image URL',
+                                        hintText: 'https://images.unsplash.com/... or paste web image link',
+                                        prefixIcon: Icons.link_rounded,
+                                        onChanged: (_) => setState(() {}),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Wrap(
+                                        spacing: 6,
+                                        runSpacing: 4,
+                                        children: [
+                                          _buildPresetChip('Coffee', 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80'),
+                                          _buildPresetChip('Tea', 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80'),
+                                          _buildPresetChip('Bread', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80'),
+                                          _buildPresetChip('Pastry', 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80'),
+                                          _buildPresetChip('Ghee', 'https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=400&q=80'),
+                                          _buildPresetChip('Nuts', 'https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=400&q=80'),
+                                          _buildPresetChip('Spices', 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80'),
+                                          _buildPresetChip('Oil', 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80'),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
+
+                            // SECTION 2: Pricing & Taxation
+                            _buildSectionHeader('Pricing, Margin & GST Taxation'),
+                            const SizedBox(height: 8),
+
+                            if (isNarrow) ...[
+                              Row(
+                                children: [
+                                  // Cost Price (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _costPriceController,
+                                      label: 'Cost Price (₹)',
+                                      hintText: '0.00',
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      onChanged: (_) => setState(() {}),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Selling Price (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _sellingPriceController,
+                                      label: 'Selling Price / MRP (₹)',
+                                      hintText: '0.00',
+                                      isRequired: true,
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      onChanged: (_) => setState(() {}),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  // GST Slab (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.dropdownField<double>(
+                                      label: 'GST Slab',
+                                      value: _selectedGst,
+                                      items: const [
+                                        DropdownMenuItem(value: 0.0, child: Text('0% (Exempt)')),
+                                        DropdownMenuItem(value: 5.0, child: Text('5% GST')),
+                                        DropdownMenuItem(value: 12.0, child: Text('12% GST')),
+                                        DropdownMenuItem(value: 18.0, child: Text('18% GST')),
+                                        DropdownMenuItem(value: 28.0, child: Text('28% Luxury')),
+                                      ],
+                                      onChanged: (val) {
+                                        if (val != null) setState(() => _selectedGst = val);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Margin Pill Indicator (35px)
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Gross Margin',
+                                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Container(
+                                          height: 35,
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          decoration: BoxDecoration(
+                                            color: marginPercent > 0 ? Colors.green.withValues(alpha: 0.1) : AppColors.canvas,
+                                            border: Border.all(color: marginPercent > 0 ? Colors.green.shade600 : AppColors.border),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${marginPercent.toStringAsFixed(1)}% markup',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: marginPercent > 0 ? Colors.green.shade800 : AppColors.zinc600,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -848,268 +1180,197 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
-                        Row(
-                          children: [
-                            // Category (35px)
-                            Expanded(
-                              child: ErpFormWidgets.dropdownField<String>(
-                                label: 'Category',
-                                value: _selectedCategory,
-                                isRequired: true,
-                                items: widget.repo.categories
-                                    .map((c) => DropdownMenuItem(value: c.name, child: Text(c.name)))
-                                    .toList(),
-                                onChanged: _onCategoryChanged,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Sub-Category (35px)
-                            Expanded(
-                              child: ErpFormWidgets.dropdownField<String>(
-                                label: 'Sub-Category',
-                                value: _selectedSubcategory,
-                                hintText: currentSubcats.isEmpty ? 'No sub-categories' : 'Select sub-category',
-                                items: currentSubcats
-                                    .map((s) => DropdownMenuItem(value: s.name, child: Text(s.name)))
-                                    .toList(),
-                                onChanged: (val) => setState(() => _selectedSubcategory = val),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // UOM (35px)
-                            SizedBox(
-                              width: 110,
-                              child: ErpFormWidgets.dropdownField<String>(
-                                label: 'UOM (Unit)',
-                                value: _selectedUom,
-                                items: _uomOptions
-                                    .map((u) => DropdownMenuItem(value: u, child: Text(u)))
-                                    .toList(),
-                                onChanged: (val) {
-                                  if (val != null) setState(() => _selectedUom = val);
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-
-                        // SECTION: Product Image
-                        _buildSectionHeader('Product Image & Visuals'),
-                        const SizedBox(height: 8),
-
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Live Preview Box (64x64)
-                            Container(
-                              width: 64,
-                              height: 64,
-                              decoration: BoxDecoration(
-                                color: AppColors.canvas,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: AppColors.border),
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: _imageUrlController.text.trim().isNotEmpty
-                                  ? Image.network(
-                                      _imageUrlController.text.trim(),
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) => const Center(
-                                        child: Icon(Icons.broken_image_outlined, size: 20, color: AppColors.zinc400),
-                                      ),
-                                      loadingBuilder: (ctx, child, progress) {
-                                        if (progress == null) return child;
-                                        return const Center(
-                                          child: SizedBox(
-                                            width: 16,
-                                            height: 16,
-                                            child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
-                                          ),
-                                        );
+                            ] else ...[
+                              Row(
+                                children: [
+                                  // Cost Price (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _costPriceController,
+                                      label: 'Cost Price (₹)',
+                                      hintText: '0.00',
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      onChanged: (_) => setState(() {}),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Selling Price (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _sellingPriceController,
+                                      label: 'Selling Price / MRP (₹)',
+                                      hintText: '0.00',
+                                      isRequired: true,
+                                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                      onChanged: (_) => setState(() {}),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // GST Slab (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.dropdownField<double>(
+                                      label: 'GST Slab',
+                                      value: _selectedGst,
+                                      items: const [
+                                        DropdownMenuItem(value: 0.0, child: Text('0% (Exempt)')),
+                                        DropdownMenuItem(value: 5.0, child: Text('5% GST')),
+                                        DropdownMenuItem(value: 12.0, child: Text('12% GST')),
+                                        DropdownMenuItem(value: 18.0, child: Text('18% GST')),
+                                        DropdownMenuItem(value: 28.0, child: Text('28% Luxury')),
+                                      ],
+                                      onChanged: (val) {
+                                        if (val != null) setState(() => _selectedGst = val);
                                       },
-                                    )
-                                  : const Center(
-                                      child: Icon(Icons.image_outlined, size: 22, color: AppColors.zinc400),
                                     ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Image URL input & Quick Presets
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Margin Pill Indicator (35px)
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Gross Margin',
+                                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Container(
+                                          height: 35,
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          decoration: BoxDecoration(
+                                            color: marginPercent > 0 ? Colors.green.withValues(alpha: 0.1) : AppColors.canvas,
+                                            border: Border.all(color: marginPercent > 0 ? Colors.green.shade600 : AppColors.border),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${marginPercent.toStringAsFixed(1)}% markup',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: marginPercent > 0 ? Colors.green.shade800 : AppColors.zinc600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                            const SizedBox(height: 18),
+
+                            // SECTION 3: Stock Control
+                            _buildSectionHeader('Inventory & Stock Levels'),
+                            const SizedBox(height: 8),
+
+                            if (isNarrow) ...[
+                              Row(
                                 children: [
-                                  ErpFormWidgets.textField(
-                                    controller: _imageUrlController,
-                                    label: 'Image URL',
-                                    hintText: 'https://images.unsplash.com/... or paste web image link',
-                                    prefixIcon: Icons.link_rounded,
-                                    onChanged: (_) => setState(() {}),
+                                  // Opening Stock (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _stockController,
+                                      label: 'Current / Opening Stock',
+                                      hintText: '0',
+                                      keyboardType: TextInputType.number,
+                                    ),
                                   ),
-                                  const SizedBox(height: 6),
-                                  Wrap(
-                                    spacing: 6,
-                                    runSpacing: 4,
-                                    children: [
-                                      _buildPresetChip('Coffee', 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80'),
-                                      _buildPresetChip('Tea', 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80'),
-                                      _buildPresetChip('Bread', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80'),
-                                      _buildPresetChip('Pastry', 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80'),
-                                      _buildPresetChip('Ghee', 'https://images.unsplash.com/photo-1589927986089-35812388d1f4?w=400&q=80'),
-                                      _buildPresetChip('Nuts', 'https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=400&q=80'),
-                                      _buildPresetChip('Spices', 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80'),
-                                      _buildPresetChip('Oil', 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80'),
-                                    ],
+                                  const SizedBox(width: 12),
+                                  // Reorder Level (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _reorderController,
+                                      label: 'Low Stock Alert Trigger',
+                                      hintText: '10',
+                                      keyboardType: TextInputType.number,
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-
-                        // SECTION 2: Pricing & Taxation
-                        _buildSectionHeader('Pricing, Margin & GST Taxation'),
-                        const SizedBox(height: 8),
-
-                        Row(
-                          children: [
-                            // Cost Price (35px)
-                            Expanded(
-                              child: ErpFormWidgets.textField(
-                                controller: _costPriceController,
-                                label: 'Cost Price (₹)',
-                                hintText: '0.00',
-                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                onChanged: (_) => setState(() {}),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Selling Price (35px)
-                            Expanded(
-                              child: ErpFormWidgets.textField(
-                                controller: _sellingPriceController,
-                                label: 'Selling Price / MRP (₹)',
-                                hintText: '0.00',
-                                isRequired: true,
-                                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                onChanged: (_) => setState(() {}),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // GST Slab (35px)
-                            Expanded(
-                              child: ErpFormWidgets.dropdownField<double>(
-                                label: 'GST Slab',
-                                value: _selectedGst,
-                                items: const [
-                                  DropdownMenuItem(value: 0.0, child: Text('0% (Exempt)')),
-                                  DropdownMenuItem(value: 5.0, child: Text('5% GST')),
-                                  DropdownMenuItem(value: 12.0, child: Text('12% GST')),
-                                  DropdownMenuItem(value: 18.0, child: Text('18% GST')),
-                                  DropdownMenuItem(value: 28.0, child: Text('28% Luxury')),
-                                ],
-                                onChanged: (val) {
-                                  if (val != null) setState(() => _selectedGst = val);
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Margin Pill Indicator (35px)
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              const SizedBox(height: 10),
+                              Row(
                                 children: [
-                                  const Text(
-                                    'Gross Margin',
-                                    style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Container(
-                                    height: 35,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      color: marginPercent > 0 ? Colors.green.withValues(alpha: 0.1) : AppColors.canvas,
-                                      border: Border.all(color: marginPercent > 0 ? Colors.green.shade600 : AppColors.border),
-                                      borderRadius: BorderRadius.circular(4),
+                                  // HSN Code (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _hsnController,
+                                      label: 'HSN / SAC Code',
+                                      hintText: 'e.g. 0901',
                                     ),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      '${marginPercent.toStringAsFixed(1)}% markup',
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: marginPercent > 0 ? Colors.green.shade800 : AppColors.zinc600,
-                                      ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Status Dropdown (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.dropdownField<bool>(
+                                      label: 'Status',
+                                      value: _isActive,
+                                      items: const [
+                                        DropdownMenuItem(value: true, child: Text('Active')),
+                                        DropdownMenuItem(value: false, child: Text('Inactive')),
+                                      ],
+                                      onChanged: (val) {
+                                        if (val != null) setState(() => _isActive = val);
+                                      },
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-
-                        // SECTION 3: Stock Control
-                        _buildSectionHeader('Inventory & Stock Levels'),
-                        const SizedBox(height: 8),
-
-                        Row(
-                          children: [
-                            // Opening Stock (35px)
-                            Expanded(
-                              child: ErpFormWidgets.textField(
-                                controller: _stockController,
-                                label: 'Current / Opening Stock',
-                                hintText: '0',
-                                keyboardType: TextInputType.number,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Reorder Level (35px)
-                            Expanded(
-                              child: ErpFormWidgets.textField(
-                                controller: _reorderController,
-                                label: 'Low Stock Alert Trigger',
-                                hintText: '10',
-                                keyboardType: TextInputType.number,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // HSN Code (35px)
-                            Expanded(
-                              child: ErpFormWidgets.textField(
-                                controller: _hsnController,
-                                label: 'HSN / SAC Code',
-                                hintText: 'e.g. 0901',
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Status Dropdown (35px)
-                            Expanded(
-                              child: ErpFormWidgets.dropdownField<bool>(
-                                label: 'Status',
-                                value: _isActive,
-                                items: const [
-                                  DropdownMenuItem(value: true, child: Text('Active')),
-                                  DropdownMenuItem(value: false, child: Text('Inactive')),
+                            ] else ...[
+                              Row(
+                                children: [
+                                  // Opening Stock (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _stockController,
+                                      label: 'Current / Opening Stock',
+                                      hintText: '0',
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Reorder Level (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _reorderController,
+                                      label: 'Low Stock Alert Trigger',
+                                      hintText: '10',
+                                      keyboardType: TextInputType.number,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // HSN Code (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.textField(
+                                      controller: _hsnController,
+                                      label: 'HSN / SAC Code',
+                                      hintText: 'e.g. 0901',
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  // Status Dropdown (35px)
+                                  Expanded(
+                                    child: ErpFormWidgets.dropdownField<bool>(
+                                      label: 'Status',
+                                      value: _isActive,
+                                      items: const [
+                                        DropdownMenuItem(value: true, child: Text('Active')),
+                                        DropdownMenuItem(value: false, child: Text('Inactive')),
+                                      ],
+                                      onChanged: (val) {
+                                        if (val != null) setState(() => _isActive = val);
+                                      },
+                                    ),
+                                  ),
                                 ],
-                                onChanged: (val) {
-                                  if (val != null) setState(() => _isActive = val);
-                                },
                               ),
-                            ),
+                            ],
                           ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
 

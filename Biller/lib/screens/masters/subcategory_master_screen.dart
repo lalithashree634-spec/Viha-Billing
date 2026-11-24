@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../models/subcategory.dart';
 import '../../services/inventory_repository.dart';
@@ -128,48 +129,90 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Bar
-            Row(
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            // Top Bar: Responsive Title & Stats
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 700;
+                if (isCompact) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Sub-Category Master',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.pitchBlack,
+                        ),
+                      ),
+                      const Text(
+                        'Granular product sub-divisions mapped to parent categories',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 11,
+                          color: AppColors.zinc500,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _buildStatPill('Total', '$totalCount', Icons.account_tree_outlined),
+                          _buildStatPill('Active', '$activeCount', Icons.check_circle_outline),
+                          ErpFormWidgets.primaryButton(
+                            onPressed: () => _openSubcategoryForm(),
+                            text: 'Add Sub-Category',
+                            icon: Icons.add,
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                }
+                return Row(
                   children: [
-                    Text(
-                      'Sub-Category Master',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.pitchBlack,
-                      ),
+                    const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Sub-Category Master',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.pitchBlack,
+                          ),
+                        ),
+                        Text(
+                          'Granular product sub-divisions mapped to parent categories',
+                          style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 11,
+                            color: AppColors.zinc500,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Granular product sub-divisions mapped to parent categories',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 11,
-                        color: AppColors.zinc500,
-                      ),
+                    const Spacer(),
+                    _buildStatPill('Total', '$totalCount', Icons.account_tree_outlined),
+                    const SizedBox(width: 8),
+                    _buildStatPill('Active', '$activeCount', Icons.check_circle_outline),
+                    const SizedBox(width: 16),
+                    ErpFormWidgets.primaryButton(
+                      onPressed: () => _openSubcategoryForm(),
+                      text: 'Add Sub-Category',
+                      icon: Icons.add,
                     ),
                   ],
-                ),
-                const Spacer(),
-                // Metric Pills
-                _buildStatPill('Total', '$totalCount', Icons.account_tree_outlined),
-                const SizedBox(width: 8),
-                _buildStatPill('Active', '$activeCount', Icons.check_circle_outline),
-                const SizedBox(width: 16),
-                // Add Sub-Category Button (35px)
-                ErpFormWidgets.primaryButton(
-                  onPressed: () => _openSubcategoryForm(),
-                  text: 'Add Sub-Category',
-                  icon: Icons.add,
-                ),
-              ],
+                );
+              },
             ),
             const SizedBox(height: 14),
 
-            // Filter Bar (All inputs strictly 35px)
+            // Filter Bar (Responsive, all inputs strictly 35px)
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -177,70 +220,132 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: AppColors.border),
               ),
-              child: Row(
-                children: [
-                  // Search Input (35px height)
-                  Expanded(
-                    flex: 3,
-                    child: ErpFormWidgets.textField(
-                      controller: _searchController,
-                      hintText: 'Search by sub-category name or parent category...',
-                      prefixIcon: Icons.search,
-                      onChanged: (val) => setState(() => _searchQuery = val),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-
-                  // Category Filter Dropdown (35px height)
-                  SizedBox(
-                    width: 170,
-                    child: ErpFormWidgets.dropdownField<String>(
-                      value: _categoryFilter,
-                      items: [
-                        const DropdownMenuItem(value: 'All', child: Text('Category: All')),
-                        ..._repo.categories.map(
-                          (c) => DropdownMenuItem(value: c.name, child: Text(c.name)),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isCompact = constraints.maxWidth < 650;
+                  if (isCompact) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ErpFormWidgets.textField(
+                          controller: _searchController,
+                          hintText: 'Search by sub-category name or parent category...',
+                          prefixIcon: Icons.search,
+                          onChanged: (val) => setState(() => _searchQuery = val),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            SizedBox(
+                              width: 160,
+                              child: ErpFormWidgets.dropdownField<String>(
+                                value: _categoryFilter,
+                                items: [
+                                  const DropdownMenuItem(value: 'All', child: Text('Category: All')),
+                                  ..._repo.categories.map(
+                                    (c) => DropdownMenuItem(value: c.name, child: Text(c.name)),
+                                  ),
+                                ],
+                                onChanged: (val) => setState(() => _categoryFilter = val ?? 'All'),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 140,
+                              child: ErpFormWidgets.dropdownField<String>(
+                                value: _statusFilter,
+                                items: const [
+                                  DropdownMenuItem(value: 'All', child: Text('Status: All')),
+                                  DropdownMenuItem(value: 'Active', child: Text('Status: Active')),
+                                  DropdownMenuItem(value: 'Inactive', child: Text('Status: Inactive')),
+                                ],
+                                onChanged: (val) => setState(() => _statusFilter = val ?? 'All'),
+                              ),
+                            ),
+                            ErpFormWidgets.secondaryButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchQuery = '';
+                                  _categoryFilter = 'All';
+                                  _statusFilter = 'All';
+                                });
+                              },
+                              text: 'Reset',
+                              icon: Icons.refresh,
+                            ),
+                          ],
                         ),
                       ],
-                      onChanged: (val) => setState(() => _categoryFilter = val ?? 'All'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
+                    );
+                  }
+                  return Row(
+                    children: [
+                      // Search Input (35px height)
+                      Expanded(
+                        flex: 3,
+                        child: ErpFormWidgets.textField(
+                          controller: _searchController,
+                          hintText: 'Search by sub-category name or parent category...',
+                          prefixIcon: Icons.search,
+                          onChanged: (val) => setState(() => _searchQuery = val),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
 
-                  // Status Filter Dropdown (35px height)
-                  SizedBox(
-                    width: 140,
-                    child: ErpFormWidgets.dropdownField<String>(
-                      value: _statusFilter,
-                      items: const [
-                        DropdownMenuItem(value: 'All', child: Text('Status: All')),
-                        DropdownMenuItem(value: 'Active', child: Text('Status: Active')),
-                        DropdownMenuItem(value: 'Inactive', child: Text('Status: Inactive')),
-                      ],
-                      onChanged: (val) => setState(() => _statusFilter = val ?? 'All'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
+                      // Category Filter Dropdown (35px height)
+                      SizedBox(
+                        width: 170,
+                        child: ErpFormWidgets.dropdownField<String>(
+                          value: _categoryFilter,
+                          items: [
+                            const DropdownMenuItem(value: 'All', child: Text('Category: All')),
+                            ..._repo.categories.map(
+                              (c) => DropdownMenuItem(value: c.name, child: Text(c.name)),
+                            ),
+                          ],
+                          onChanged: (val) => setState(() => _categoryFilter = val ?? 'All'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
 
-                  // Reset Button (35px height)
-                  ErpFormWidgets.secondaryButton(
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() {
-                        _searchQuery = '';
-                        _categoryFilter = 'All';
-                        _statusFilter = 'All';
-                      });
-                    },
-                    text: 'Reset',
-                    icon: Icons.refresh,
-                  ),
-                ],
+                      // Status Filter Dropdown (35px height)
+                      SizedBox(
+                        width: 140,
+                        child: ErpFormWidgets.dropdownField<String>(
+                          value: _statusFilter,
+                          items: const [
+                            DropdownMenuItem(value: 'All', child: Text('Status: All')),
+                            DropdownMenuItem(value: 'Active', child: Text('Status: Active')),
+                            DropdownMenuItem(value: 'Inactive', child: Text('Status: Inactive')),
+                          ],
+                          onChanged: (val) => setState(() => _statusFilter = val ?? 'All'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+
+                      // Reset Button (35px height)
+                      ErpFormWidgets.secondaryButton(
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                            _categoryFilter = 'All';
+                            _statusFilter = 'All';
+                          });
+                        },
+                        text: 'Reset',
+                        icon: Icons.refresh,
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             const SizedBox(height: 12),
 
-            // Enterprise Data Table
+            // Enterprise Data Table (Horizontally Scrollable & Responsive)
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -248,164 +353,175 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: AppColors.border),
                 ),
-                child: Column(
-                  children: [
-                    // Table Header
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                      decoration: const BoxDecoration(
-                        color: AppColors.canvas,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
-                        border: Border(bottom: BorderSide(color: AppColors.border)),
-                      ),
-                      child: const Row(
-                        children: [
-                          Expanded(flex: 3, child: Text('SUB-CATEGORY NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          Expanded(flex: 2, child: Text('PARENT CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 120, child: Text('PRODUCTS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 100, child: Text('STATUS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
-                        ],
-                      ),
-                    ),
-
-                    // Table Rows
-                    Expanded(
-                      child: subcategories.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double tableWidth = max(constraints.maxWidth, 820.0);
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: tableWidth,
+                        child: Column(
+                          children: [
+                            // Table Header
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              decoration: const BoxDecoration(
+                                color: AppColors.canvas,
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(4)),
+                                border: Border(bottom: BorderSide(color: AppColors.border)),
+                              ),
+                              child: const Row(
                                 children: [
-                                  const Icon(Icons.account_tree_outlined, size: 36, color: AppColors.zinc400),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    'No sub-categories found',
-                                    style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.pitchBlack),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    'Try adjusting search or add a new sub-category above',
-                                    style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
-                                  ),
+                                  Expanded(flex: 3, child: Text('SUB-CATEGORY NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  Expanded(flex: 2, child: Text('PARENT CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 120, child: Text('PRODUCTS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 100, child: Text('STATUS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                                  SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
                                 ],
                               ),
-                            )
-                          : ListView.separated(
-                              itemCount: subcategories.length,
-                              separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 1),
-                              itemBuilder: (context, index) {
-                                final sub = subcategories[index];
-                                final prodCount = _repo.getProductCountForSubcategory(sub.name);
+                            ),
 
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                  color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
-                                  child: Row(
-                                    children: [
-                                      // Name & Description
-                                      Expanded(
-                                        flex: 3,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              sub.name,
-                                              style: const TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 12,
-                                                color: AppColors.pitchBlack,
-                                              ),
-                                            ),
-                                            if (sub.description.isNotEmpty)
-                                              Text(
-                                                sub.description,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  fontSize: 10,
-                                                  color: AppColors.zinc500,
+                            // Table Rows
+                            Expanded(
+                              child: subcategories.isEmpty
+                                  ? Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.account_tree_outlined, size: 36, color: AppColors.zinc400),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'No sub-categories found',
+                                            style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.pitchBlack),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          const Text(
+                                            'Try adjusting search or add a new sub-category above',
+                                            style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : ListView.separated(
+                                      itemCount: subcategories.length,
+                                      separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 1),
+                                      itemBuilder: (context, index) {
+                                        final sub = subcategories[index];
+                                        final prodCount = _repo.getProductCountForSubcategory(sub.name);
+
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                          color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
+                                          child: Row(
+                                            children: [
+                                              // Name & Description
+                                              Expanded(
+                                                flex: 3,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      sub.name,
+                                                      style: const TextStyle(
+                                                        fontFamily: 'Poppins',
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 12,
+                                                        color: AppColors.pitchBlack,
+                                                      ),
+                                                    ),
+                                                    if (sub.description.isNotEmpty)
+                                                      Text(
+                                                        sub.description,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
+                                                        style: const TextStyle(
+                                                          fontFamily: 'Poppins',
+                                                          fontSize: 10,
+                                                          color: AppColors.zinc500,
+                                                        ),
+                                                      ),
+                                                  ],
                                                 ),
                                               ),
-                                          ],
-                                        ),
-                                      ),
-                                      // Parent Category Badge
-                                      Expanded(
-                                        flex: 2,
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.canvas,
-                                              borderRadius: BorderRadius.circular(4),
-                                              border: Border.all(color: AppColors.border),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Icon(Icons.folder_outlined, size: 12, color: AppColors.zinc600),
-                                                const SizedBox(width: 5),
-                                                Text(
-                                                  sub.categoryName,
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: AppColors.pitchBlack,
+                                              // Parent Category Badge
+                                              Expanded(
+                                                flex: 2,
+                                                child: Align(
+                                                  alignment: Alignment.centerLeft,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.canvas,
+                                                      borderRadius: BorderRadius.circular(4),
+                                                      border: Border.all(color: AppColors.border),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        const Icon(Icons.folder_outlined, size: 12, color: AppColors.zinc600),
+                                                        const SizedBox(width: 5),
+                                                        Text(
+                                                          sub.categoryName,
+                                                          style: const TextStyle(
+                                                            fontFamily: 'Poppins',
+                                                            fontSize: 11,
+                                                            fontWeight: FontWeight.w500,
+                                                            color: AppColors.pitchBlack,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              // Products count
+                                              SizedBox(
+                                                width: 120,
+                                                child: Text(
+                                                  '$prodCount items',
+                                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
+                                                ),
+                                              ),
+                                              // Status
+                                              SizedBox(
+                                                width: 100,
+                                                child: ErpFormWidgets.statusBadge(sub.isActive),
+                                              ),
+                                              // Actions
+                                              SizedBox(
+                                                width: 90,
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.zinc700),
+                                                      tooltip: 'Edit Sub-Category',
+                                                      onPressed: () => _openSubcategoryForm(sub),
+                                                      padding: EdgeInsets.zero,
+                                                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    IconButton(
+                                                      icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
+                                                      tooltip: 'Delete Sub-Category',
+                                                      onPressed: () => _confirmDelete(sub),
+                                                      padding: EdgeInsets.zero,
+                                                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
-                                      ),
-                                      // Products count
-                                      SizedBox(
-                                        width: 120,
-                                        child: Text(
-                                          '$prodCount items',
-                                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
-                                        ),
-                                      ),
-                                      // Status
-                                      SizedBox(
-                                        width: 100,
-                                        child: ErpFormWidgets.statusBadge(sub.isActive),
-                                      ),
-                                      // Actions
-                                      SizedBox(
-                                        width: 90,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.edit_outlined, size: 16, color: AppColors.zinc700),
-                                              tooltip: 'Edit Sub-Category',
-                                              onPressed: () => _openSubcategoryForm(sub),
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                            ),
-                                            const SizedBox(width: 4),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete_outline, size: 16, color: Colors.redAccent),
-                                              tooltip: 'Delete Sub-Category',
-                                              onPressed: () => _confirmDelete(sub),
-                                              padding: EdgeInsets.zero,
-                                              constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                                        );
+                                      },
+                                    ),
                             ),
-                    ),
-                  ],
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -541,7 +657,7 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
         side: const BorderSide(color: AppColors.border),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 460),
+        constraints: BoxConstraints(maxWidth: min(460.0, MediaQuery.of(context).size.width * 0.94)),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
