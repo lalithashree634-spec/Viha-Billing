@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -292,7 +291,7 @@ class _PosScreenState extends State<PosScreen> {
             right: 12,
             bottom: 12,
             child: Material(
-              color: AppColors.primary,
+              color: AppColors.pitchBlack,
               borderRadius: BorderRadius.circular(6),
               elevation: 4,
               child: InkWell(
@@ -302,12 +301,12 @@ class _PosScreenState extends State<PosScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      const Icon(Icons.receipt_outlined, color: Colors.white, size: 18),
+                      const Icon(Icons.receipt_outlined, color: AppColors.textOnDark, size: 18),
                       const SizedBox(width: 10),
                       Text(
                         '${_cart.fold(0, (sum, item) => sum + item.quantity)} Items • ${currencyFormatter.format(_grandTotal)}',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textOnDark,
                           fontFamily: 'Poppins',
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -317,14 +316,14 @@ class _PosScreenState extends State<PosScreen> {
                       const Text(
                         'View Bill',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: AppColors.textOnDark,
                           fontFamily: 'Poppins',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 12),
+                      const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textOnDark, size: 12),
                     ],
                   ),
                 ),
@@ -355,9 +354,9 @@ class _PosScreenState extends State<PosScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.primaryTint,
+                color: AppColors.lightGray,
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: AppColors.primaryBorder),
+                border: Border.all(color: AppColors.border),
               ),
               child: const Text(
                 'COUNTER 01',
@@ -365,7 +364,7 @@ class _PosScreenState extends State<PosScreen> {
                   fontFamily: 'Poppins',
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
+                  color: AppColors.zinc700,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -459,7 +458,7 @@ class _PosScreenState extends State<PosScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2),
         ),
       ),
     );
@@ -487,10 +486,10 @@ class _PosScreenState extends State<PosScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.primary : AppColors.lightGray,
+                  color: isSelected ? AppColors.pitchBlack : AppColors.lightGray,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.border,
+                    color: isSelected ? AppColors.pitchBlack : AppColors.border,
                   ),
                 ),
                 child: Row(
@@ -498,7 +497,7 @@ class _PosScreenState extends State<PosScreen> {
                     Icon(
                       icon,
                       size: 15,
-                      color: isSelected ? Colors.white : AppColors.zinc600,
+                      color: isSelected ? AppColors.textOnDark : AppColors.zinc600,
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -507,7 +506,7 @@ class _PosScreenState extends State<PosScreen> {
                         fontFamily: 'Poppins',
                         fontSize: 12,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected ? Colors.white : AppColors.zinc700,
+                        color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
                       ),
                     ),
                   ],
@@ -650,56 +649,44 @@ class _PosScreenState extends State<PosScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Frosted Category Pill
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.45),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                          ),
-                          child: Text(
-                            product.category.toUpperCase(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              letterSpacing: 0.4,
-                            ),
-                          ),
+                    // Glass Category Pill
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.70),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                      ),
+                      child: Text(
+                        product.category.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          letterSpacing: 0.4,
                         ),
                       ),
                     ),
 
                     // Low Stock Alert Badge
                     if (isLowStock)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade900.withValues(alpha: 0.72),
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: Colors.red.shade300.withValues(alpha: 0.3)),
-                            ),
-                            child: Text(
-                              'Low: ${product.stock}',
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade900.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.red.shade300.withValues(alpha: 0.4)),
+                        ),
+                        child: Text(
+                          'Low: ${product.stock}',
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -707,103 +694,89 @@ class _PosScreenState extends State<PosScreen> {
                 ),
               ),
 
-              // 4. BOTTOM FROSTED GLASS BLURRED PANEL (Product Name, Price, SKU & Add Button)
+              // 4. BOTTOM HIGH-PERFORMANCE DARK GLASS PANEL
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.52),
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.18),
-                            width: 1,
-                          ),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xEB000000), // 92% pitch black glass for high contrast & speed
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.18),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Product Name
+                      Text(
+                        product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: Colors.white,
+                          height: 1.25,
                         ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
+                      const SizedBox(height: 5),
+
+                      // Price, Stock & Quick Add (+) Button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          // Product Name on Blurred Glass
-                          Text(
-                            product.name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: Colors.white,
-                              height: 1.25,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 1),
-                                  blurRadius: 2,
-                                  color: Colors.black45,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  currencyFormatter.format(product.price),
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  isLowStock ? '${product.barcode} • ${product.stock} left' : '${product.barcode} • In stock',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 9,
+                                    color: Colors.white.withValues(alpha: 0.75),
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 5),
+                          const SizedBox(width: 6),
 
-                          // Price, Stock & Quick Add (+) Button
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    currencyFormatter.format(product.price),
-                                    style: const TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  Text(
-                                    isLowStock ? '${product.barcode} • ${product.stock} left' : '${product.barcode} • In stock',
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 9,
-                                      color: Colors.white.withValues(alpha: 0.75),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // Quick Add Button
-                              Container(
-                                width: 28,
-                                height: 28,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.circular(4),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.primary.withValues(alpha: 0.4),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(Icons.add, color: Colors.white, size: 16),
-                              ),
-                            ],
+                          // Quick Add Button (Pitch Black with border)
+                          Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: AppColors.pitchBlack,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
+                            ),
+                            child: const Icon(Icons.add, color: Colors.white, size: 15),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -1159,8 +1132,8 @@ class _PosScreenState extends State<PosScreen> {
                   style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 12),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.pitchBlack,
+                  foregroundColor: AppColors.textOnDark,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
@@ -1382,9 +1355,8 @@ class _PosScreenState extends State<PosScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.primaryTint,
+                color: AppColors.pitchBlack,
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: AppColors.primaryBorder),
               ),
               child: Text(
                 '${_cart.length} ITEMS',
@@ -1392,7 +1364,7 @@ class _PosScreenState extends State<PosScreen> {
                   fontFamily: 'Poppins',
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
+                  color: AppColors.textOnDark,
                 ),
               ),
             ),
@@ -1585,8 +1557,8 @@ class _PosScreenState extends State<PosScreen> {
           child: ElevatedButton(
             onPressed: isCompleting ? null : onComplete,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              backgroundColor: AppColors.pitchBlack,
+              foregroundColor: AppColors.textOnDark,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             ),
             child: isCompleting
@@ -1620,10 +1592,10 @@ class _PosScreenState extends State<PosScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : AppColors.surfaceInput,
+            color: isSelected ? AppColors.pitchBlack : AppColors.canvas,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.border,
+              color: isSelected ? AppColors.pitchBlack : AppColors.border,
             ),
           ),
           child: Row(
@@ -1632,7 +1604,7 @@ class _PosScreenState extends State<PosScreen> {
               Icon(
                 icon,
                 size: 16,
-                color: isSelected ? Colors.white : AppColors.zinc700,
+                color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
               ),
               const SizedBox(width: 6),
               Text(
@@ -1641,7 +1613,7 @@ class _PosScreenState extends State<PosScreen> {
                   fontFamily: 'Poppins',
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : AppColors.zinc700,
+                  color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
                 ),
               ),
             ],
