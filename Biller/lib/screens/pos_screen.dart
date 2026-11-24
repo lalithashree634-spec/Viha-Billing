@@ -19,21 +19,21 @@ class _PosScreenState extends State<PosScreen> {
 
   String _selectedCategory = 'All';
 
-  final List<Map<String, dynamic>> _categoryData = [
-    {'name': 'All', 'icon': Icons.grid_view_rounded, 'count': 10},
-    {'name': 'Beverages', 'icon': Icons.coffee_rounded, 'count': 2},
-    {'name': 'Bakery', 'icon': Icons.bakery_dining_rounded, 'count': 2},
-    {'name': 'Dairy', 'icon': Icons.egg_rounded, 'count': 1},
-    {'name': 'Snacks', 'icon': Icons.cookie_rounded, 'count': 2},
-    {'name': 'Spices', 'icon': Icons.grain_rounded, 'count': 1},
-    {'name': 'Essentials', 'icon': Icons.shopping_basket_rounded, 'count': 2},
+  final List<Map<String, dynamic>> _categories = [
+    {'name': 'All', 'icon': Icons.apps_outlined},
+    {'name': 'Beverages', 'icon': Icons.local_cafe_outlined},
+    {'name': 'Bakery', 'icon': Icons.bakery_dining_outlined},
+    {'name': 'Dairy', 'icon': Icons.egg_outlined},
+    {'name': 'Snacks', 'icon': Icons.cookie_outlined},
+    {'name': 'Spices', 'icon': Icons.grain_outlined},
+    {'name': 'Essentials', 'icon': Icons.inventory_2_outlined},
   ];
 
-  // Modern Real-world Product Catalog
+  // Professional Product Catalog
   final List<Product> _allProducts = [
     const Product(
       id: 'p1',
-      name: 'Artisan Filter Coffee',
+      name: 'Artisan Filter Coffee (250g)',
       category: 'Beverages',
       barcode: '8901234001',
       price: 180.0,
@@ -43,7 +43,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p2',
-      name: 'Roasted Masala Chai',
+      name: 'Roasted Masala Tea (200g)',
       category: 'Beverages',
       barcode: '8901234002',
       price: 120.0,
@@ -53,7 +53,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p3',
-      name: 'Sourdough Artisanal Bread',
+      name: 'Whole Wheat Sourdough Loaf',
       category: 'Bakery',
       barcode: '8901234003',
       price: 95.0,
@@ -63,7 +63,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p4',
-      name: 'Fresh Butter Croissant (2x)',
+      name: 'Butter Croissant (2 pcs)',
       category: 'Bakery',
       barcode: '8901234004',
       price: 140.0,
@@ -73,7 +73,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p5',
-      name: 'Desi Cow A2 Ghee (500ml)',
+      name: 'Pure Desi Cow Ghee (500ml)',
       category: 'Dairy',
       barcode: '8901234005',
       price: 490.0,
@@ -83,7 +83,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p6',
-      name: 'Raw California Almonds',
+      name: 'California Almonds (250g)',
       category: 'Snacks',
       barcode: '8901234006',
       price: 320.0,
@@ -93,7 +93,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p7',
-      name: 'Dark Cocoa Chunk Cookies',
+      name: 'Dark Chocolate Cookie Pack',
       category: 'Snacks',
       barcode: '8901234007',
       price: 160.0,
@@ -103,7 +103,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p8',
-      name: 'Cardamom Green Bold (50g)',
+      name: 'Green Cardamom Extra Bold (50g)',
       category: 'Spices',
       barcode: '8901234008',
       price: 210.0,
@@ -113,7 +113,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p9',
-      name: 'Himalayan Pink Rock Salt',
+      name: 'Himalayan Pink Rock Salt (1kg)',
       category: 'Essentials',
       barcode: '8901234009',
       price: 85.0,
@@ -123,7 +123,7 @@ class _PosScreenState extends State<PosScreen> {
     ),
     const Product(
       id: 'p10',
-      name: 'Wood Pressed Gingelly Oil',
+      name: 'Wood Pressed Gingelly Oil (1L)',
       category: 'Essentials',
       barcode: '8901234010',
       price: 260.0,
@@ -133,7 +133,6 @@ class _PosScreenState extends State<PosScreen> {
     ),
   ];
 
-  // Cart & Cashier State
   final List<BillItem> _cart = [];
   final List<List<BillItem>> _heldBills = [];
   double _overallDiscountPercent = 0.0;
@@ -202,15 +201,15 @@ class _PosScreenState extends State<PosScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: AppColors.pitchBlack,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         content: Text(
           'Bill held successfully (${_heldBills.length} queued)',
-          style: const TextStyle(fontFamily: 'Poppins', color: AppColors.white),
+          style: const TextStyle(fontFamily: 'Poppins', color: AppColors.white, fontSize: 12),
         ),
         action: SnackBarAction(
-          label: 'RESTORE',
-          textColor: AppColors.zinc300,
+          label: 'RECALL',
+          textColor: AppColors.white,
           onPressed: _recallHeldBill,
         ),
       ),
@@ -276,50 +275,41 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // DESKTOP: Sleek 2-Section POS (Catalog Left + Modern Receipt Dock Right)
+  // DESKTOP: Clean Industrial POS Layout (Catalog Left + Invoice Sheet Right)
   Widget _buildDesktopView() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Product Catalog Section (62% width)
+        // Catalog Area (60% width)
         Expanded(
-          flex: 62,
+          flex: 60,
           child: Container(
-            padding: const EdgeInsets.fromLTRB(28, 24, 20, 24),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeaderBar(),
-                const SizedBox(height: 20),
-                _buildModernSearchBar(),
-                const SizedBox(height: 16),
-                _buildCategoryPills(),
-                const SizedBox(height: 20),
-                Expanded(child: _buildModernProductGrid(crossAxisCount: 3)),
+                const SizedBox(height: 12),
+                _buildSearchBar(),
+                const SizedBox(height: 10),
+                _buildCategoryTabs(),
+                const SizedBox(height: 12),
+                Expanded(child: _buildProductGrid(crossAxisCount: 3)),
               ],
             ),
           ),
         ),
 
-        // Floating Ticket Dock (38% width)
+        // Vertical Divider
+        Container(width: 1, color: AppColors.border),
+
+        // Right Invoice Table Register (40% width)
         Expanded(
-          flex: 38,
+          flex: 40,
           child: Container(
-            margin: const EdgeInsets.fromLTRB(8, 16, 20, 20),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.border, width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.pitchBlack.withAlpha(8),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(22),
-            child: _buildReceiptDock(),
+            color: AppColors.white,
+            padding: const EdgeInsets.all(16),
+            child: _buildInvoiceTablePanel(),
           ),
         ),
       ],
@@ -331,33 +321,29 @@ class _PosScreenState extends State<PosScreen> {
     return Row(
       children: [
         Expanded(
-          flex: 54,
+          flex: 52,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             child: Column(
               children: [
                 _buildHeaderBar(),
-                const SizedBox(height: 14),
-                _buildModernSearchBar(),
-                const SizedBox(height: 14),
-                _buildCategoryPills(),
-                const SizedBox(height: 14),
-                Expanded(child: _buildModernProductGrid(crossAxisCount: 2)),
+                const SizedBox(height: 10),
+                _buildSearchBar(),
+                const SizedBox(height: 10),
+                _buildCategoryTabs(),
+                const SizedBox(height: 10),
+                Expanded(child: _buildProductGrid(crossAxisCount: 2)),
               ],
             ),
           ),
         ),
+        Container(width: 1, color: AppColors.border),
         Expanded(
-          flex: 46,
+          flex: 48,
           child: Container(
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.border),
-            ),
-            padding: const EdgeInsets.all(18),
-            child: _buildReceiptDock(),
+            color: AppColors.white,
+            padding: const EdgeInsets.all(12),
+            child: _buildInvoiceTablePanel(),
           ),
         ),
       ],
@@ -369,96 +355,61 @@ class _PosScreenState extends State<PosScreen> {
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 80),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeaderBar(),
-              const SizedBox(height: 14),
-              _buildModernSearchBar(),
-              const SizedBox(height: 14),
-              _buildCategoryPills(),
-              const SizedBox(height: 14),
-              Expanded(child: _buildModernProductGrid(crossAxisCount: 2)),
+              const SizedBox(height: 10),
+              _buildSearchBar(),
+              const SizedBox(height: 10),
+              _buildCategoryTabs(),
+              const SizedBox(height: 10),
+              Expanded(child: _buildProductGrid(crossAxisCount: 2)),
             ],
           ),
         ),
 
-        // Floating Mobile Checkout Bar
+        // Mobile Bottom Cart Summary Bar
         if (_cart.isNotEmpty)
           Positioned(
-            left: 16,
-            right: 16,
-            bottom: 16,
+            left: 12,
+            right: 12,
+            bottom: 12,
             child: Material(
-              elevation: 12,
-              shadowColor: AppColors.pitchBlack.withAlpha(60),
-              borderRadius: BorderRadius.circular(20),
               color: AppColors.pitchBlack,
+              borderRadius: BorderRadius.circular(6),
+              elevation: 4,
               child: InkWell(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(6),
                 onTap: _openMobileBottomSheet,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.zinc800,
-                          borderRadius: BorderRadius.circular(10),
+                      const Icon(Icons.receipt_outlined, color: AppColors.white, size: 18),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${_cart.fold(0, (sum, item) => sum + item.quantity)} Items • ${currencyFormatter.format(_grandTotal)}',
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
                         ),
-                        child: const Icon(Icons.receipt_rounded, color: AppColors.white, size: 20),
-                      ),
-                      const SizedBox(width: 14),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '${_cart.fold(0, (sum, item) => sum + item.quantity)} ITEMS IN CART',
-                            style: const TextStyle(
-                              color: AppColors.zinc400,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10,
-                              letterSpacing: 0.8,
-                            ),
-                          ),
-                          Text(
-                            currencyFormatter.format(_grandTotal),
-                            style: const TextStyle(
-                              color: AppColors.white,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
                       ),
                       const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        decoration: BoxDecoration(
+                      const Text(
+                        'View Bill',
+                        style: TextStyle(
                           color: AppColors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Row(
-                          children: [
-                            Text(
-                              'View Bill',
-                              style: TextStyle(
-                                color: AppColors.pitchBlack,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13,
-                              ),
-                            ),
-                            SizedBox(width: 6),
-                            Icon(Icons.arrow_forward_rounded, color: AppColors.pitchBlack, size: 14),
-                          ],
+                          fontFamily: 'Poppins',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.white, size: 12),
                     ],
                   ),
                 ),
@@ -469,213 +420,178 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // TOP COMMAND BAR
+  // COMPACT TOP HEADER
   Widget _buildHeaderBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
           children: [
-            const Row(
-              children: [
-                Text(
-                  'Cash Register',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.6,
-                    color: AppColors.pitchBlack,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  '• Counter 01',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.zinc500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 2),
-            Text(
-              DateFormat('EEEE, MMMM d, yyyy • hh:mm a').format(DateTime.now()),
-              style: const TextStyle(
+            const Text(
+              'POS Register',
+              style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 12,
-                color: AppColors.zinc400,
-                fontWeight: FontWeight.w500,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppColors.pitchBlack,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.zinc100,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: const Text(
+                'COUNTER 01',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.zinc700,
+                  letterSpacing: 0.5,
+                ),
               ),
             ),
           ],
         ),
-
-        // Quick Held Button
-        if (_heldBills.isNotEmpty)
-          OutlinedButton.icon(
-            onPressed: _recallHeldBill,
-            icon: const Icon(Icons.history_rounded, size: 16, color: AppColors.pitchBlack),
-            label: Text(
-              'Held Tickets (${_heldBills.length})',
+        Row(
+          children: [
+            Text(
+              DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now()),
               style: const TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: AppColors.pitchBlack,
+                fontSize: 11,
+                color: AppColors.zinc500,
+                fontWeight: FontWeight.w400,
               ),
             ),
-            style: OutlinedButton.styleFrom(
-              backgroundColor: AppColors.zinc100,
-              side: const BorderSide(color: AppColors.border),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            ),
-          ),
+            if (_heldBills.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              OutlinedButton.icon(
+                onPressed: _recallHeldBill,
+                icon: const Icon(Icons.history_outlined, size: 14),
+                label: Text(
+                  'Held (${_heldBills.length})',
+                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                ),
+              ),
+            ],
+          ],
+        ),
       ],
     );
   }
 
-  // MODERN SEARCH BAR (Apple/Stripe Inspired)
-  Widget _buildModernSearchBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.pitchBlack.withAlpha(4),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: _searchController,
-        focusNode: _searchFocusNode,
-        onChanged: (_) => setState(() {}),
-        style: const TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w500),
-        decoration: InputDecoration(
-          hintText: 'Search product by name, category, or barcode...',
-          hintStyle: const TextStyle(fontFamily: 'Poppins', color: AppColors.zinc400, fontSize: 13),
-          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.zinc500, size: 22),
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (_searchController.text.isNotEmpty)
-                IconButton(
-                  icon: const Icon(Icons.close_rounded, size: 18, color: AppColors.zinc400),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() {});
-                  },
-                ),
-              Container(
-                margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.zinc100,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: const Text(
-                  'F2',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.zinc600,
-                  ),
+  // SEARCH BAR (No heavy rounded radius)
+  Widget _buildSearchBar() {
+    return TextField(
+      controller: _searchController,
+      focusNode: _searchFocusNode,
+      onChanged: (_) => setState(() {}),
+      style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w500),
+      decoration: InputDecoration(
+        hintText: 'Search items by name, category, or barcode...',
+        prefixIcon: const Icon(Icons.search_rounded, color: AppColors.zinc500, size: 18),
+        suffixIcon: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_searchController.text.isNotEmpty)
+              IconButton(
+                icon: const Icon(Icons.close_rounded, size: 16),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() {});
+                },
+              ),
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.zinc100,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: const Text(
+                'F2',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.zinc600,
                 ),
               ),
-            ],
-          ),
-          filled: true,
-          fillColor: Colors.transparent,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
+            ),
+          ],
+        ),
+        filled: true,
+        fillColor: AppColors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(6),
+          borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2),
         ),
       ),
     );
   }
 
-  // CATEGORY PILL SELECTOR (Modern Rounded Horizontal Chips)
-  Widget _buildCategoryPills() {
+  // CLEAN HORIZONTAL CATEGORY TABS (Crisp 4px radius, Clean Icons, Zero Emojis)
+  Widget _buildCategoryTabs() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Row(
-        children: _categoryData.map((cat) {
+        children: _categories.map((cat) {
           final isSelected = _selectedCategory == cat['name'];
           final name = cat['name'] as String;
           final icon = cat['icon'] as IconData;
-          final count = cat['count'] as int;
 
           return Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 6),
             child: InkWell(
               onTap: () {
                 HapticFeedback.selectionClick();
                 setState(() => _selectedCategory = name);
               },
-              borderRadius: BorderRadius.circular(12),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 160),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              borderRadius: BorderRadius.circular(4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.pitchBlack : AppColors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color: isSelected ? AppColors.pitchBlack : AppColors.border,
                   ),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppColors.pitchBlack.withAlpha(25),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          )
-                        ]
-                      : null,
                 ),
                 child: Row(
                   children: [
                     Icon(
                       icon,
-                      size: 16,
+                      size: 15,
                       color: isSelected ? AppColors.white : AppColors.zinc600,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Text(
                       name,
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 12,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                         color: isSelected ? AppColors.white : AppColors.zinc700,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppColors.zinc800 : AppColors.zinc100,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '$count',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: isSelected ? AppColors.zinc300 : AppColors.zinc500,
-                        ),
                       ),
                     ),
                   ],
@@ -688,36 +604,29 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // REDESIGNED PRODUCT GRID (Clean, Clickable, High-End Card Surfaces)
-  Widget _buildModernProductGrid({required int crossAxisCount}) {
+  // DENSE PRODUCT GRID (Fast, crisp, 6px radius)
+  Widget _buildProductGrid({required int crossAxisCount}) {
     final products = _filteredProducts;
     if (products.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
-                color: AppColors.zinc100,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.search_off_rounded, size: 40, color: AppColors.zinc400),
-            ),
-            const SizedBox(height: 14),
+            const Icon(Icons.search_off_rounded, size: 36, color: AppColors.zinc400),
+            const SizedBox(height: 8),
             const Text(
-              'No items found',
+              'No items match your search',
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
                 color: AppColors.pitchBlack,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             const Text(
-              'Try searching with another keyword or barcode',
-              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc500),
+              'Try another keyword or barcode',
+              style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
             ),
           ],
         ),
@@ -729,9 +638,9 @@ class _PosScreenState extends State<PosScreen> {
       itemCount: products.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 14,
-        mainAxisSpacing: 14,
-        childAspectRatio: 0.92,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.95,
       ),
       itemBuilder: (context, index) {
         final product = products[index];
@@ -740,50 +649,43 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // INDIVIDUAL HIGH-END PRODUCT TILE
+  // SHARP ENTERPRISE PRODUCT TILE
   Widget _buildProductCard(Product product) {
     final isLowStock = product.stock <= 6;
 
     return Material(
       color: AppColors.white,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(6),
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(6),
         onTap: () => _addToCart(product),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(6),
             border: Border.all(color: AppColors.border),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.pitchBlack.withAlpha(4),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Row: Category Tag & Price Pill
+              // Category tag & Price
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: AppColors.zinc100,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       product.category.toUpperCase(),
                       style: const TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.6,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.zinc600,
+                        letterSpacing: 0.4,
                       ),
                     ),
                   ),
@@ -791,10 +693,9 @@ class _PosScreenState extends State<PosScreen> {
                     currencyFormatter.format(product.price),
                     style: const TextStyle(
                       fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
                       color: AppColors.pitchBlack,
-                      letterSpacing: -0.3,
                     ),
                   ),
                 ],
@@ -808,60 +709,47 @@ class _PosScreenState extends State<PosScreen> {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
                   color: AppColors.pitchBlack,
                   height: 1.3,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
 
-              // SKU & Tax info
+              // SKU
               Text(
-                'SKU: ${product.barcode.substring(product.barcode.length - 4)} • GST ${product.gstPercent.toStringAsFixed(0)}%',
+                'SKU: ${product.barcode}',
                 style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 10,
-                  fontWeight: FontWeight.w500,
                   color: AppColors.zinc400,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
               const Spacer(),
 
-              // Bottom Row: Stock status & Tap-to-Add action
+              // Stock Status
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: isLowStock ? Colors.orangeAccent : AppColors.zinc400,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        isLowStock ? '${product.stock} left' : '${product.stock} in stock',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 11,
-                          fontWeight: isLowStock ? FontWeight.w700 : FontWeight.w500,
-                          color: isLowStock ? Colors.orange.shade800 : AppColors.zinc500,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    isLowStock ? 'Stock: ${product.stock} (Low)' : 'Stock: ${product.stock}',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 10,
+                      fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w400,
+                      color: isLowStock ? Colors.orange.shade800 : AppColors.zinc500,
+                    ),
                   ),
                   Container(
-                    width: 30,
-                    height: 30,
+                    width: 24,
+                    height: 24,
                     decoration: BoxDecoration(
                       color: AppColors.pitchBlack,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Icon(Icons.add_rounded, color: AppColors.white, size: 18),
+                    child: const Icon(Icons.add, color: AppColors.white, size: 14),
                   ),
                 ],
               ),
@@ -872,12 +760,12 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // THE FLOATING RECEIPT DOCK (Smart POS Register)
-  Widget _buildReceiptDock() {
+  // PROFESSIONAL INVOICE TABLE REGISTER (Clean Tabular Layout)
+  Widget _buildInvoiceTablePanel() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Ticket Header
+        // Ticket Info Header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -885,12 +773,11 @@ class _PosScreenState extends State<PosScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Current Ticket',
+                  'Active Bill',
                   style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w800,
-                    fontSize: 20,
-                    letterSpacing: -0.5,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
                     color: AppColors.pitchBlack,
                   ),
                 ),
@@ -899,7 +786,7 @@ class _PosScreenState extends State<PosScreen> {
                   style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.zinc500,
                   ),
                 ),
@@ -910,74 +797,85 @@ class _PosScreenState extends State<PosScreen> {
                 children: [
                   IconButton(
                     tooltip: 'Hold Bill [F4]',
-                    icon: const Icon(Icons.pause_circle_outline_rounded, size: 20, color: AppColors.zinc600),
+                    icon: const Icon(Icons.pause_circle_outline, size: 18, color: AppColors.zinc600),
                     onPressed: _holdCurrentBill,
                   ),
                   IconButton(
-                    tooltip: 'Clear Cart',
-                    icon: const Icon(Icons.delete_outline_rounded, size: 20, color: AppColors.zinc400),
+                    tooltip: 'Clear Bill',
+                    icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.zinc400),
                     onPressed: _clearCart,
                   ),
                 ],
               ),
           ],
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
 
-        // Customer Input Pill
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-          decoration: BoxDecoration(
-            color: AppColors.zinc100,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: TextField(
-            controller: _customerController,
-            style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w500),
-            decoration: const InputDecoration(
-              hintText: 'Customer phone or name (optional)...',
-              hintStyle: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc400),
-              prefixIcon: Icon(Icons.person_outline_rounded, size: 18, color: AppColors.zinc600),
-              filled: false,
-              isDense: true,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-            ),
+        // Customer Phone Field (Compact)
+        TextField(
+          controller: _customerController,
+          style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),
+          decoration: InputDecoration(
+            hintText: 'Customer phone or name...',
+            prefixIcon: const Icon(Icons.person_outline, size: 16, color: AppColors.zinc600),
+            filled: true,
+            fillColor: AppColors.zinc50,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
           ),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
 
-        // Ticket Items List
+        // Table Header
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          decoration: BoxDecoration(
+            color: AppColors.zinc100,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: const Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: Text('ITEM', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc600)),
+              ),
+              Expanded(
+                flex: 3,
+                child: Center(
+                  child: Text('QTY', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc600)),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text('AMOUNT', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc600)),
+                ),
+              ),
+              SizedBox(width: 24),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+
+        // Item List (Clean rows)
         Expanded(
           child: _cart.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: const BoxDecoration(
-                          color: AppColors.zinc100,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.shopping_bag_outlined, size: 36, color: AppColors.zinc400),
-                      ),
-                      const SizedBox(height: 14),
+                      const Icon(Icons.receipt_outlined, size: 32, color: AppColors.zinc400),
+                      const SizedBox(height: 8),
                       const Text(
-                        'Ticket is empty',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: AppColors.pitchBlack,
-                        ),
+                        'Bill is empty',
+                        style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13),
                       ),
-                      const SizedBox(height: 4),
                       const Text(
-                        'Tap items on the left to build the bill',
-                        style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc500),
+                        'Select items from the catalog to add',
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
                       ),
                     ],
                   ),
@@ -985,216 +883,176 @@ class _PosScreenState extends State<PosScreen> {
               : ListView.separated(
                   physics: const BouncingScrollPhysics(),
                   itemCount: _cart.length,
-                  separatorBuilder: (_, index) => const Divider(color: AppColors.border, height: 16),
+                  separatorBuilder: (_, __) => const Divider(color: AppColors.border, height: 1),
                   itemBuilder: (context, index) {
                     final item = _cart[index];
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Quantity stepper pill
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.zinc100,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.border),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              InkWell(
-                                onTap: () => _updateQuantity(index, -1),
-                                borderRadius: BorderRadius.circular(8),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                  child: Icon(Icons.remove, size: 12, color: AppColors.zinc700),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 6),
-                                child: Text(
-                                  '${item.quantity}',
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                      child: Row(
+                        children: [
+                          // Item Name & Rate
+                          Expanded(
+                            flex: 5,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.product.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w500,
                                     fontSize: 12,
                                     color: AppColors.pitchBlack,
                                   ),
                                 ),
-                              ),
-                              InkWell(
-                                onTap: () => _updateQuantity(index, 1),
-                                borderRadius: BorderRadius.circular(8),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                  child: Icon(Icons.add, size: 12, color: AppColors.zinc700),
+                                Text(
+                                  '${currencyFormatter.format(item.unitPrice)} • GST ${item.product.gstPercent.toStringAsFixed(0)}%',
+                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc500),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
 
-                        // Item description
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.product.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 13,
-                                  color: AppColors.pitchBlack,
-                                ),
+                          // Quantity Controls (Crisp compact box)
+                          Expanded(
+                            flex: 3,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.border),
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                              Text(
-                                '${currencyFormatter.format(item.unitPrice)} ea • GST ${item.product.gstPercent.toStringAsFixed(0)}%',
-                                style: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 10,
-                                  color: AppColors.zinc400,
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                    onTap: () => _updateQuantity(index, -1),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                      child: Icon(Icons.remove, size: 12),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${item.quantity}',
+                                    style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 11),
+                                  ),
+                                  InkWell(
+                                    onTap: () => _updateQuantity(index, 1),
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                      child: Icon(Icons.add, size: 12),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 8),
 
-                        // Item Total
-                        Text(
-                          currencyFormatter.format(item.subtotal),
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w800,
-                            fontSize: 14,
-                            color: AppColors.pitchBlack,
+                          // Line Total
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              currencyFormatter.format(item.subtotal),
+                              textAlign: TextAlign.right,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                color: AppColors.pitchBlack,
+                              ),
+                            ),
                           ),
-                        ),
 
-                        // Quick delete
-                        IconButton(
-                          icon: const Icon(Icons.close_rounded, size: 16, color: AppColors.zinc400),
-                          onPressed: () => _removeFromCart(index),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 28),
-                        ),
-                      ],
+                          // Remove Button
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 14, color: AppColors.zinc400),
+                            onPressed: () => _removeFromCart(index),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 24),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),
         ),
 
-        const Divider(color: AppColors.border, height: 20),
+        const Divider(color: AppColors.border, height: 16),
 
-        // Bill Summary Section
-        Column(
-          children: [
-            _buildSummaryRow('Subtotal', currencyFormatter.format(_cartSubtotal)),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Discount',
-                      style: TextStyle(fontFamily: 'Poppins', fontSize: 13, color: AppColors.zinc600),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.zinc100,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppColors.border),
+        // Summary Breakdown Box
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.zinc50,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            children: [
+              _buildSummaryLine('Subtotal', currencyFormatter.format(_cartSubtotal)),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Discount',
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc600),
                       ),
-                      child: DropdownButton<double>(
+                      const SizedBox(width: 6),
+                      DropdownButton<double>(
                         value: _overallDiscountPercent,
                         underline: const SizedBox(),
                         isDense: true,
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.pitchBlack,
-                        ),
-                        items: [0.0, 5.0, 10.0, 15.0].map((disc) {
+                        style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                        items: [0.0, 5.0, 10.0, 15.0].map((d) {
                           return DropdownMenuItem<double>(
-                            value: disc,
-                            child: Text('${disc.toStringAsFixed(0)}% OFF'),
+                            value: d,
+                            child: Text('${d.toStringAsFixed(0)}%'),
                           );
                         }).toList(),
                         onChanged: (val) {
                           if (val != null) setState(() => _overallDiscountPercent = val);
                         },
                       ),
-                    ),
-                  ],
-                ),
-                Text(
-                  '- ${currencyFormatter.format(_discountAmount)}',
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.pitchBlack,
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            _buildSummaryRow('GST Tax', currencyFormatter.format(_cartTax)),
-            const SizedBox(height: 14),
-
-            // Big High-Contrast Total Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.pitchBlack,
-                borderRadius: BorderRadius.circular(16),
+                  Text(
+                    '- ${currencyFormatter.format(_discountAmount)}',
+                    style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                  ),
+                ],
               ),
-              child: Row(
+              const SizedBox(height: 6),
+              _buildSummaryLine('Tax (GST)', currencyFormatter.format(_cartTax)),
+              const Divider(color: AppColors.border, height: 14),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'GRAND TOTAL',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.0,
-                          color: AppColors.zinc400,
-                        ),
-                      ),
-                      Text(
-                        'Tax Included',
-                        style: TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc500),
-                      ),
-                    ],
+                  const Text(
+                    'Net Payable',
+                    style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.pitchBlack),
                   ),
                   Text(
                     currencyFormatter.format(_grandTotal),
                     style: const TextStyle(
                       fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 22,
-                      color: AppColors.white,
-                      letterSpacing: -0.5,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: AppColors.pitchBlack,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
-        // Action Buttons: Hold [F4] + Big Charge Button [F12]
+        // Action Buttons: Hold [F4] + Charge & Print [F12]
         Row(
           children: [
             Expanded(
@@ -1202,38 +1060,27 @@ class _PosScreenState extends State<PosScreen> {
               child: OutlinedButton(
                 onPressed: _cart.isEmpty ? null : _holdCurrentBill,
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
-                child: const Text('Hold [F4]', style: TextStyle(fontFamily: 'Poppins', fontSize: 12)),
+                child: const Text('Hold [F4]', style: TextStyle(fontFamily: 'Poppins', fontSize: 11)),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 8),
             Expanded(
               flex: 2,
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: _cart.isEmpty ? null : _showPaymentModal,
+                icon: const Icon(Icons.print_outlined, size: 16),
+                label: Text(
+                  'Pay ${currencyFormatter.format(_grandTotal)}',
+                  style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 12),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.pitchBlack,
                   foregroundColor: AppColors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.payments_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Charge ${currencyFormatter.format(_grandTotal)}',
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 14,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ],
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
               ),
             ),
@@ -1243,23 +1090,12 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  Widget _buildSummaryRow(String label, String value) {
+  Widget _buildSummaryLine(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, color: AppColors.zinc600),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: AppColors.pitchBlack,
-          ),
-        ),
+        Text(label, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc600)),
+        Text(value, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.pitchBlack)),
       ],
     );
   }
@@ -1273,20 +1109,20 @@ class _PosScreenState extends State<PosScreen> {
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) {
           return Container(
-            height: MediaQuery.of(context).size.height * 0.88,
+            height: MediaQuery.of(context).size.height * 0.85,
             decoration: const BoxDecoration(
               color: AppColors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
             ),
-            padding: const EdgeInsets.all(20),
-            child: _buildReceiptDock(),
+            padding: const EdgeInsets.all(16),
+            child: _buildInvoiceTablePanel(),
           );
         },
       ),
     );
   }
 
-  // REDESIGNED PAYMENT MODAL (Digital POS Register Experience)
+  // PAYMENT MODAL (Sharp 6px radius, max 600 weight)
   void _showPaymentModal() {
     String selectedMethod = 'UPI';
     double cashReceived = _grandTotal.ceilToDouble();
@@ -1302,260 +1138,191 @@ class _PosScreenState extends State<PosScreen> {
           return AlertDialog(
             backgroundColor: AppColors.white,
             surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            titlePadding: const EdgeInsets.fromLTRB(24, 20, 16, 0),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            titlePadding: const EdgeInsets.fromLTRB(20, 16, 16, 0),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Payment Terminal',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 20,
-                        letterSpacing: -0.4,
-                      ),
-                    ),
-                    Text(
-                      'Choose customer tender & print invoice',
-                      style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc500),
-                    ),
-                  ],
+                const Text(
+                  'Payment & Print',
+                  style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, size: 20),
+                  icon: const Icon(Icons.close, size: 18),
                   onPressed: () => Navigator.pop(ctx),
                 ),
               ],
             ),
             content: SizedBox(
-              width: 440,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Amount Banner
+              width: 380,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Amount Banner
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.zinc100,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'Total Payable',
+                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          currencyFormatter.format(_grandTotal),
+                          style: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w600,
+                            fontSize: 22,
+                            color: AppColors.pitchBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Method Selector
+                  Row(
+                    children: ['UPI', 'Cash', 'Card'].map((method) {
+                      final isSelected = selectedMethod == method;
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3),
+                          child: InkWell(
+                            onTap: () => setDialogState(() => selectedMethod = method),
+                            borderRadius: BorderRadius.circular(4),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: isSelected ? AppColors.pitchBlack : AppColors.zinc50,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: isSelected ? AppColors.pitchBlack : AppColors.border,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    method == 'UPI'
+                                        ? Icons.qr_code_scanner_outlined
+                                        : method == 'Cash'
+                                            ? Icons.payments_outlined
+                                            : Icons.credit_card_outlined,
+                                    color: isSelected ? AppColors.white : AppColors.zinc700,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    method,
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: isSelected ? AppColors.white : AppColors.zinc700,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Cash Calculation
+                  if (selectedMethod == 'Cash') ...[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Cash Given by Customer', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w500)),
+                        const SizedBox(height: 6),
+                        TextField(
+                          controller: cashController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, fontWeight: FontWeight.w600),
+                          onChanged: (_) => setDialogState(() {}),
+                          decoration: InputDecoration(
+                            prefixText: '₹ ',
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            _buildTenderChip('Exact', _grandTotal, cashController, setDialogState),
+                            _buildTenderChip('₹100', 100, cashController, setDialogState),
+                            _buildTenderChip('₹200', 200, cashController, setDialogState),
+                            _buildTenderChip('₹500', 500, cashController, setDialogState),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: changeDue >= 0 ? AppColors.zinc100 : Colors.red.withAlpha(20),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                changeDue >= 0 ? 'Change to Return:' : 'Shortage:',
+                                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: changeDue >= 0 ? AppColors.pitchBlack : Colors.red),
+                              ),
+                              Text(
+                                currencyFormatter.format(changeDue.abs()),
+                                style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600, color: changeDue >= 0 ? AppColors.pitchBlack : Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else if (selectedMethod == 'UPI') ...[
                     Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.pitchBlack,
-                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.border),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Column(
                         children: [
-                          const Text(
-                            'AMOUNT DUE',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.zinc400,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            currencyFormatter.format(_grandTotal),
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w900,
-                              fontSize: 32,
-                              color: AppColors.white,
-                              letterSpacing: -0.8,
-                            ),
-                          ),
+                          const Icon(Icons.qr_code_2, size: 90, color: AppColors.pitchBlack),
+                          const SizedBox(height: 6),
+                          const Text('Scan using any UPI App (GPay, PhonePe, Paytm)', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc500)),
+                          const Text('VPA: vihabiller@icici', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600)),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // Method Tabs
-                    Row(
-                      children: ['UPI', 'Cash', 'Card'].map((method) {
-                        final isSelected = selectedMethod == method;
-                        return Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: InkWell(
-                              onTap: () => setDialogState(() => selectedMethod = method),
-                              borderRadius: BorderRadius.circular(14),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? AppColors.pitchBlack : AppColors.zinc100,
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: isSelected ? AppColors.pitchBlack : AppColors.border,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      method == 'UPI'
-                                          ? Icons.qr_code_scanner_rounded
-                                          : method == 'Cash'
-                                              ? Icons.payments_rounded
-                                              : Icons.credit_card_rounded,
-                                      color: isSelected ? AppColors.white : AppColors.zinc700,
-                                      size: 22,
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      method,
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: isSelected ? AppColors.white : AppColors.zinc700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Method Content
-                    if (selectedMethod == 'Cash') ...[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  ] else ...[
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(color: AppColors.zinc100, borderRadius: BorderRadius.circular(4)),
+                      child: const Column(
                         children: [
-                          const Text(
-                            'Cash Received from Customer',
-                            style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: cashController,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.w800),
-                            onChanged: (_) => setDialogState(() {}),
-                            decoration: InputDecoration(
-                              prefixText: '₹ ',
-                              prefixStyle: const TextStyle(fontFamily: 'Poppins', fontSize: 20, fontWeight: FontWeight.w800),
-                              filled: true,
-                              fillColor: AppColors.zinc100,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-
-                          // Quick cash tender pills
-                          Row(
-                            children: [
-                              _buildTenderChip('Exact', _grandTotal, cashController, setDialogState),
-                              _buildTenderChip('₹100', 100, cashController, setDialogState),
-                              _buildTenderChip('₹200', 200, cashController, setDialogState),
-                              _buildTenderChip('₹500', 500, cashController, setDialogState),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-
-                          // Change Return Banner
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                            decoration: BoxDecoration(
-                              color: changeDue >= 0 ? AppColors.zinc100 : Colors.red.withAlpha(20),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: changeDue >= 0 ? AppColors.border : Colors.redAccent),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  changeDue >= 0 ? 'Change to Return:' : 'Shortage:',
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: changeDue >= 0 ? AppColors.pitchBlack : Colors.red,
-                                  ),
-                                ),
-                                Text(
-                                  currencyFormatter.format(changeDue.abs()),
-                                  style: TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                    color: changeDue >= 0 ? AppColors.pitchBlack : Colors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          Icon(Icons.contactless_outlined, size: 32),
+                          SizedBox(height: 6),
+                          Text('Swipe / Tap Card on POS Terminal', style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500)),
                         ],
                       ),
-                    ] else if (selectedMethod == 'UPI') ...[
-                      Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(16),
-                          color: AppColors.white,
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 150,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                color: AppColors.zinc100,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.border),
-                              ),
-                              child: const Center(
-                                child: Icon(Icons.qr_code_2_rounded, size: 110, color: AppColors.pitchBlack),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              'Scan with Google Pay, PhonePe, or Paytm',
-                              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc500),
-                            ),
-                            const Text(
-                              'VPA: vihabiller@icici',
-                              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.pitchBlack),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ] else ...[
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: AppColors.zinc100,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Column(
-                          children: [
-                            Icon(Icons.contactless_rounded, size: 44, color: AppColors.pitchBlack),
-                            SizedBox(height: 10),
-                            Text(
-                              'Tap or Insert Card',
-                              style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w800, fontSize: 14),
-                            ),
-                            Text(
-                              'Waiting for card machine PIN confirmation...',
-                              style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                    ),
                   ],
-                ),
+                ],
               ),
             ),
-            actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+            actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
             actions: [
               SizedBox(
                 width: double.infinity,
@@ -1564,13 +1331,13 @@ class _PosScreenState extends State<PosScreen> {
                     Navigator.pop(ctx);
                     _showReceiptCompletedModal();
                   },
-                  icon: const Icon(Icons.print_rounded, size: 18),
-                  label: const Text('Complete & Print Slip [Enter]'),
+                  icon: const Icon(Icons.print_outlined, size: 16),
+                  label: const Text('Complete & Print Receipt'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.pitchBlack,
                     foregroundColor: AppColors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
               ),
@@ -1584,30 +1351,25 @@ class _PosScreenState extends State<PosScreen> {
   Widget _buildTenderChip(String label, double amount, TextEditingController controller, StateSetter setDialogState) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 2),
         child: InkWell(
           onTap: () {
             setDialogState(() {
               controller.text = amount.toStringAsFixed(0);
             });
           },
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(4),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               color: AppColors.zinc100,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: AppColors.border),
             ),
             child: Center(
               child: Text(
                 label,
-                style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.pitchBlack,
-                ),
+                style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -1625,64 +1387,49 @@ class _PosScreenState extends State<PosScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.white,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         content: SizedBox(
-          width: 340,
+          width: 320,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: const BoxDecoration(
-                  color: AppColors.zinc100,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.check_rounded, color: AppColors.pitchBlack, size: 30),
-              ),
-              const SizedBox(height: 12),
+              const Icon(Icons.check_circle_outline, color: AppColors.pitchBlack, size: 36),
+              const SizedBox(height: 8),
               const Text(
-                'Payment Approved',
-                style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w800, fontSize: 18),
+                'Bill Generated',
+                style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 16),
               ),
               const Text(
                 'Receipt sent to 80mm thermal printer',
                 style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
               // Authentic Thermal Paper Layout
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppColors.zinc50,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: AppColors.border),
                 ),
                 child: Column(
                   children: [
                     const Text(
                       'VIHA BILLING STORE',
-                      style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w900, fontSize: 14, letterSpacing: 1.5),
+                      style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 1),
                     ),
-                    const Text(
-                      '124, Anna Salai, Chennai - 600002',
-                      style: TextStyle(fontFamily: 'Poppins', fontSize: 9, color: AppColors.zinc500),
-                    ),
-                    const Text(
-                      'GSTIN: 33AAAAA0000A1Z5 | Ph: 044-28521100',
-                      style: TextStyle(fontFamily: 'Poppins', fontSize: 9, color: AppColors.zinc500),
-                    ),
-                    const Divider(color: AppColors.border, height: 16),
+                    const Text('Chennai - 600002 | GSTIN: 33AAAAA0000A1Z5', style: TextStyle(fontFamily: 'Poppins', fontSize: 9, color: AppColors.zinc500)),
+                    const Divider(color: AppColors.border, height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(_billNumber, style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w700)),
+                        Text(_billNumber, style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600)),
                         Text(DateFormat('dd/MM/yy hh:mm a').format(DateTime.now()), style: const TextStyle(fontFamily: 'Poppins', fontSize: 10)),
                       ],
                     ),
-                    const Divider(color: AppColors.border, height: 16),
+                    const Divider(color: AppColors.border, height: 12),
                     ..._cart.map((item) => Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
@@ -1695,32 +1442,31 @@ class _PosScreenState extends State<PosScreen> {
                                   style: const TextStyle(fontFamily: 'Poppins', fontSize: 10),
                                 ),
                               ),
-                              Text(currencyFormatter.format(item.subtotal), style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w700)),
+                              Text(currencyFormatter.format(item.subtotal), style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600)),
                             ],
                           ),
                         )),
-                    const Divider(color: AppColors.border, height: 16),
+                    const Divider(color: AppColors.border, height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Grand Total', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w900, fontSize: 14)),
-                        Text(currencyFormatter.format(_grandTotal), style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w900, fontSize: 16, color: AppColors.pitchBlack)),
+                        const Text('Total Amount', style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13)),
+                        Text(currencyFormatter.format(_grandTotal), style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.pitchBlack)),
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    const Text('*** THANK YOU VISIT AGAIN ***', style: TextStyle(fontFamily: 'Poppins', fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.pitchBlack)),
+                    const SizedBox(height: 8),
+                    const Text('*** THANK YOU VISIT AGAIN ***', style: TextStyle(fontFamily: 'Poppins', fontSize: 9, fontWeight: FontWeight.w500, color: AppColors.zinc500)),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
 
-              // Actions
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => Navigator.pop(ctx),
-                      icon: const Icon(Icons.share_rounded, size: 16),
+                      icon: const Icon(Icons.share_outlined, size: 14),
                       label: const Text('WhatsApp', style: TextStyle(fontSize: 11)),
                     ),
                   ),
@@ -1732,7 +1478,7 @@ class _PosScreenState extends State<PosScreen> {
                         _clearCart();
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: AppColors.pitchBlack),
-                      child: const Text('New Bill', style: TextStyle(fontSize: 12)),
+                      child: const Text('New Bill', style: TextStyle(fontSize: 11)),
                     ),
                   ),
                 ],
