@@ -5,6 +5,7 @@ import '../../services/inventory_repository.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/form_helpers.dart';
 import '../../widgets/antd_message.dart';
+import '../../widgets/antd_modal.dart';
 
 class CategoryMasterScreen extends StatefulWidget {
   const CategoryMasterScreen({super.key});
@@ -60,52 +61,18 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
 
   void _confirmDelete(ProductCategory category) {
     final productCount = _repo.getProductCountForCategory(category.name);
-    showDialog(
+    AntdModal.confirm(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.lightGray,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-          side: const BorderSide(color: AppColors.border),
-        ),
-        title: const Text(
-          'Delete Category',
-          style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
-        ),
-        content: Text(
-          productCount > 0
-              ? 'Warning: "${category.name}" has $productCount products linked to it. Are you sure you want to delete it?'
-              : 'Are you sure you want to delete category "${category.name}"?',
-          style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc700),
-        ),
-        actions: [
-          ErpFormWidgets.outlinedButton(
-            onPressed: () => Navigator.pop(ctx),
-            text: 'Cancel',
-          ),
-          SizedBox(
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade700,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-              ),
-              onPressed: () {
-                _repo.deleteCategory(category.id);
-                Navigator.pop(ctx);
-                AntdMessage.success(context, 'Category "${category.name}" deleted successfully');
-              },
-              child: const Text(
-                'Delete',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
+      title: 'Delete Category',
+      content: productCount > 0
+          ? 'Warning: "${category.name}" has $productCount products linked to it. Are you sure you want to delete it?'
+          : 'Are you sure you want to delete category "${category.name}"?',
+      confirmText: 'Delete',
+      isDanger: true,
+      onConfirm: () {
+        _repo.deleteCategory(category.id);
+        AntdMessage.success(context, 'Category "${category.name}" deleted successfully');
+      },
     );
   }
 
@@ -608,141 +575,94 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
   Widget build(BuildContext context) {
     final isEdit = widget.category != null;
 
-    return Dialog(
-      backgroundColor: AppColors.lightGray,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
-        side: const BorderSide(color: AppColors.border),
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: min(460.0, MediaQuery.of(context).size.width * 0.94)),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    isEdit ? 'Edit Category' : 'New Category',
-                    style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.pitchBlack,
-                    ),
+    return AntdModal(
+      title: isEdit ? 'Edit Category' : 'New Category',
+      titleIcon: Icons.category_outlined,
+      maxWidth: 480,
+      content: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Category Name
+            ErpFormWidgets.textField(
+              controller: _nameController,
+              label: 'Category Name',
+              hintText: 'e.g. Beverages, Bakery, Snacks, Dairy',
+              isRequired: true,
+            ),
+            const SizedBox(height: 14),
+
+            Row(
+              children: [
+                // HSN Prefix
+                Expanded(
+                  flex: 2,
+                  child: ErpFormWidgets.textField(
+                    controller: _hsnController,
+                    label: 'HSN Prefix',
+                    hintText: 'e.g. 0901, 1905',
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 18, color: AppColors.zinc600),
-                    onPressed: () => Navigator.pop(context),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                  ),
-                ],
-              ),
-              const Divider(color: AppColors.border, height: 20),
-
-              // Form fields (Strict 35px height)
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Category Name (35px)
-                    ErpFormWidgets.textField(
-                      controller: _nameController,
-                      label: 'Category Name',
-                      hintText: 'e.g. Beverages, Bakery, Snacks, Dairy',
-                      isRequired: true,
-                    ),
-                    const SizedBox(height: 12),
-
-                    Row(
-                      children: [
-                        // HSN Prefix (35px)
-                        Expanded(
-                          flex: 2,
-                          child: ErpFormWidgets.textField(
-                            controller: _hsnController,
-                            label: 'HSN Prefix',
-                            hintText: 'e.g. 0901, 1905',
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // Default GST Slab Dropdown (35px)
-                        Expanded(
-                          flex: 2,
-                          child: ErpFormWidgets.dropdownField<double>(
-                            label: 'Default GST Slab',
-                            value: _selectedGst,
-                            items: const [
-                              DropdownMenuItem(value: 0.0, child: Text('0% (Exempt)')),
-                              DropdownMenuItem(value: 5.0, child: Text('5% GST')),
-                              DropdownMenuItem(value: 12.0, child: Text('12% GST')),
-                              DropdownMenuItem(value: 18.0, child: Text('18% GST')),
-                              DropdownMenuItem(value: 28.0, child: Text('28% Luxury')),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) setState(() => _selectedGst = val);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Status Dropdown (35px)
-                    ErpFormWidgets.dropdownField<bool>(
-                      label: 'Status',
-                      value: _isActive,
-                      items: const [
-                        DropdownMenuItem(value: true, child: Text('Active')),
-                        DropdownMenuItem(value: false, child: Text('Inactive')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) setState(() => _isActive = val);
-                      },
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Description (35px)
-                    ErpFormWidgets.textField(
-                      controller: _descController,
-                      label: 'Description / Remarks',
-                      hintText: 'Optional brief category description',
-                    ),
-                  ],
                 ),
-              ),
-
-              const SizedBox(height: 20),
-              const Divider(color: AppColors.border, height: 1),
-              const SizedBox(height: 16),
-
-              // Form Action Buttons (Strictly 35px)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ErpFormWidgets.outlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    text: 'Cancel',
+                const SizedBox(width: 12),
+                // Default GST Slab Dropdown
+                Expanded(
+                  flex: 2,
+                  child: ErpFormWidgets.dropdownField<double>(
+                    label: 'Default GST Slab',
+                    value: _selectedGst,
+                    items: const [
+                      DropdownMenuItem(value: 0.0, child: Text('0% (Exempt)')),
+                      DropdownMenuItem(value: 5.0, child: Text('5% GST')),
+                      DropdownMenuItem(value: 12.0, child: Text('12% GST')),
+                      DropdownMenuItem(value: 18.0, child: Text('18% GST')),
+                      DropdownMenuItem(value: 28.0, child: Text('28% Luxury')),
+                    ],
+                    onChanged: (val) {
+                      if (val != null) setState(() => _selectedGst = val);
+                    },
                   ),
-                  const SizedBox(width: 10),
-                  ErpFormWidgets.primaryButton(
-                    onPressed: _saveCategory,
-                    text: isEdit ? 'Update Category' : 'Save Category',
-                    icon: Icons.check,
-                    isLoading: _isSaving,
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // Status Dropdown
+            ErpFormWidgets.dropdownField<bool>(
+              label: 'Status',
+              value: _isActive,
+              items: const [
+                DropdownMenuItem(value: true, child: Text('Active')),
+                DropdownMenuItem(value: false, child: Text('Inactive')),
+              ],
+              onChanged: (val) {
+                if (val != null) setState(() => _isActive = val);
+              },
+            ),
+            const SizedBox(height: 14),
+
+            // Description
+            ErpFormWidgets.textField(
+              controller: _descController,
+              label: 'Description / Remarks',
+              hintText: 'Optional brief category description',
+            ),
+          ],
         ),
       ),
+      actions: [
+        ErpFormWidgets.outlinedButton(
+          onPressed: () => Navigator.pop(context),
+          text: 'Cancel',
+        ),
+        ErpFormWidgets.primaryButton(
+          onPressed: _saveCategory,
+          text: isEdit ? 'Update Category' : 'Save Category',
+          icon: Icons.check,
+          isLoading: _isSaving,
+        ),
+      ],
     );
   }
 }

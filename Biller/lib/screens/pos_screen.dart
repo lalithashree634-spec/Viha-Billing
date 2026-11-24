@@ -452,19 +452,19 @@ class _PosScreenState extends State<PosScreen> {
             ],
           ),
           filled: true,
-          fillColor: AppColors.lightGray,
+          fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: AppColors.border),
+            borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: AppColors.border),
+            borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2),
+            borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5),
           ),
         ),
       ),
@@ -867,22 +867,23 @@ class _PosScreenState extends State<PosScreen> {
         ),
         const SizedBox(height: 10),
 
-        // Customer Phone Field (Light Gray - Strict 40px Height)
+        // Customer Phone Field (AntD Input - Strict 40px Height)
         SizedBox(
           height: 40,
           child: TextField(
             controller: _customerController,
-            style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF1F1F1F)),
             decoration: InputDecoration(
               hintText: 'Customer phone or name...',
-              prefixIcon: const Icon(Icons.person_outline, size: 16, color: AppColors.zinc600),
+              hintStyle: const TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Color(0xFFBFBFBF)),
+              prefixIcon: const Icon(Icons.person_outline, size: 16, color: Color(0xFF8C8C8C)),
               filled: true,
-              fillColor: AppColors.canvas,
+              fillColor: Colors.white,
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2)),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
+              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
+              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
             ),
           ),
         ),
@@ -1257,30 +1258,46 @@ class _PosScreenState extends State<PosScreen> {
           final isWide = screenWidth >= 800;
 
           return Dialog(
-            backgroundColor: AppColors.lightGray,
+            backgroundColor: Colors.white,
             surfaceTintColor: Colors.transparent,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: const BorderSide(color: Color(0xFFF0F0F0), width: 1),
+            ),
             insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            child: SizedBox(
-              width: isWide ? 760 : min(440.0, screenWidth * 0.94),
-              height: isWide ? 560 : null,
-              child: isWide
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Left 40%: Bill Receipt Summary Column
-                        Expanded(
-                          flex: 40,
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: AppColors.canvas,
-                              borderRadius: BorderRadius.horizontal(left: Radius.circular(6)),
-                              border: Border(right: BorderSide(color: AppColors.border, width: 1)),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: SizedBox(
+                width: isWide ? 760 : min(440.0, screenWidth * 0.94),
+                height: isWide ? 560 : null,
+                child: isWide
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Left 40%: Bill Receipt Summary Column (AntD Soft Sidebar)
+                          Expanded(
+                            flex: 40,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFAFAFA),
+                                borderRadius: BorderRadius.horizontal(left: Radius.circular(8)),
+                                border: Border(right: BorderSide(color: Color(0xFFF0F0F0), width: 1)),
+                              ),
+                              padding: const EdgeInsets.all(20),
+                              child: _buildTerminalBillSummary(),
                             ),
-                            padding: const EdgeInsets.all(20),
-                            child: _buildTerminalBillSummary(),
                           ),
-                        ),
 
                         // Right 60%: Interactive Payment & Numpad Controller
                         Expanded(
@@ -1347,6 +1364,7 @@ class _PosScreenState extends State<PosScreen> {
                         ],
                       ),
                     ),
+              ),
             ),
           );
         },
@@ -1970,21 +1988,22 @@ class _PosScreenState extends State<PosScreen> {
           ),
           const SizedBox(height: 12),
 
-          // Transaction Auth / Ref ID (Strict 40px Height)
+          // Transaction Auth / Ref ID (AntD Input - Strict 40px Height)
           SizedBox(
             height: 40,
             child: TextField(
               controller: cardRefController,
-              style: const TextStyle(fontFamily: 'Poppins', fontSize: 12),
+              style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF1F1F1F)),
               decoration: InputDecoration(
                 hintText: 'Card Approval / Auth Code (Optional)...',
+                hintStyle: const TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Color(0xFFBFBFBF)),
                 isDense: true,
                 filled: true,
-                fillColor: AppColors.lightGray,
+                fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
               ),
             ),
           ),
@@ -2030,9 +2049,13 @@ class _PosScreenState extends State<PosScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.lightGray,
+        backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+          side: const BorderSide(color: Color(0xFFF0F0F0), width: 1),
+        ),
         content: SizedBox(
           width: 320,
           child: Column(

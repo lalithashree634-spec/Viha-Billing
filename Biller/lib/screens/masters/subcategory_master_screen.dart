@@ -5,6 +5,7 @@ import '../../services/inventory_repository.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/form_helpers.dart';
 import '../../widgets/antd_message.dart';
+import '../../widgets/antd_modal.dart';
 
 class SubcategoryMasterScreen extends StatefulWidget {
   const SubcategoryMasterScreen({super.key});
@@ -67,52 +68,18 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
 
   void _confirmDelete(Subcategory subcategory) {
     final productCount = _repo.getProductCountForSubcategory(subcategory.name);
-    showDialog(
+    AntdModal.confirm(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.lightGray,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-          side: const BorderSide(color: AppColors.border),
-        ),
-        title: const Text(
-          'Delete Sub-Category',
-          style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
-        ),
-        content: Text(
-          productCount > 0
-              ? 'Warning: "${subcategory.name}" has $productCount products linked to it. Are you sure you want to delete it?'
-              : 'Are you sure you want to delete sub-category "${subcategory.name}"?',
-          style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc700),
-        ),
-        actions: [
-          ErpFormWidgets.outlinedButton(
-            onPressed: () => Navigator.pop(ctx),
-            text: 'Cancel',
-          ),
-          SizedBox(
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade700,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-              ),
-              onPressed: () {
-                _repo.deleteSubcategory(subcategory.id);
-                Navigator.pop(ctx);
-                AntdMessage.success(context, 'Sub-Category "${subcategory.name}" deleted successfully');
-              },
-              child: const Text(
-                'Delete',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
+      title: 'Delete Sub-Category',
+      content: productCount > 0
+          ? 'Warning: "${subcategory.name}" has $productCount products linked to it. Are you sure you want to delete it?'
+          : 'Are you sure you want to delete sub-category "${subcategory.name}"?',
+      confirmText: 'Delete',
+      isDanger: true,
+      onConfirm: () {
+        _repo.deleteSubcategory(subcategory.id);
+        AntdMessage.success(context, 'Sub-Category "${subcategory.name}" deleted successfully');
+      },
     );
   }
 
@@ -650,126 +617,79 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
   Widget build(BuildContext context) {
     final isEdit = widget.subcategory != null;
 
-    return Dialog(
-      backgroundColor: AppColors.lightGray,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
-        side: const BorderSide(color: AppColors.border),
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: min(460.0, MediaQuery.of(context).size.width * 0.94)),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    isEdit ? 'Edit Sub-Category' : 'New Sub-Category',
-                    style: const TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.pitchBlack,
+    return AntdModal(
+      title: isEdit ? 'Edit Sub-Category' : 'New Sub-Category',
+      titleIcon: Icons.account_tree_outlined,
+      maxWidth: 480,
+      content: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Parent Category Dropdown
+            ErpFormWidgets.dropdownField<String>(
+              label: 'Parent Category',
+              value: _selectedCategoryId,
+              isRequired: true,
+              items: widget.repo.categories
+                  .map(
+                    (c) => DropdownMenuItem(
+                      value: c.id,
+                      child: Text(c.name),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 18, color: AppColors.zinc600),
-                    onPressed: () => Navigator.pop(context),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                  ),
-                ],
-              ),
-              const Divider(color: AppColors.border, height: 20),
+                  )
+                  .toList(),
+              onChanged: (val) {
+                if (val != null) setState(() => _selectedCategoryId = val);
+              },
+            ),
+            const SizedBox(height: 14),
 
-              // Form fields (Strictly 35px height)
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Parent Category Dropdown (35px)
-                    ErpFormWidgets.dropdownField<String>(
-                      label: 'Parent Category',
-                      value: _selectedCategoryId,
-                      isRequired: true,
-                      items: widget.repo.categories
-                          .map(
-                            (c) => DropdownMenuItem(
-                              value: c.id,
-                              child: Text(c.name),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (val) {
-                        if (val != null) setState(() => _selectedCategoryId = val);
-                      },
-                    ),
-                    const SizedBox(height: 12),
+            // Sub-Category Name
+            ErpFormWidgets.textField(
+              controller: _nameController,
+              label: 'Sub-Category Name',
+              hintText: 'e.g. Coffee & Tea, Pastries, Whole Spices',
+              isRequired: true,
+            ),
+            const SizedBox(height: 14),
 
-                    // Sub-Category Name (35px)
-                    ErpFormWidgets.textField(
-                      controller: _nameController,
-                      label: 'Sub-Category Name',
-                      hintText: 'e.g. Coffee & Tea, Pastries, Whole Spices',
-                      isRequired: true,
-                    ),
-                    const SizedBox(height: 12),
+            // Status Dropdown
+            ErpFormWidgets.dropdownField<bool>(
+              label: 'Status',
+              value: _isActive,
+              items: const [
+                DropdownMenuItem(value: true, child: Text('Active')),
+                DropdownMenuItem(value: false, child: Text('Inactive')),
+              ],
+              onChanged: (val) {
+                if (val != null) setState(() => _isActive = val);
+              },
+            ),
+            const SizedBox(height: 14),
 
-                    // Status Dropdown (35px)
-                    ErpFormWidgets.dropdownField<bool>(
-                      label: 'Status',
-                      value: _isActive,
-                      items: const [
-                        DropdownMenuItem(value: true, child: Text('Active')),
-                        DropdownMenuItem(value: false, child: Text('Inactive')),
-                      ],
-                      onChanged: (val) {
-                        if (val != null) setState(() => _isActive = val);
-                      },
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Description (35px)
-                    ErpFormWidgets.textField(
-                      controller: _descController,
-                      label: 'Description / Remarks',
-                      hintText: 'Optional details about this sub-classification',
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 20),
-              const Divider(color: AppColors.border, height: 1),
-              const SizedBox(height: 16),
-
-              // Action Buttons (Strictly 35px)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ErpFormWidgets.outlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    text: 'Cancel',
-                  ),
-                  const SizedBox(width: 10),
-                  ErpFormWidgets.primaryButton(
-                    onPressed: _saveSubcategory,
-                    text: isEdit ? 'Update Sub-Category' : 'Save Sub-Category',
-                    icon: Icons.check,
-                    isLoading: _isSaving,
-                  ),
-                ],
-              ),
-            ],
-          ),
+            // Description
+            ErpFormWidgets.textField(
+              controller: _descController,
+              label: 'Description / Remarks',
+              hintText: 'Optional details about this sub-classification',
+            ),
+          ],
         ),
       ),
+      actions: [
+        ErpFormWidgets.outlinedButton(
+          onPressed: () => Navigator.pop(context),
+          text: 'Cancel',
+        ),
+        ErpFormWidgets.primaryButton(
+          onPressed: _saveSubcategory,
+          text: isEdit ? 'Update Sub-Category' : 'Save Sub-Category',
+          icon: Icons.check,
+          isLoading: _isSaving,
+        ),
+      ],
     );
   }
 }

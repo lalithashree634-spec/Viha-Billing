@@ -6,6 +6,7 @@ import '../../services/inventory_repository.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/form_helpers.dart';
 import '../../widgets/antd_message.dart';
+import '../../widgets/antd_modal.dart';
 
 class ProductMasterScreen extends StatefulWidget {
   const ProductMasterScreen({super.key});
@@ -73,50 +74,16 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
   }
 
   void _confirmDelete(Product product) {
-    showDialog(
+    AntdModal.confirm(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.lightGray,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-          side: const BorderSide(color: AppColors.border),
-        ),
-        title: const Text(
-          'Delete Product',
-          style: TextStyle(fontFamily: 'Poppins', fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
-        ),
-        content: Text(
-          'Are you sure you want to delete "${product.name}" (SKU: ${product.barcode})? This action cannot be undone.',
-          style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc700),
-        ),
-        actions: [
-          ErpFormWidgets.outlinedButton(
-            onPressed: () => Navigator.pop(ctx),
-            text: 'Cancel',
-          ),
-          SizedBox(
-            height: 40,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade700,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-              ),
-              onPressed: () {
-                _repo.deleteProduct(product.id);
-                Navigator.pop(ctx);
-                AntdMessage.success(context, 'Product "${product.name}" deleted successfully');
-              },
-              child: const Text(
-                'Delete',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
-      ),
+      title: 'Delete Product',
+      content: 'Are you sure you want to delete "${product.name}" (SKU: ${product.barcode})? This action cannot be undone.',
+      confirmText: 'Delete',
+      isDanger: true,
+      onConfirm: () {
+        _repo.deleteProduct(product.id);
+        AntdMessage.success(context, 'Product "${product.name}" deleted successfully');
+      },
     );
   }
 
@@ -840,52 +807,11 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     final selling = double.tryParse(_sellingPriceController.text) ?? 0.0;
     final marginPercent = cost > 0 ? (((selling - cost) / cost) * 100) : 0.0;
 
-    return Dialog(
-      backgroundColor: AppColors.lightGray,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
-        side: const BorderSide(color: AppColors.border),
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: min(680.0, MediaQuery.of(context).size.width * 0.94)),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.inventory_2_outlined, size: 20, color: AppColors.pitchBlack),
-                      const SizedBox(width: 8),
-                      Text(
-                        isEdit ? 'Edit Product Master' : 'New Product Master',
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.pitchBlack,
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 18, color: AppColors.zinc600),
-                    onPressed: () => Navigator.pop(context),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                  ),
-                ],
-              ),
-              const Divider(color: AppColors.border, height: 20),
-
-              // Scrollable Form Sections
-              Flexible(
-                child: LayoutBuilder(
+    return AntdModal(
+      title: isEdit ? 'Edit Product Master' : 'New Product Master',
+      titleIcon: Icons.inventory_2_outlined,
+      maxWidth: 680,
+      content: LayoutBuilder(
                   builder: (context, formConstraints) {
                     final isNarrow = formConstraints.maxWidth < 520;
 
@@ -1372,33 +1298,18 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                     );
                   },
                 ),
-              ),
-
-              const SizedBox(height: 20),
-              const Divider(color: AppColors.border, height: 1),
-              const SizedBox(height: 16),
-
-              // Action Buttons (Strictly 35px height)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ErpFormWidgets.outlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    text: 'Cancel',
-                  ),
-                  const SizedBox(width: 10),
-                  ErpFormWidgets.primaryButton(
-                    onPressed: _saveProduct,
-                    text: isEdit ? 'Update Product' : 'Save Product',
-                    icon: Icons.check,
-                    isLoading: _isSaving,
-                  ),
-                ],
-              ),
-            ],
-          ),
+      actions: [
+        ErpFormWidgets.outlinedButton(
+          onPressed: () => Navigator.pop(context),
+          text: 'Cancel',
         ),
-      ),
+        ErpFormWidgets.primaryButton(
+          onPressed: _saveProduct,
+          text: isEdit ? 'Update Product' : 'Save Product',
+          icon: Icons.check,
+          isLoading: _isSaving,
+        ),
+      ],
     );
   }
 
