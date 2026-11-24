@@ -1917,7 +1917,7 @@ class _PosScreenState extends State<PosScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.check_circle_outline, color: AppColors.pitchBlack, size: 36),
+              Image.asset('assets/images/logo.png', width: 42, height: 42, fit: BoxFit.contain),
               const SizedBox(height: 8),
               const Text(
                 'Bill Generated',

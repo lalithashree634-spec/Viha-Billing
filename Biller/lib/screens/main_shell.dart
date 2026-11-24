@@ -93,29 +93,25 @@ class _MainShellState extends State<MainShell> {
         children: [
           // Brand Logo
           if (isCompact) ...[
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: AppColors.pitchBlack,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Center(
-                child: Icon(Icons.receipt_outlined, color: AppColors.textOnDark, size: 20),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: Image.asset(
+                'assets/images/logo.png',
+                width: 36,
+                height: 36,
+                fit: BoxFit.contain,
               ),
             ),
           ] else ...[
             Row(
               children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: AppColors.pitchBlack,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.receipt_outlined, color: AppColors.textOnDark, size: 18),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 34,
+                    height: 34,
+                    fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(width: 10),
