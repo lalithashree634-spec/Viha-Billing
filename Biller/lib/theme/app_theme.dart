@@ -30,6 +30,11 @@ class AppTheme {
           color: AppColors.pitchBlack,
         ),
       ),
+      scrollbarTheme: const ScrollbarThemeData(
+        thumbVisibility: WidgetStatePropertyAll(false),
+        trackVisibility: WidgetStatePropertyAll(false),
+        thickness: WidgetStatePropertyAll(0),
+      ),
       cardTheme: CardThemeData(
         color: AppColors.lightGray,
         elevation: 0,
