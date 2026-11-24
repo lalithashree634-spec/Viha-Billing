@@ -10,16 +10,16 @@ class AppTheme {
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
         primary: AppColors.pitchBlack,
-        onPrimary: AppColors.white,
+        onPrimary: AppColors.textOnDark,
         secondary: AppColors.black,
-        onSecondary: AppColors.white,
+        onSecondary: AppColors.textOnDark,
         error: Colors.redAccent,
-        onError: AppColors.white,
-        surface: AppColors.white,
+        onError: AppColors.textOnDark,
+        surface: AppColors.lightGray,
         onSurface: AppColors.textPrimary,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.lightGray,
         foregroundColor: AppColors.pitchBlack,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -31,7 +31,7 @@ class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.white,
+        color: AppColors.lightGray,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
@@ -41,7 +41,7 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.zinc50,
+        fillColor: AppColors.surfaceInput,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
@@ -49,7 +49,7 @@ class AppTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: AppColors.border, width: 1),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
@@ -65,7 +65,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.pitchBlack,
-          foregroundColor: AppColors.white,
+          foregroundColor: AppColors.textOnDark,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           shape: RoundedRectangleBorder(
@@ -81,6 +81,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.pitchBlack,
+          backgroundColor: AppColors.lightGray,
           side: const BorderSide(color: AppColors.border, width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           shape: RoundedRectangleBorder(

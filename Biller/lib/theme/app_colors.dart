@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 
-/// Ultra-Modern Stealth Monochrome Palette (Zinc / Black / Slate / White)
-/// Strict: Pitch Black, White, Zinc Grays. Zero Brown.
+/// Industrial Light Gray & Pitch Black Monochrome Palette
+/// Strict: All white surfaces replaced with Light Gray. Max font-weight 600.
 class AppColors {
-  // Deep Pitch Blacks & Chars
+  // Deep Pitch Blacks & Darks
   static const Color pitchBlack = Color(0xFF000000);
-  static const Color black = Color(0xFF09090B); // Zinc 950
-  static const Color cardDark = Color(0xFF18181B); // Zinc 900
-  static const Color secondaryDark = Color(0xFF27272A); // Zinc 800
+  static const Color black = Color(0xFF111111);
+  static const Color cardDark = Color(0xFF1E1E1E);
 
-  // Whites & Canvases
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color canvas = Color(0xFFF8F9FA); // Ultra-clean subtle off-white
-  static const Color cardLight = Color(0xFFFFFFFF);
+  // Surfaces: Pure White eliminated -> Replaced with Light Gray
+  static const Color canvas = Color(0xFFE5E7EB); // Base canvas (Cool Light Gray)
+  static const Color lightGray = Color(0xFFF3F4F6); // Surface panels & cards
+  static const Color cardLight = Color(0xFFF3F4F6);
+  static const Color surfaceElevated = Color(0xFFE5E7EB);
+  static const Color surfaceInput = Color(0xFFE5E7EB);
 
-  // Meticulously Tuned Zinc Grays
-  static const Color zinc50 = Color(0xFFFAFAFA);
-  static const Color zinc100 = Color(0xFFF4F4F5);
-  static const Color zinc200 = Color(0xFFE4E4E7);
-  static const Color zinc300 = Color(0xFFD4D4D8);
-  static const Color zinc400 = Color(0xFFA1A1AA);
-  static const Color zinc500 = Color(0xFF71717A);
-  static const Color zinc600 = Color(0xFF52525B);
-  static const Color zinc700 = Color(0xFF3F3F46);
-  static const Color zinc800 = Color(0xFF27272A);
-  static const Color zinc900 = Color(0xFF18181B);
+  // Text on Dark Backgrounds
+  static const Color textOnDark = Color(0xFFFFFFFF);
 
-  // Semantic
-  static const Color border = Color(0xFFE4E4E7);
-  static const Color borderSubtle = Color(0xFFF0F0F2);
-  static const Color textPrimary = Color(0xFF09090B);
-  static const Color textSecondary = Color(0xFF52525B);
-  static const Color textMuted = Color(0xFF71717A);
+  // Borders & Dividers (Tuned for light gray backgrounds)
+  static const Color border = Color(0xFFD1D5DB); // Gray 300
+  static const Color borderDark = Color(0xFF9CA3AF); // Gray 400
+
+  // Typography & Semantics
+  static const Color textPrimary = Color(0xFF111111);
+  static const Color textSecondary = Color(0xFF374151);
+  static const Color textMuted = Color(0xFF6B7280);
+  static const Color zinc400 = Color(0xFF6B7280);
+  static const Color zinc500 = Color(0xFF4B5563);
+  static const Color zinc600 = Color(0xFF374151);
+  static const Color zinc700 = Color(0xFF1F2937);
+  static const Color zinc100 = Color(0xFFE5E7EB);
+  static const Color zinc50 = Color(0xFFF3F4F6);
 }

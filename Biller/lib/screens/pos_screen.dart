@@ -205,11 +205,11 @@ class _PosScreenState extends State<PosScreen> {
         behavior: SnackBarBehavior.floating,
         content: Text(
           'Bill held successfully (${_heldBills.length} queued)',
-          style: const TextStyle(fontFamily: 'Poppins', color: AppColors.white, fontSize: 12),
+          style: const TextStyle(fontFamily: 'Poppins', color: AppColors.textOnDark, fontSize: 12),
         ),
         action: SnackBarAction(
           label: 'RECALL',
-          textColor: AppColors.white,
+          textColor: AppColors.textOnDark,
           onPressed: _recallHeldBill,
         ),
       ),
@@ -275,7 +275,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // DESKTOP: Clean Industrial POS Layout (Catalog Left + Invoice Sheet Right)
+  // DESKTOP: Light Gray Industrial Layout
   Widget _buildDesktopView() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,11 +303,11 @@ class _PosScreenState extends State<PosScreen> {
         // Vertical Divider
         Container(width: 1, color: AppColors.border),
 
-        // Right Invoice Table Register (40% width)
+        // Right Invoice Table Register (40% width) in Sleek Light Gray
         Expanded(
           flex: 40,
           child: Container(
-            color: AppColors.white,
+            color: AppColors.lightGray,
             padding: const EdgeInsets.all(16),
             child: _buildInvoiceTablePanel(),
           ),
@@ -341,7 +341,7 @@ class _PosScreenState extends State<PosScreen> {
         Expanded(
           flex: 48,
           child: Container(
-            color: AppColors.white,
+            color: AppColors.lightGray,
             padding: const EdgeInsets.all(12),
             child: _buildInvoiceTablePanel(),
           ),
@@ -387,12 +387,12 @@ class _PosScreenState extends State<PosScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      const Icon(Icons.receipt_outlined, color: AppColors.white, size: 18),
+                      const Icon(Icons.receipt_outlined, color: AppColors.textOnDark, size: 18),
                       const SizedBox(width: 10),
                       Text(
                         '${_cart.fold(0, (sum, item) => sum + item.quantity)} Items • ${currencyFormatter.format(_grandTotal)}',
                         style: const TextStyle(
-                          color: AppColors.white,
+                          color: AppColors.textOnDark,
                           fontFamily: 'Poppins',
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -402,14 +402,14 @@ class _PosScreenState extends State<PosScreen> {
                       const Text(
                         'View Bill',
                         style: TextStyle(
-                          color: AppColors.white,
+                          color: AppColors.textOnDark,
                           fontFamily: 'Poppins',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.white, size: 12),
+                      const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textOnDark, size: 12),
                     ],
                   ),
                 ),
@@ -440,7 +440,7 @@ class _PosScreenState extends State<PosScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.zinc100,
+                color: AppColors.lightGray,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: AppColors.border),
               ),
@@ -478,6 +478,7 @@ class _PosScreenState extends State<PosScreen> {
                   style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
                 ),
                 style: OutlinedButton.styleFrom(
+                  backgroundColor: AppColors.lightGray,
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
@@ -489,7 +490,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // SEARCH BAR (No heavy rounded radius)
+  // SEARCH BAR IN LIGHT GRAY
   Widget _buildSearchBar() {
     return TextField(
       controller: _searchController,
@@ -514,7 +515,7 @@ class _PosScreenState extends State<PosScreen> {
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.zinc100,
+                color: AppColors.canvas,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: AppColors.border),
               ),
@@ -531,7 +532,7 @@ class _PosScreenState extends State<PosScreen> {
           ],
         ),
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: AppColors.lightGray,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
@@ -549,7 +550,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // CLEAN HORIZONTAL CATEGORY TABS (Crisp 4px radius, Clean Icons, Zero Emojis)
+  // CLEAN HORIZONTAL CATEGORY TABS (Light Gray)
   Widget _buildCategoryTabs() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -571,7 +572,7 @@ class _PosScreenState extends State<PosScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.pitchBlack : AppColors.white,
+                  color: isSelected ? AppColors.pitchBlack : AppColors.lightGray,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color: isSelected ? AppColors.pitchBlack : AppColors.border,
@@ -582,7 +583,7 @@ class _PosScreenState extends State<PosScreen> {
                     Icon(
                       icon,
                       size: 15,
-                      color: isSelected ? AppColors.white : AppColors.zinc600,
+                      color: isSelected ? AppColors.textOnDark : AppColors.zinc600,
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -591,7 +592,7 @@ class _PosScreenState extends State<PosScreen> {
                         fontFamily: 'Poppins',
                         fontSize: 12,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected ? AppColors.white : AppColors.zinc700,
+                        color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
                       ),
                     ),
                   ],
@@ -604,7 +605,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // DENSE PRODUCT GRID (Fast, crisp, 6px radius)
+  // DENSE PRODUCT GRID (Light Gray)
   Widget _buildProductGrid({required int crossAxisCount}) {
     final products = _filteredProducts;
     if (products.isEmpty) {
@@ -649,12 +650,12 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // SHARP ENTERPRISE PRODUCT TILE
+  // SHARP PRODUCT TILE IN LIGHT GRAY
   Widget _buildProductCard(Product product) {
     final isLowStock = product.stock <= 6;
 
     return Material(
-      color: AppColors.white,
+      color: AppColors.lightGray,
       borderRadius: BorderRadius.circular(6),
       child: InkWell(
         borderRadius: BorderRadius.circular(6),
@@ -675,7 +676,7 @@ class _PosScreenState extends State<PosScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppColors.zinc100,
+                      color: AppColors.canvas,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -723,7 +724,7 @@ class _PosScreenState extends State<PosScreen> {
                 style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 10,
-                  color: AppColors.zinc400,
+                  color: AppColors.zinc500,
                   fontWeight: FontWeight.w400,
                 ),
               ),
@@ -739,7 +740,7 @@ class _PosScreenState extends State<PosScreen> {
                       fontFamily: 'Poppins',
                       fontSize: 10,
                       fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w400,
-                      color: isLowStock ? Colors.orange.shade800 : AppColors.zinc500,
+                      color: isLowStock ? Colors.orange.shade900 : AppColors.zinc600,
                     ),
                   ),
                   Container(
@@ -749,7 +750,7 @@ class _PosScreenState extends State<PosScreen> {
                       color: AppColors.pitchBlack,
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Icon(Icons.add, color: AppColors.white, size: 14),
+                    child: const Icon(Icons.add, color: AppColors.textOnDark, size: 14),
                   ),
                 ],
               ),
@@ -760,7 +761,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // PROFESSIONAL INVOICE TABLE REGISTER (Clean Tabular Layout)
+  // INVOICE TABLE REGISTER (In Sleek Light Gray)
   Widget _buildInvoiceTablePanel() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -787,7 +788,7 @@ class _PosScreenState extends State<PosScreen> {
                     fontFamily: 'Poppins',
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.zinc500,
+                    color: AppColors.zinc600,
                   ),
                 ),
               ],
@@ -797,12 +798,12 @@ class _PosScreenState extends State<PosScreen> {
                 children: [
                   IconButton(
                     tooltip: 'Hold Bill [F4]',
-                    icon: const Icon(Icons.pause_circle_outline, size: 18, color: AppColors.zinc600),
+                    icon: const Icon(Icons.pause_circle_outline, size: 18, color: AppColors.zinc700),
                     onPressed: _holdCurrentBill,
                   ),
                   IconButton(
                     tooltip: 'Clear Bill',
-                    icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.zinc400),
+                    icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.zinc500),
                     onPressed: _clearCart,
                   ),
                 ],
@@ -811,7 +812,7 @@ class _PosScreenState extends State<PosScreen> {
         ),
         const SizedBox(height: 10),
 
-        // Customer Phone Field (Compact)
+        // Customer Phone Field (Light Gray)
         TextField(
           controller: _customerController,
           style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500),
@@ -819,7 +820,7 @@ class _PosScreenState extends State<PosScreen> {
             hintText: 'Customer phone or name...',
             prefixIcon: const Icon(Icons.person_outline, size: 16, color: AppColors.zinc600),
             filled: true,
-            fillColor: AppColors.zinc50,
+            fillColor: AppColors.canvas,
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
@@ -832,26 +833,26 @@ class _PosScreenState extends State<PosScreen> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
           decoration: BoxDecoration(
-            color: AppColors.zinc100,
+            color: AppColors.canvas,
             borderRadius: BorderRadius.circular(4),
           ),
           child: const Row(
             children: [
               Expanded(
                 flex: 5,
-                child: Text('ITEM', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc600)),
+                child: Text('ITEM', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc700)),
               ),
               Expanded(
                 flex: 3,
                 child: Center(
-                  child: Text('QTY', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc600)),
+                  child: Text('QTY', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc700)),
                 ),
               ),
               Expanded(
                 flex: 3,
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Text('AMOUNT', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc600)),
+                  child: Text('AMOUNT', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.zinc700)),
                 ),
               ),
               SizedBox(width: 24),
@@ -909,17 +910,18 @@ class _PosScreenState extends State<PosScreen> {
                                 ),
                                 Text(
                                   '${currencyFormatter.format(item.unitPrice)} • GST ${item.product.gstPercent.toStringAsFixed(0)}%',
-                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc500),
+                                  style: const TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc600),
                                 ),
                               ],
                             ),
                           ),
 
-                          // Quantity Controls (Crisp compact box)
+                          // Quantity Stepper (Light Gray Box)
                           Expanded(
                             flex: 3,
                             child: Container(
                               decoration: BoxDecoration(
+                                color: AppColors.canvas,
                                 border: Border.all(color: AppColors.border),
                                 borderRadius: BorderRadius.circular(4),
                               ),
@@ -967,7 +969,7 @@ class _PosScreenState extends State<PosScreen> {
 
                           // Remove Button
                           IconButton(
-                            icon: const Icon(Icons.close, size: 14, color: AppColors.zinc400),
+                            icon: const Icon(Icons.close, size: 14, color: AppColors.zinc500),
                             onPressed: () => _removeFromCart(index),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(minWidth: 24),
@@ -981,12 +983,12 @@ class _PosScreenState extends State<PosScreen> {
 
         const Divider(color: AppColors.border, height: 16),
 
-        // Summary Breakdown Box
+        // Summary Breakdown Box in Canvas Light Gray
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppColors.zinc50,
-            borderRadius: BorderRadius.circular(6),
+            color: AppColors.canvas,
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(color: AppColors.border),
           ),
           child: Column(
@@ -1000,7 +1002,7 @@ class _PosScreenState extends State<PosScreen> {
                     children: [
                       const Text(
                         'Discount',
-                        style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc600),
+                        style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc700),
                       ),
                       const SizedBox(width: 6),
                       DropdownButton<double>(
@@ -1060,6 +1062,7 @@ class _PosScreenState extends State<PosScreen> {
               child: OutlinedButton(
                 onPressed: _cart.isEmpty ? null : _holdCurrentBill,
                 style: OutlinedButton.styleFrom(
+                  backgroundColor: AppColors.lightGray,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
@@ -1078,7 +1081,7 @@ class _PosScreenState extends State<PosScreen> {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.pitchBlack,
-                  foregroundColor: AppColors.white,
+                  foregroundColor: AppColors.textOnDark,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
@@ -1094,7 +1097,7 @@ class _PosScreenState extends State<PosScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc600)),
+        Text(label, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc700)),
         Text(value, style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.pitchBlack)),
       ],
     );
@@ -1111,7 +1114,7 @@ class _PosScreenState extends State<PosScreen> {
           return Container(
             height: MediaQuery.of(context).size.height * 0.85,
             decoration: const BoxDecoration(
-              color: AppColors.white,
+              color: AppColors.lightGray,
               borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
             ),
             padding: const EdgeInsets.all(16),
@@ -1122,7 +1125,7 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // PAYMENT MODAL (Sharp 6px radius, max 600 weight)
+  // PAYMENT MODAL (In Light Gray)
   void _showPaymentModal() {
     String selectedMethod = 'UPI';
     double cashReceived = _grandTotal.ceilToDouble();
@@ -1136,7 +1139,7 @@ class _PosScreenState extends State<PosScreen> {
           final double changeDue = parsedCash - _grandTotal;
 
           return AlertDialog(
-            backgroundColor: AppColors.white,
+            backgroundColor: AppColors.lightGray,
             surfaceTintColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
             titlePadding: const EdgeInsets.fromLTRB(20, 16, 16, 0),
@@ -1164,7 +1167,7 @@ class _PosScreenState extends State<PosScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: AppColors.zinc100,
+                      color: AppColors.canvas,
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(color: AppColors.border),
                     ),
@@ -1172,7 +1175,7 @@ class _PosScreenState extends State<PosScreen> {
                       children: [
                         const Text(
                           'Total Payable',
-                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
+                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -1202,7 +1205,7 @@ class _PosScreenState extends State<PosScreen> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
-                                color: isSelected ? AppColors.pitchBlack : AppColors.zinc50,
+                                color: isSelected ? AppColors.pitchBlack : AppColors.canvas,
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: isSelected ? AppColors.pitchBlack : AppColors.border,
@@ -1216,7 +1219,7 @@ class _PosScreenState extends State<PosScreen> {
                                         : method == 'Cash'
                                             ? Icons.payments_outlined
                                             : Icons.credit_card_outlined,
-                                    color: isSelected ? AppColors.white : AppColors.zinc700,
+                                    color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
                                     size: 18,
                                   ),
                                   const SizedBox(height: 4),
@@ -1226,7 +1229,7 @@ class _PosScreenState extends State<PosScreen> {
                                       fontFamily: 'Poppins',
                                       fontSize: 11,
                                       fontWeight: FontWeight.w600,
-                                      color: isSelected ? AppColors.white : AppColors.zinc700,
+                                      color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
                                     ),
                                   ),
                                 ],
@@ -1254,6 +1257,7 @@ class _PosScreenState extends State<PosScreen> {
                           decoration: InputDecoration(
                             prefixText: '₹ ',
                             isDense: true,
+                            fillColor: AppColors.canvas,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(4)),
                           ),
@@ -1271,7 +1275,7 @@ class _PosScreenState extends State<PosScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: changeDue >= 0 ? AppColors.zinc100 : Colors.red.withAlpha(20),
+                            color: changeDue >= 0 ? AppColors.canvas : Colors.red.withAlpha(20),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
@@ -1294,6 +1298,7 @@ class _PosScreenState extends State<PosScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
+                        color: AppColors.canvas,
                         border: Border.all(color: AppColors.border),
                         borderRadius: BorderRadius.circular(4),
                       ),
@@ -1301,7 +1306,7 @@ class _PosScreenState extends State<PosScreen> {
                         children: [
                           const Icon(Icons.qr_code_2, size: 90, color: AppColors.pitchBlack),
                           const SizedBox(height: 6),
-                          const Text('Scan using any UPI App (GPay, PhonePe, Paytm)', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc500)),
+                          const Text('Scan using any UPI App (GPay, PhonePe, Paytm)', style: TextStyle(fontFamily: 'Poppins', fontSize: 10, color: AppColors.zinc600)),
                           const Text('VPA: vihabiller@icici', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600)),
                         ],
                       ),
@@ -1309,7 +1314,7 @@ class _PosScreenState extends State<PosScreen> {
                   ] else ...[
                     Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(color: AppColors.zinc100, borderRadius: BorderRadius.circular(4)),
+                      decoration: BoxDecoration(color: AppColors.canvas, borderRadius: BorderRadius.circular(4)),
                       child: const Column(
                         children: [
                           Icon(Icons.contactless_outlined, size: 32),
@@ -1335,7 +1340,7 @@ class _PosScreenState extends State<PosScreen> {
                   label: const Text('Complete & Print Receipt'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.pitchBlack,
-                    foregroundColor: AppColors.white,
+                    foregroundColor: AppColors.textOnDark,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
@@ -1362,7 +1367,7 @@ class _PosScreenState extends State<PosScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.zinc100,
+              color: AppColors.canvas,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: AppColors.border),
             ),
@@ -1385,7 +1390,7 @@ class _PosScreenState extends State<PosScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.lightGray,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         content: SizedBox(
@@ -1405,12 +1410,12 @@ class _PosScreenState extends State<PosScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Authentic Thermal Paper Layout
+              // Authentic Thermal Paper in Canvas Gray
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.zinc50,
+                  color: AppColors.canvas,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: AppColors.border),
                 ),
@@ -1420,7 +1425,7 @@ class _PosScreenState extends State<PosScreen> {
                       'VIHA BILLING STORE',
                       style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 1),
                     ),
-                    const Text('Chennai - 600002 | GSTIN: 33AAAAA0000A1Z5', style: TextStyle(fontFamily: 'Poppins', fontSize: 9, color: AppColors.zinc500)),
+                    const Text('Chennai - 600002 | GSTIN: 33AAAAA0000A1Z5', style: TextStyle(fontFamily: 'Poppins', fontSize: 9, color: AppColors.zinc600)),
                     const Divider(color: AppColors.border, height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1455,7 +1460,7 @@ class _PosScreenState extends State<PosScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text('*** THANK YOU VISIT AGAIN ***', style: TextStyle(fontFamily: 'Poppins', fontSize: 9, fontWeight: FontWeight.w500, color: AppColors.zinc500)),
+                    const Text('*** THANK YOU VISIT AGAIN ***', style: TextStyle(fontFamily: 'Poppins', fontSize: 9, fontWeight: FontWeight.w500, color: AppColors.zinc600)),
                   ],
                 ),
               ),
@@ -1477,7 +1482,10 @@ class _PosScreenState extends State<PosScreen> {
                         Navigator.pop(ctx);
                         _clearCart();
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.pitchBlack),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.pitchBlack,
+                        foregroundColor: AppColors.textOnDark,
+                      ),
                       child: const Text('New Bill', style: TextStyle(fontSize: 11)),
                     ),
                   ),

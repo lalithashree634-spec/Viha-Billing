@@ -43,14 +43,14 @@ class _MainShellState extends State<MainShell> {
         body: SafeArea(child: _screens[_selectedIndex]),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.lightGray,
             border: Border(top: BorderSide(color: AppColors.border, width: 1)),
           ),
           child: NavigationBar(
             selectedIndex: _selectedIndex,
             onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
-            backgroundColor: AppColors.white,
-            indicatorColor: AppColors.zinc100,
+            backgroundColor: AppColors.lightGray,
+            indicatorColor: AppColors.canvas,
             elevation: 0,
             destinations: const [
               NavigationDestination(
@@ -84,7 +84,7 @@ class _MainShellState extends State<MainShell> {
     return Container(
       width: isCompact ? 64 : 210,
       decoration: const BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.lightGray,
         border: Border(right: BorderSide(color: AppColors.border, width: 1)),
       ),
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: isCompact ? 8 : 12),
@@ -101,7 +101,7 @@ class _MainShellState extends State<MainShell> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Center(
-                child: Icon(Icons.receipt_outlined, color: AppColors.white, size: 20),
+                child: Icon(Icons.receipt_outlined, color: AppColors.textOnDark, size: 20),
               ),
             ),
           ] else ...[
@@ -115,7 +115,7 @@ class _MainShellState extends State<MainShell> {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Center(
-                    child: Icon(Icons.receipt_outlined, color: AppColors.white, size: 18),
+                    child: Icon(Icons.receipt_outlined, color: AppColors.textOnDark, size: 18),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -138,7 +138,7 @@ class _MainShellState extends State<MainShell> {
                         fontFamily: 'Poppins',
                         fontSize: 10,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.zinc400,
+                        color: AppColors.zinc500,
                       ),
                     ),
                   ],
@@ -161,7 +161,7 @@ class _MainShellState extends State<MainShell> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.zinc50,
+                color: AppColors.canvas,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: AppColors.border),
               ),
@@ -186,7 +186,7 @@ class _MainShellState extends State<MainShell> {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 10,
-                          color: AppColors.zinc500,
+                          color: AppColors.zinc600,
                         ),
                       ),
                     ],
@@ -220,7 +220,7 @@ class _MainShellState extends State<MainShell> {
               children: [
                 Icon(
                   isSelected ? activeIcon : icon,
-                  color: isSelected ? AppColors.white : AppColors.zinc600,
+                  color: isSelected ? AppColors.textOnDark : AppColors.zinc600,
                   size: 18,
                 ),
                 if (!isCompact) ...[
@@ -231,7 +231,7 @@ class _MainShellState extends State<MainShell> {
                       fontFamily: 'Poppins',
                       fontSize: 12,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected ? AppColors.white : AppColors.zinc700,
+                      color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
                     ),
                   ),
                 ],
@@ -244,7 +244,7 @@ class _MainShellState extends State<MainShell> {
   }
 }
 
-// INVENTORY TAB
+// INVENTORY TAB (Light Gray)
 class _InventoryScreen extends StatelessWidget {
   const _InventoryScreen();
 
@@ -257,7 +257,7 @@ class _InventoryScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.lightGray,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: AppColors.border),
           ),
@@ -273,7 +273,7 @@ class _InventoryScreen extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 'Manage barcodes, purchase cost, selling rates & GST tax slabs',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
               ),
             ],
           ),
@@ -283,7 +283,7 @@ class _InventoryScreen extends StatelessWidget {
   }
 }
 
-// REPORTS TAB
+// REPORTS TAB (Light Gray)
 class _ReportsScreen extends StatelessWidget {
   const _ReportsScreen();
 
@@ -296,7 +296,7 @@ class _ReportsScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.lightGray,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: AppColors.border),
           ),
@@ -312,7 +312,7 @@ class _ReportsScreen extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 'Daily revenue summary, UPI/Cash split, and GSTR-1 Excel export',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
               ),
             ],
           ),
@@ -322,7 +322,7 @@ class _ReportsScreen extends StatelessWidget {
   }
 }
 
-// SETTINGS TAB
+// SETTINGS TAB (Light Gray)
 class _SettingsScreen extends StatelessWidget {
   const _SettingsScreen();
 
@@ -335,7 +335,7 @@ class _SettingsScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.lightGray,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: AppColors.border),
           ),
@@ -351,7 +351,7 @@ class _SettingsScreen extends StatelessWidget {
               SizedBox(height: 4),
               Text(
                 'ESC/POS Thermal Printer (58mm/80mm USB & Bluetooth) & Store Header',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc500),
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc600),
               ),
             ],
           ),
