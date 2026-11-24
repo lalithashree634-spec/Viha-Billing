@@ -58,7 +58,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 45,
         uom: 'Pack',
         hsnCode: '0901',
-        imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 10,
       ),
       const Product(
@@ -73,7 +73,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 28,
         uom: 'Pack',
         hsnCode: '0902',
-        imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 8,
       ),
       const Product(
@@ -88,7 +88,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 6,
         uom: 'Loaf',
         hsnCode: '1905',
-        imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 5,
       ),
       const Product(
@@ -103,7 +103,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 4,
         uom: 'Pcs',
         hsnCode: '1905',
-        imageUrl: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 5,
       ),
       const Product(
@@ -118,7 +118,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 22,
         uom: 'Jar',
         hsnCode: '0405',
-        imageUrl: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 10,
       ),
       const Product(
@@ -133,7 +133,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 50,
         uom: 'Pack',
         hsnCode: '1904',
-        imageUrl: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 15,
       ),
       const Product(
@@ -148,7 +148,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 35,
         uom: 'Pack',
         hsnCode: '1905',
-        imageUrl: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 10,
       ),
       const Product(
@@ -163,7 +163,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 60,
         uom: 'Pouch',
         hsnCode: '0904',
-        imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 12,
       ),
       const Product(
@@ -178,7 +178,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 18,
         uom: 'Bottle',
         hsnCode: '1508',
-        imageUrl: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 8,
       ),
       const Product(
@@ -193,7 +193,7 @@ class InventoryRepository extends ChangeNotifier {
         stock: 40,
         uom: 'Pouch',
         hsnCode: '0908',
-        imageUrl: 'https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=400&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=260&auto=format&fit=crop&q=65',
         reorderLevel: 10,
       ),
     ]);

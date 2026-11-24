@@ -552,24 +552,21 @@ class _PosScreenState extends State<PosScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         int cols = crossAxisCount ?? 3;
-        double ratio = 0.82;
-        if (constraints.maxWidth >= 1100) {
-          cols = crossAxisCount != null ? max(crossAxisCount, 4) : 4;
-          ratio = 0.82;
-        } else if (constraints.maxWidth >= 720) {
+        double ratio = 0.90;
+        if (constraints.maxWidth >= 950) {
+          cols = 4;
+          ratio = 0.90;
+        } else if (constraints.maxWidth >= 520) {
           cols = 3;
-          ratio = 0.82;
-        } else if (constraints.maxWidth >= 440) {
-          cols = 2;
-          ratio = 0.80;
+          ratio = 0.90;
         } else {
           cols = 2;
-          ratio = 0.74;
+          ratio = 0.85;
         }
 
         return GridView.builder(
           physics: const BouncingScrollPhysics(),
-          cacheExtent: 1000,
+          cacheExtent: 1500,
           addRepaintBoundaries: true,
           itemCount: products.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
