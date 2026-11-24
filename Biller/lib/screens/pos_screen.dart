@@ -291,7 +291,7 @@ class _PosScreenState extends State<PosScreen> {
             right: 12,
             bottom: 12,
             child: Material(
-              color: AppColors.pitchBlack,
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(6),
               elevation: 4,
               child: InkWell(
@@ -301,12 +301,12 @@ class _PosScreenState extends State<PosScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
-                      const Icon(Icons.receipt_outlined, color: AppColors.textOnDark, size: 18),
+                      const Icon(Icons.receipt_outlined, color: Colors.white, size: 18),
                       const SizedBox(width: 10),
                       Text(
                         '${_cart.fold(0, (sum, item) => sum + item.quantity)} Items • ${currencyFormatter.format(_grandTotal)}',
                         style: const TextStyle(
-                          color: AppColors.textOnDark,
+                          color: Colors.white,
                           fontFamily: 'Poppins',
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -316,14 +316,14 @@ class _PosScreenState extends State<PosScreen> {
                       const Text(
                         'View Bill',
                         style: TextStyle(
-                          color: AppColors.textOnDark,
+                          color: Colors.white,
                           fontFamily: 'Poppins',
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textOnDark, size: 12),
+                      const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 12),
                     ],
                   ),
                 ),
@@ -354,9 +354,9 @@ class _PosScreenState extends State<PosScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.lightGray,
+                color: AppColors.primaryTint,
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.primaryBorder),
               ),
               child: const Text(
                 'COUNTER 01',
@@ -364,7 +364,7 @@ class _PosScreenState extends State<PosScreen> {
                   fontFamily: 'Poppins',
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.zinc700,
+                  color: AppColors.primary,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -458,7 +458,7 @@ class _PosScreenState extends State<PosScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
-          borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
       ),
     );
@@ -486,10 +486,10 @@ class _PosScreenState extends State<PosScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.pitchBlack : AppColors.lightGray,
+                  color: isSelected ? AppColors.primary : AppColors.lightGray,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: isSelected ? AppColors.pitchBlack : AppColors.border,
+                    color: isSelected ? AppColors.primary : AppColors.border,
                   ),
                 ),
                 child: Row(
@@ -497,7 +497,7 @@ class _PosScreenState extends State<PosScreen> {
                     Icon(
                       icon,
                       size: 15,
-                      color: isSelected ? AppColors.textOnDark : AppColors.zinc600,
+                      color: isSelected ? Colors.white : AppColors.zinc600,
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -506,7 +506,7 @@ class _PosScreenState extends State<PosScreen> {
                         fontFamily: 'Poppins',
                         fontSize: 12,
                         fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
+                        color: isSelected ? Colors.white : AppColors.zinc700,
                       ),
                     ),
                   ],
@@ -557,7 +557,7 @@ class _PosScreenState extends State<PosScreen> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: crossAxisCount >= 3 ? 0.88 : 0.82,
+        childAspectRatio: crossAxisCount >= 3 ? 0.78 : 0.75,
       ),
       itemBuilder: (context, index) {
         final product = products[index];
@@ -586,9 +586,9 @@ class _PosScreenState extends State<PosScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Product Image Header (75px) with Category Overlay
+              // Product Image Header (70px) with Category Overlay
               SizedBox(
-                height: 75,
+                height: 70,
                 width: double.infinity,
                 child: Stack(
                   fit: StackFit.expand,
@@ -655,7 +655,7 @@ class _PosScreenState extends State<PosScreen> {
               // Product Info Area
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -717,10 +717,10 @@ class _PosScreenState extends State<PosScreen> {
                             width: 24,
                             height: 24,
                             decoration: BoxDecoration(
-                              color: AppColors.pitchBlack,
+                              color: AppColors.primary,
                               borderRadius: BorderRadius.circular(4),
                             ),
-                            child: const Icon(Icons.add, color: AppColors.textOnDark, size: 14),
+                            child: const Icon(Icons.add, color: Colors.white, size: 14),
                           ),
                         ],
                       ),
@@ -1080,8 +1080,8 @@ class _PosScreenState extends State<PosScreen> {
                   style: const TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: 12),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.pitchBlack,
-                  foregroundColor: AppColors.textOnDark,
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                 ),
@@ -1303,8 +1303,9 @@ class _PosScreenState extends State<PosScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.pitchBlack,
+                color: AppColors.primaryTint,
                 borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: AppColors.primaryBorder),
               ),
               child: Text(
                 '${_cart.length} ITEMS',
@@ -1312,7 +1313,7 @@ class _PosScreenState extends State<PosScreen> {
                   fontFamily: 'Poppins',
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textOnDark,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -1505,8 +1506,8 @@ class _PosScreenState extends State<PosScreen> {
           child: ElevatedButton(
             onPressed: isCompleting ? null : onComplete,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.pitchBlack,
-              foregroundColor: AppColors.textOnDark,
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             ),
             child: isCompleting
@@ -1540,10 +1541,10 @@ class _PosScreenState extends State<PosScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.pitchBlack : AppColors.canvas,
+            color: isSelected ? AppColors.primary : AppColors.surfaceInput,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: isSelected ? AppColors.pitchBlack : AppColors.border,
+              color: isSelected ? AppColors.primary : AppColors.border,
             ),
           ),
           child: Row(
@@ -1552,7 +1553,7 @@ class _PosScreenState extends State<PosScreen> {
               Icon(
                 icon,
                 size: 16,
-                color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
+                color: isSelected ? Colors.white : AppColors.zinc700,
               ),
               const SizedBox(width: 6),
               Text(
@@ -1561,7 +1562,7 @@ class _PosScreenState extends State<PosScreen> {
                   fontFamily: 'Poppins',
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
+                  color: isSelected ? Colors.white : AppColors.zinc700,
                 ),
               ),
             ],

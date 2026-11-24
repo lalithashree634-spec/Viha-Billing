@@ -64,32 +64,32 @@ class _MainShellState extends State<MainShell> {
             selectedIndex: _selectedIndex > 4 ? 4 : _selectedIndex,
             onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
             backgroundColor: AppColors.lightGray,
-            indicatorColor: AppColors.canvas,
+            indicatorColor: AppColors.primaryTint,
             elevation: 0,
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.point_of_sale_outlined, color: AppColors.zinc600),
-                selectedIcon: Icon(Icons.point_of_sale, color: AppColors.pitchBlack),
+                selectedIcon: Icon(Icons.point_of_sale, color: AppColors.primary),
                 label: 'POS',
               ),
               NavigationDestination(
                 icon: Icon(Icons.category_outlined, color: AppColors.zinc600),
-                selectedIcon: Icon(Icons.category, color: AppColors.pitchBlack),
+                selectedIcon: Icon(Icons.category, color: AppColors.primary),
                 label: 'Category',
               ),
               NavigationDestination(
                 icon: Icon(Icons.account_tree_outlined, color: AppColors.zinc600),
-                selectedIcon: Icon(Icons.account_tree, color: AppColors.pitchBlack),
+                selectedIcon: Icon(Icons.account_tree, color: AppColors.primary),
                 label: 'Sub-Cat',
               ),
               NavigationDestination(
                 icon: Icon(Icons.inventory_2_outlined, color: AppColors.zinc600),
-                selectedIcon: Icon(Icons.inventory_2, color: AppColors.pitchBlack),
+                selectedIcon: Icon(Icons.inventory_2, color: AppColors.primary),
                 label: 'Products',
               ),
               NavigationDestination(
                 icon: Icon(Icons.tune_outlined, color: AppColors.zinc600),
-                selectedIcon: Icon(Icons.tune, color: AppColors.pitchBlack),
+                selectedIcon: Icon(Icons.tune, color: AppColors.primary),
                 label: 'Settings',
               ),
             ],
@@ -187,7 +187,7 @@ class _MainShellState extends State<MainShell> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isProductSubSelected && !_isProductExpanded ? AppColors.canvas : Colors.transparent,
+                  color: isProductSubSelected && !_isProductExpanded ? AppColors.primaryTint : Colors.transparent,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
@@ -195,7 +195,7 @@ class _MainShellState extends State<MainShell> {
                     Icon(
                       Icons.inventory_2_outlined,
                       size: 17,
-                      color: isProductSubSelected ? AppColors.pitchBlack : AppColors.zinc600,
+                      color: isProductSubSelected ? AppColors.primary : AppColors.zinc600,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -205,14 +205,14 @@ class _MainShellState extends State<MainShell> {
                           fontFamily: 'Poppins',
                           fontSize: 12,
                           fontWeight: isProductSubSelected ? FontWeight.w600 : FontWeight.w500,
-                          color: isProductSubSelected ? AppColors.pitchBlack : AppColors.zinc700,
+                          color: isProductSubSelected ? AppColors.primary : AppColors.zinc700,
                         ),
                       ),
                     ),
                     Icon(
                       _isProductExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                       size: 16,
-                      color: AppColors.zinc600,
+                      color: isProductSubSelected ? AppColors.primary : AppColors.zinc600,
                     ),
                   ],
                 ),
@@ -253,13 +253,13 @@ class _MainShellState extends State<MainShell> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.canvas,
+                color: AppColors.surfaceInput,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: AppColors.border),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.check_circle_outline, size: 16, color: AppColors.pitchBlack),
+                  Icon(Icons.check_circle_rounded, size: 16, color: AppColors.success),
                   SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +270,7 @@ class _MainShellState extends State<MainShell> {
                           fontFamily: 'Poppins',
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.pitchBlack,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       Text(
@@ -278,7 +278,7 @@ class _MainShellState extends State<MainShell> {
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 10,
-                          color: AppColors.zinc600,
+                          color: AppColors.zinc500,
                         ),
                       ),
                     ],
@@ -304,15 +304,16 @@ class _MainShellState extends State<MainShell> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: isCompact ? 10 : 10, vertical: 8),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.pitchBlack : Colors.transparent,
+              color: isSelected ? AppColors.primaryTint : Colors.transparent,
               borderRadius: BorderRadius.circular(4),
+              border: isSelected ? Border.all(color: AppColors.primaryBorder) : null,
             ),
             child: Row(
               mainAxisAlignment: isCompact ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
                 Icon(
                   isSelected ? activeIcon : icon,
-                  color: isSelected ? AppColors.textOnDark : AppColors.zinc600,
+                  color: isSelected ? AppColors.primary : AppColors.zinc600,
                   size: 17,
                 ),
                 if (!isCompact) ...[
@@ -322,8 +323,8 @@ class _MainShellState extends State<MainShell> {
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected ? AppColors.textOnDark : AppColors.zinc700,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color: isSelected ? AppColors.primary : AppColors.zinc700,
                     ),
                   ),
                 ],
@@ -346,7 +347,7 @@ class _MainShellState extends State<MainShell> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.pitchBlack : Colors.transparent,
+            color: isSelected ? AppColors.primaryTint : Colors.transparent,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
@@ -354,7 +355,7 @@ class _MainShellState extends State<MainShell> {
               Icon(
                 icon,
                 size: 14,
-                color: isSelected ? Colors.white : AppColors.zinc600,
+                color: isSelected ? AppColors.primary : AppColors.zinc600,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -364,7 +365,7 @@ class _MainShellState extends State<MainShell> {
                     fontFamily: 'Poppins',
                     fontSize: 11,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? Colors.white : AppColors.zinc700,
+                    color: isSelected ? AppColors.primary : AppColors.zinc700,
                   ),
                 ),
               ),

@@ -5,7 +5,7 @@ import '../theme/app_colors.dart';
 /// - Exact 35px height for inputs and buttons
 /// - Maximum FontWeight.w600
 /// - 4px to 6px border radius
-/// - Monochrome Light Gray & Pitch Black enterprise palette
+/// - Royal Indigo & Deep Slate enterprise palette
 class ErpFormWidgets {
   /// Strict 35px Height Text Field with optional label
   static Widget textField({
@@ -32,7 +32,7 @@ class ErpFormWidgets {
                   fontFamily: 'Poppins',
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.pitchBlack,
+                  color: AppColors.textPrimary,
                 ),
               ),
               if (isRequired)
@@ -42,7 +42,7 @@ class ErpFormWidgets {
                     fontFamily: 'Poppins',
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Colors.redAccent,
+                    color: AppColors.error,
                   ),
                 ),
             ],
@@ -60,7 +60,7 @@ class ErpFormWidgets {
               fontFamily: 'Poppins',
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: AppColors.pitchBlack,
+              color: AppColors.textPrimary,
             ),
             decoration: InputDecoration(
               isDense: true,
@@ -71,7 +71,7 @@ class ErpFormWidgets {
                 color: AppColors.zinc500,
               ),
               filled: true,
-              fillColor: AppColors.canvas,
+              fillColor: AppColors.surfaceInput,
               prefixIcon: prefixIcon != null
                   ? Icon(prefixIcon, size: 15, color: AppColors.zinc600)
                   : null,
@@ -87,7 +87,7 @@ class ErpFormWidgets {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
               ),
             ),
           ),
@@ -118,7 +118,7 @@ class ErpFormWidgets {
                   fontFamily: 'Poppins',
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.pitchBlack,
+                  color: AppColors.textPrimary,
                 ),
               ),
               if (isRequired)
@@ -128,7 +128,7 @@ class ErpFormWidgets {
                     fontFamily: 'Poppins',
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Colors.redAccent,
+                    color: AppColors.error,
                   ),
                 ),
             ],
@@ -145,7 +145,7 @@ class ErpFormWidgets {
               fontFamily: 'Poppins',
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: AppColors.pitchBlack,
+              color: AppColors.textPrimary,
             ),
             icon: const Icon(Icons.keyboard_arrow_down, size: 16, color: AppColors.zinc700),
             isDense: true,
@@ -159,7 +159,7 @@ class ErpFormWidgets {
                 color: AppColors.zinc500,
               ),
               filled: true,
-              fillColor: AppColors.canvas,
+              fillColor: AppColors.surfaceInput,
               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
@@ -171,7 +171,7 @@ class ErpFormWidgets {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
-                borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5),
+                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
               ),
             ),
           ),
@@ -180,7 +180,7 @@ class ErpFormWidgets {
     );
   }
 
-  /// Strict 35px Height Primary Black Button
+  /// Strict 35px Height Primary Royal Indigo Button
   static Widget primaryButton({
     required VoidCallback onPressed,
     required String text,
@@ -191,7 +191,7 @@ class ErpFormWidgets {
       height: 35,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.pitchBlack,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -240,7 +240,8 @@ class ErpFormWidgets {
       height: 35,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.pitchBlack,
+          backgroundColor: AppColors.lightGray,
+          foregroundColor: AppColors.textPrimary,
           side: const BorderSide(color: AppColors.border, width: 1),
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -252,7 +253,7 @@ class ErpFormWidgets {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 14, color: AppColors.pitchBlack),
+              Icon(icon, size: 14, color: AppColors.textPrimary),
               const SizedBox(width: 6),
             ],
             Text(
@@ -261,7 +262,7 @@ class ErpFormWidgets {
                 fontFamily: 'Poppins',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: AppColors.pitchBlack,
+                color: AppColors.textPrimary,
               ),
             ),
           ],
@@ -270,7 +271,7 @@ class ErpFormWidgets {
     );
   }
 
-  /// Strict 35px Height Secondary Flat Button (Light Gray)
+  /// Strict 35px Height Secondary Flat Button
   static Widget secondaryButton({
     required VoidCallback onPressed,
     required String text,
@@ -280,8 +281,8 @@ class ErpFormWidgets {
       height: 35,
       child: TextButton(
         style: TextButton.styleFrom(
-          backgroundColor: AppColors.canvas,
-          foregroundColor: AppColors.pitchBlack,
+          backgroundColor: AppColors.surfaceInput,
+          foregroundColor: AppColors.textPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4),
@@ -293,7 +294,7 @@ class ErpFormWidgets {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 14, color: AppColors.pitchBlack),
+              Icon(icon, size: 14, color: AppColors.textPrimary),
               const SizedBox(width: 6),
             ],
             Text(
@@ -302,7 +303,7 @@ class ErpFormWidgets {
                 fontFamily: 'Poppins',
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: AppColors.pitchBlack,
+                color: AppColors.textPrimary,
               ),
             ),
           ],
@@ -316,9 +317,9 @@ class ErpFormWidgets {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: isActive ? Colors.green.withValues(alpha: 0.12) : AppColors.canvas,
+        color: isActive ? AppColors.successLight : AppColors.surfaceInput,
         border: Border.all(
-          color: isActive ? Colors.green.shade600 : AppColors.border,
+          color: isActive ? AppColors.success.withValues(alpha: 0.4) : AppColors.border,
           width: 1,
         ),
         borderRadius: BorderRadius.circular(4),
@@ -331,7 +332,7 @@ class ErpFormWidgets {
             height: 6,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isActive ? Colors.green.shade700 : AppColors.zinc500,
+              color: isActive ? AppColors.success : AppColors.zinc500,
             ),
           ),
           const SizedBox(width: 5),
@@ -341,7 +342,7 @@ class ErpFormWidgets {
               fontFamily: 'Poppins',
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: isActive ? Colors.green.shade800 : AppColors.zinc600,
+              color: isActive ? AppColors.success : AppColors.zinc600,
             ),
           ),
         ],
