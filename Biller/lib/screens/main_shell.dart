@@ -14,26 +14,26 @@ class _MainShellState extends State<MainShell> {
 
   final List<Widget> _screens = [
     const PosScreen(),
-    const _InventoryScreenPlaceholder(),
-    const _ReportsScreenPlaceholder(),
-    const _SettingsScreenPlaceholder(),
+    const _InventoryScreen(),
+    const _ReportsScreen(),
+    const _SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth >= 1024;
-    final isTablet = screenWidth >= 700 && screenWidth < 1024;
+    final isTablet = screenWidth >= 720 && screenWidth < 1024;
 
     if (isDesktop || isTablet) {
       return Scaffold(
-        backgroundColor: AppColors.offWhite,
+        backgroundColor: AppColors.canvas,
         body: Row(
           children: [
-            // Responsive Sidebar (Collapsed on tablet, expanded on desktop)
-            _buildSidebar(isCompact: isTablet),
+            // Responsive Sidebar Dock
+            _buildSidebarDock(isCompact: isTablet),
 
-            // Active View
+            // Active Viewport
             Expanded(
               child: _screens[_selectedIndex],
             ),
@@ -41,9 +41,9 @@ class _MainShellState extends State<MainShell> {
         ),
       );
     } else {
-      // Mobile View with Clean Bottom Navigation
+      // Mobile Viewport with Clean Minimalist Bottom Bar
       return Scaffold(
-        backgroundColor: AppColors.offWhite,
+        backgroundColor: AppColors.canvas,
         body: SafeArea(child: _screens[_selectedIndex]),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
@@ -54,26 +54,26 @@ class _MainShellState extends State<MainShell> {
             selectedIndex: _selectedIndex,
             onDestinationSelected: (idx) => setState(() => _selectedIndex = idx),
             backgroundColor: AppColors.white,
-            indicatorColor: AppColors.lightGray,
+            indicatorColor: AppColors.zinc100,
             elevation: 0,
             destinations: const [
               NavigationDestination(
-                icon: Icon(Icons.point_of_sale_outlined, color: AppColors.darkGray),
+                icon: Icon(Icons.point_of_sale_outlined, color: AppColors.zinc600),
                 selectedIcon: Icon(Icons.point_of_sale_rounded, color: AppColors.pitchBlack),
                 label: 'POS',
               ),
               NavigationDestination(
-                icon: Icon(Icons.inventory_2_outlined, color: AppColors.darkGray),
+                icon: Icon(Icons.inventory_2_outlined, color: AppColors.zinc600),
                 selectedIcon: Icon(Icons.inventory_2_rounded, color: AppColors.pitchBlack),
-                label: 'Stock',
+                label: 'Catalog',
               ),
               NavigationDestination(
-                icon: Icon(Icons.bar_chart_outlined, color: AppColors.darkGray),
+                icon: Icon(Icons.bar_chart_outlined, color: AppColors.zinc600),
                 selectedIcon: Icon(Icons.bar_chart_rounded, color: AppColors.pitchBlack),
                 label: 'Reports',
               ),
               NavigationDestination(
-                icon: Icon(Icons.tune_outlined, color: AppColors.darkGray),
+                icon: Icon(Icons.tune_outlined, color: AppColors.zinc600),
                 selectedIcon: Icon(Icons.tune_rounded, color: AppColors.pitchBlack),
                 label: 'Settings',
               ),
@@ -84,39 +84,51 @@ class _MainShellState extends State<MainShell> {
     }
   }
 
-  Widget _buildSidebar({required bool isCompact}) {
+  Widget _buildSidebarDock({required bool isCompact}) {
     return Container(
-      width: isCompact ? 72 : 230,
-      color: AppColors.white,
+      width: isCompact ? 76 : 240,
+      margin: const EdgeInsets.fromLTRB(16, 16, 0, 16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.pitchBlack.withAlpha(5),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       padding: EdgeInsets.symmetric(vertical: 24, horizontal: isCompact ? 10 : 16),
       child: Column(
         crossAxisAlignment: isCompact ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
-          // Logo & App Name
+          // Brand Header
           if (isCompact) ...[
             Container(
-              width: 40,
-              height: 40,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
                 color: AppColors.pitchBlack,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(14),
               ),
               child: const Center(
-                child: Icon(Icons.receipt_long_rounded, color: AppColors.white, size: 22),
+                child: Icon(Icons.bolt_rounded, color: AppColors.white, size: 24),
               ),
             ),
           ] else ...[
             Row(
               children: [
                 Container(
-                  width: 38,
-                  height: 38,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
                     color: AppColors.pitchBlack,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Center(
-                    child: Icon(Icons.receipt_long_rounded, color: AppColors.white, size: 22),
+                    child: Icon(Icons.bolt_rounded, color: AppColors.white, size: 24),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -124,22 +136,22 @@ class _MainShellState extends State<MainShell> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'VIHA BILLER',
+                      'VIHA POS',
                       style: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.1,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.2,
                         color: AppColors.pitchBlack,
                       ),
                     ),
                     Text(
-                      'POS & Invoicing Pro',
+                      'Enterprise Billing',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.textMuted,
+                        color: AppColors.zinc400,
                       ),
                     ),
                   ],
@@ -150,33 +162,44 @@ class _MainShellState extends State<MainShell> {
           const SizedBox(height: 36),
 
           // Nav Items
-          _buildSidebarNavItem(0, 'POS Counter', Icons.point_of_sale_outlined, Icons.point_of_sale_rounded, isCompact),
-          _buildSidebarNavItem(1, 'Inventory', Icons.inventory_2_outlined, Icons.inventory_2_rounded, isCompact),
-          _buildSidebarNavItem(2, 'Sales & GST', Icons.bar_chart_outlined, Icons.bar_chart_rounded, isCompact),
-          _buildSidebarNavItem(3, 'Settings', Icons.tune_outlined, Icons.tune_rounded, isCompact),
+          _buildNavItem(0, 'Cash Register', Icons.point_of_sale_outlined, Icons.point_of_sale_rounded, isCompact),
+          _buildNavItem(1, 'Item Catalog', Icons.inventory_2_outlined, Icons.inventory_2_rounded, isCompact),
+          _buildNavItem(2, 'Daily Analytics', Icons.bar_chart_outlined, Icons.bar_chart_rounded, isCompact),
+          _buildNavItem(3, 'Settings', Icons.tune_outlined, Icons.tune_rounded, isCompact),
 
           const Spacer(),
 
-          // Bottom Store Status Tag
+          // Bottom Cashier Card
           if (!isCompact)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.lightGray,
-                borderRadius: BorderRadius.circular(10),
+                color: AppColors.zinc50,
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
                   Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
                       color: AppColors.pitchBlack,
-                      shape: BoxShape.circle,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '01',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: AppColors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,17 +208,17 @@ class _MainShellState extends State<MainShell> {
                           'Counter #01',
                           style: TextStyle(
                             fontFamily: 'Poppins',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
                             color: AppColors.pitchBlack,
                           ),
                         ),
                         Text(
-                          'Thermal Printer Ready',
+                          'Printer Online',
                           style: TextStyle(
                             fontFamily: 'Poppins',
-                            fontSize: 9,
-                            color: AppColors.textMuted,
+                            fontSize: 10,
+                            color: AppColors.zinc500,
                           ),
                         ),
                       ],
@@ -209,28 +232,29 @@ class _MainShellState extends State<MainShell> {
     );
   }
 
-  Widget _buildSidebarNavItem(int index, String title, IconData icon, IconData activeIcon, bool isCompact) {
+  Widget _buildNavItem(int index, String title, IconData icon, IconData activeIcon, bool isCompact) {
     final isSelected = _selectedIndex == index;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Tooltip(
         message: isCompact ? title : '',
         child: InkWell(
           onTap: () => setState(() => _selectedIndex = index),
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: isCompact ? 10 : 14, vertical: 12),
+          borderRadius: BorderRadius.circular(14),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 140),
+            padding: EdgeInsets.symmetric(horizontal: isCompact ? 12 : 16, vertical: 12),
             decoration: BoxDecoration(
               color: isSelected ? AppColors.pitchBlack : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
               mainAxisAlignment: isCompact ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
                 Icon(
                   isSelected ? activeIcon : icon,
-                  color: isSelected ? AppColors.white : AppColors.darkGray,
+                  color: isSelected ? AppColors.white : AppColors.zinc600,
                   size: 20,
                 ),
                 if (!isCompact) ...[
@@ -240,8 +264,8 @@ class _MainShellState extends State<MainShell> {
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 13,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      color: isSelected ? AppColors.white : AppColors.darkGray,
+                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: isSelected ? AppColors.white : AppColors.zinc700,
                     ),
                   ),
                 ],
@@ -254,93 +278,138 @@ class _MainShellState extends State<MainShell> {
   }
 }
 
-// INVENTORY PLACEHOLDER SCREEN
-class _InventoryScreenPlaceholder extends StatelessWidget {
-  const _InventoryScreenPlaceholder();
+// INVENTORY TAB
+class _InventoryScreen extends StatelessWidget {
+  const _InventoryScreen();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.offWhite,
-      appBar: AppBar(title: const Text('Inventory Catalog')),
+      backgroundColor: AppColors.canvas,
+      appBar: AppBar(title: const Text('Inventory & Stock Management')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inventory_2_outlined, size: 64, color: AppColors.gray.withAlpha(120)),
-            const SizedBox(height: 16),
-            const Text(
-              'Stock & Inventory Catalog',
-              style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w700, fontSize: 18),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Manage item barcodes, cost prices, GST slabs, and low-stock alerts',
-              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.textMuted),
-            ),
-          ],
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: const BoxDecoration(
+                  color: AppColors.zinc100,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.inventory_2_rounded, size: 36, color: AppColors.pitchBlack),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Inventory Catalog',
+                style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w800, fontSize: 18),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Track barcodes, low-stock warnings, purchase cost & GST slabs',
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc500),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// REPORTS PLACEHOLDER SCREEN
-class _ReportsScreenPlaceholder extends StatelessWidget {
-  const _ReportsScreenPlaceholder();
+// REPORTS TAB
+class _ReportsScreen extends StatelessWidget {
+  const _ReportsScreen();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.offWhite,
-      appBar: AppBar(title: const Text('Sales & Tax Analytics')),
+      backgroundColor: AppColors.canvas,
+      appBar: AppBar(title: const Text('Daily Analytics & Tax Filing')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.bar_chart_outlined, size: 64, color: AppColors.gray.withAlpha(120)),
-            const SizedBox(height: 16),
-            const Text(
-              'Daily Revenue & GST Filing',
-              style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w700, fontSize: 18),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Live today\'s totals, UPI/Cash splits, and download GSTR-1 summaries',
-              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.textMuted),
-            ),
-          ],
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: const BoxDecoration(
+                  color: AppColors.zinc100,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.bar_chart_rounded, size: 36, color: AppColors.pitchBlack),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Sales & GST Analytics',
+                style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w800, fontSize: 18),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Daily gross revenue, UPI/Cash split, and GSTR-1 summaries',
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc500),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// SETTINGS PLACEHOLDER SCREEN
-class _SettingsScreenPlaceholder extends StatelessWidget {
-  const _SettingsScreenPlaceholder();
+// SETTINGS TAB
+class _SettingsScreen extends StatelessWidget {
+  const _SettingsScreen();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.offWhite,
-      appBar: AppBar(title: const Text('Store & Hardware Setup')),
+      backgroundColor: AppColors.canvas,
+      appBar: AppBar(title: const Text('Hardware & Store Settings')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.tune_outlined, size: 64, color: AppColors.gray.withAlpha(120)),
-            const SizedBox(height: 16),
-            const Text(
-              'Thermal Printer & POS Settings',
-              style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w700, fontSize: 18),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Configure ESC/POS 58mm/80mm USB & Bluetooth printers, store GSTIN, and headers',
-              style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.textMuted),
-            ),
-          ],
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: const BoxDecoration(
+                  color: AppColors.zinc100,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.tune_rounded, size: 36, color: AppColors.pitchBlack),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Hardware & Printer Settings',
+                style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w800, fontSize: 18),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'ESC/POS Thermal Printer (58mm/80mm USB & Bluetooth) & GSTIN setup',
+                style: TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc500),
+              ),
+            ],
+          ),
         ),
       ),
     );
