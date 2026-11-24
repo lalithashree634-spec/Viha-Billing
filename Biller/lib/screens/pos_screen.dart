@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -697,107 +696,101 @@ class _PosScreenState extends State<PosScreen> {
                 ),
               ),
 
-              // 3. BOTTOM FROSTED WHITE GLASS BLUR PANEL
+              // 3. BOTTOM TRANSLUCENT FROSTED WHITE GLASS PANEL (100% Hardware Accelerated - Zero WebGL Lag)
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(6)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.88), // Translucent Frosted White
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            width: 1,
-                          ),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xF2FFFFFF), // 95% translucent frosted white
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Product Name (Bold pitch black text on frosted white)
+                      Text(
+                        product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          color: AppColors.pitchBlack,
+                          height: 1.25,
                         ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
+                      const SizedBox(height: 5),
+
+                      // Barcode / SKU & Stock Count
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Product Name (Bold pitch black text on frosted white)
-                          Text(
-                            product.name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: AppColors.pitchBlack,
-                              height: 1.25,
+                          Expanded(
+                            child: Text(
+                              product.barcode,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 10,
+                                color: AppColors.zinc700,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 5),
-
-                          // Barcode / SKU & Stock Count
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  product.barcode,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontSize: 10,
-                                    color: AppColors.zinc700,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                isLowStock ? '${product.stock} (Low)' : '${product.stock} left',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 10,
-                                  fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w500,
-                                  color: isLowStock ? const Color(0xFFDC2626) : AppColors.zinc700,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 5),
-
-                          // Price & Quick Add (+) Button
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  currencyFormatter.format(product.price),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14,
-                                    color: AppColors.pitchBlack,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                width: 26,
-                                height: 26,
-                                decoration: BoxDecoration(
-                                  color: AppColors.pitchBlack,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Icon(Icons.add, color: AppColors.textOnDark, size: 15),
-                              ),
-                            ],
+                          Text(
+                            isLowStock ? '${product.stock} (Low)' : '${product.stock} left',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 10,
+                              fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w500,
+                              color: isLowStock ? const Color(0xFFDC2626) : AppColors.zinc700,
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                      const SizedBox(height: 5),
+
+                      // Price & Quick Add (+) Button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              currencyFormatter.format(product.price),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                                color: AppColors.pitchBlack,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: AppColors.pitchBlack,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Icon(Icons.add, color: AppColors.textOnDark, size: 15),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
