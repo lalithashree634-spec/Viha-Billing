@@ -838,7 +838,7 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                // Barcode / SKU (35px) with Generate Button
+                                // Barcode / SKU (Strict 40px AntD Input) with Generate Button
                                 Expanded(
                                   flex: 2,
                                   child: Column(
@@ -848,12 +848,12 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                         children: [
                                           Text(
                                             'Barcode / SKU',
-                                            style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                            style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF1F1F1F)),
                                           ),
-                                          Text(' *', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: Colors.redAccent)),
+                                          Text(' *', style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFFFF4D4F))),
                                         ],
                                       ),
-                                      const SizedBox(height: 5),
+                                      const SizedBox(height: 6),
                                       SizedBox(
                                         height: 40,
                                         child: Row(
@@ -861,33 +861,36 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                             Expanded(
                                               child: TextField(
                                                 controller: _barcodeController,
-                                                style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.pitchBlack),
+                                                textAlignVertical: TextAlignVertical.center,
+                                                style: const TextStyle(fontFamily: 'Poppins', fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF1F1F1F)),
                                                 decoration: InputDecoration(
                                                   isDense: true,
                                                   hintText: '8901234...',
-                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                                  hintStyle: const TextStyle(fontFamily: 'Poppins', fontSize: 13, color: Color(0xFFBFBFBF)),
+                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                                                   filled: true,
-                                                  fillColor: AppColors.canvas,
-                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-                                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.border)),
-                                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(4), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
+                                                  fillColor: Colors.white,
+                                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9), width: 1)),
+                                                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9), width: 1)),
+                                                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
                                                 ),
                                               ),
                                             ),
                                             const SizedBox(width: 6),
-                                            // Quick Generate Button (40px)
+                                            // Quick Generate Button (Strict 40px)
                                             SizedBox(
                                               height: 40,
+                                              width: 40,
                                               child: OutlinedButton(
                                                 style: OutlinedButton.styleFrom(
-                                                  backgroundColor: AppColors.canvas,
-                                                  foregroundColor: AppColors.pitchBlack,
-                                                  side: const BorderSide(color: AppColors.border),
-                                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor: const Color(0xFF1F1F1F),
+                                                  side: const BorderSide(color: Color(0xFFD9D9D9), width: 1),
+                                                  padding: EdgeInsets.zero,
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                                                 ),
                                                 onPressed: _generateBarcode,
-                                                child: const Icon(Icons.qr_code, size: 16),
+                                                child: const Icon(Icons.qr_code_rounded, size: 18, color: Color(0xFF595959)),
                                               ),
                                             ),
                                           ],
@@ -1079,25 +1082,25 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                       children: [
                                         const Text(
                                           'Gross Margin',
-                                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                          style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF1F1F1F)),
                                         ),
-                                        const SizedBox(height: 5),
+                                        const SizedBox(height: 6),
                                         Container(
                                           height: 40,
-                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          padding: const EdgeInsets.symmetric(horizontal: 12),
                                           decoration: BoxDecoration(
-                                            color: marginPercent > 0 ? Colors.green.withValues(alpha: 0.1) : AppColors.canvas,
-                                            border: Border.all(color: marginPercent > 0 ? Colors.green.shade600 : AppColors.border),
-                                            borderRadius: BorderRadius.circular(4),
+                                            color: marginPercent > 0 ? const Color(0xFFF6FFED) : Colors.white,
+                                            border: Border.all(color: marginPercent > 0 ? const Color(0xFFB7EB8F) : const Color(0xFFD9D9D9), width: 1),
+                                            borderRadius: BorderRadius.circular(6),
                                           ),
                                           alignment: Alignment.centerLeft,
                                           child: Text(
                                             '${marginPercent.toStringAsFixed(1)}% markup',
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                              color: marginPercent > 0 ? Colors.green.shade800 : AppColors.zinc600,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              color: marginPercent > 0 ? const Color(0xFF389E0D) : const Color(0xFF8C8C8C),
                                             ),
                                           ),
                                         ),
@@ -1157,25 +1160,25 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
                                       children: [
                                         const Text(
                                           'Gross Margin',
-                                          style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.pitchBlack),
+                                          style: TextStyle(fontFamily: 'Poppins', fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF1F1F1F)),
                                         ),
-                                        const SizedBox(height: 5),
+                                        const SizedBox(height: 6),
                                         Container(
                                           height: 40,
-                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          padding: const EdgeInsets.symmetric(horizontal: 12),
                                           decoration: BoxDecoration(
-                                            color: marginPercent > 0 ? Colors.green.withValues(alpha: 0.1) : AppColors.canvas,
-                                            border: Border.all(color: marginPercent > 0 ? Colors.green.shade600 : AppColors.border),
-                                            borderRadius: BorderRadius.circular(4),
+                                            color: marginPercent > 0 ? const Color(0xFFF6FFED) : Colors.white,
+                                            border: Border.all(color: marginPercent > 0 ? const Color(0xFFB7EB8F) : const Color(0xFFD9D9D9), width: 1),
+                                            borderRadius: BorderRadius.circular(6),
                                           ),
                                           alignment: Alignment.centerLeft,
                                           child: Text(
                                             '${marginPercent.toStringAsFixed(1)}% markup',
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                              color: marginPercent > 0 ? Colors.green.shade800 : AppColors.zinc600,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                              color: marginPercent > 0 ? const Color(0xFF389E0D) : const Color(0xFF8C8C8C),
                                             ),
                                           ),
                                         ),

@@ -67,6 +67,7 @@ class ErpFormWidgets {
             readOnly: readOnly,
             keyboardType: keyboardType,
             onChanged: onChanged,
+            textAlignVertical: TextAlignVertical.center,
             style: const TextStyle(
               fontFamily: 'Poppins',
               fontSize: 13,
@@ -88,7 +89,7 @@ class ErpFormWidgets {
                   ? Icon(prefixIcon, size: 16, color: const Color(0xFF8C8C8C))
                   : null,
               suffixIcon: suffix,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
                 borderSide: const BorderSide(color: borderNeutral, width: 1),
@@ -170,6 +171,7 @@ class ErpFormWidgets {
             ),
             isDense: true,
             isExpanded: true,
+            alignment: AlignmentDirectional.centerStart,
             decoration: InputDecoration(
               isDense: true,
               hintText: hintText,
@@ -181,7 +183,7 @@ class ErpFormWidgets {
               ),
               filled: true,
               fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
                 borderSide: const BorderSide(color: borderNeutral, width: 1),
