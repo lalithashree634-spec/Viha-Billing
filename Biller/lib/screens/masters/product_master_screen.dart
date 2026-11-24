@@ -5,6 +5,7 @@ import '../../models/product.dart';
 import '../../services/inventory_repository.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/form_helpers.dart';
+import '../../widgets/antd_message.dart';
 
 class ProductMasterScreen extends StatefulWidget {
   const ProductMasterScreen({super.key});
@@ -57,12 +58,7 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
 
   void _openProductForm([Product? productToEdit]) {
     if (_repo.categories.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please create at least one Category in Category Master first'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      AntdMessage.warning(context, 'Please create at least one Category in Category Master first');
       return;
     }
 
@@ -111,13 +107,7 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
               onPressed: () {
                 _repo.deleteProduct(product.id);
                 Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Product "${product.name}" deleted successfully'),
-                    backgroundColor: AppColors.pitchBlack,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                AntdMessage.success(context, 'Product "${product.name}" deleted successfully');
               },
               child: const Text(
                 'Delete',
@@ -281,8 +271,8 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
                         children: [
                           SizedBox(width: 110, child: Text('BARCODE / SKU', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           Expanded(flex: 3, child: Text('PRODUCT NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 110, child: Text('CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 120, child: Text('SUB-CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 120, child: Text('CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 130, child: Text('SUB-CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           SizedBox(width: 60, child: Text('UOM', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('COST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
                           SizedBox(width: 100, child: Align(alignment: Alignment.centerRight, child: Text('SELLING (MRP)', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
@@ -356,7 +346,7 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
                                       ),
                                       // Category
                                       SizedBox(
-                                        width: 110,
+                                        width: 120,
                                         child: Text(
                                           p.category,
                                           style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
@@ -364,7 +354,7 @@ class _ProductMasterScreenState extends State<ProductMasterScreen> {
                                       ),
                                       // Subcategory
                                       SizedBox(
-                                        width: 120,
+                                        width: 130,
                                         child: Text(
                                           p.subcategory.isEmpty ? '—' : p.subcategory,
                                           maxLines: 1,
@@ -602,7 +592,6 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
       final subcats = widget.repo.getSubcategoriesForCategory(newCategory);
       _selectedSubcategory = subcats.isNotEmpty ? subcats.first.name : null;
 
-      // Auto-set category's default GST
       final cat = widget.repo.categories.firstWhere((c) => c.name == newCategory);
       _selectedGst = cat.gstPercent;
       if (cat.hsnCode.isNotEmpty && _hsnController.text.isEmpty) {
@@ -626,23 +615,17 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     final reorder = int.tryParse(_reorderController.text.trim()) ?? 10;
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter Product Name'), backgroundColor: Colors.redAccent),
-      );
+      AntdMessage.error(context, 'Please enter Product Name');
       return;
     }
 
     if (barcode.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter or generate Barcode/SKU'), backgroundColor: Colors.redAccent),
-      );
+      AntdMessage.error(context, 'Please enter or generate Barcode/SKU');
       return;
     }
 
     if (price <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selling Price must be greater than zero'), backgroundColor: Colors.redAccent),
-      );
+      AntdMessage.error(context, 'Selling Price must be greater than zero');
       return;
     }
 
@@ -663,6 +646,8 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
         isActive: _isActive,
       );
       widget.repo.addProduct(newProd);
+      Navigator.pop(context);
+      AntdMessage.success(context, 'Product "$name" added to inventory');
     } else {
       final updated = widget.product!.copyWith(
         name: name,
@@ -679,16 +664,9 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
         isActive: _isActive,
       );
       widget.repo.updateProduct(updated);
+      Navigator.pop(context);
+      AntdMessage.success(context, 'Product "$name" updated successfully');
     }
-
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(widget.product == null ? 'Product added to inventory' : 'Product updated successfully'),
-        backgroundColor: AppColors.pitchBlack,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   @override
@@ -696,7 +674,6 @@ class _ProductFormDialogState extends State<_ProductFormDialog> {
     final isEdit = widget.product != null;
     final currentSubcats = widget.repo.getSubcategoriesForCategory(_selectedCategory);
 
-    // Compute live profit margin
     final cost = double.tryParse(_costPriceController.text) ?? 0.0;
     final selling = double.tryParse(_sellingPriceController.text) ?? 0.0;
     final marginPercent = cost > 0 ? (((selling - cost) / cost) * 100) : 0.0;

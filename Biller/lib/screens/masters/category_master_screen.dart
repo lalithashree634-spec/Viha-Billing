@@ -3,6 +3,7 @@ import '../../models/category.dart';
 import '../../services/inventory_repository.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/form_helpers.dart';
+import '../../widgets/antd_message.dart';
 
 class CategoryMasterScreen extends StatefulWidget {
   const CategoryMasterScreen({super.key});
@@ -37,7 +38,6 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
   List<ProductCategory> get _filteredCategories {
     return _repo.categories.where((cat) {
       final matchesSearch = cat.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          cat.code.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           cat.hsnCode.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesStatus = _statusFilter == 'All' ||
           (_statusFilter == 'Active' && cat.isActive) ||
@@ -74,7 +74,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
         content: Text(
           productCount > 0
               ? 'Warning: "${category.name}" has $productCount products linked to it. Are you sure you want to delete it?'
-              : 'Are you sure you want to delete category "${category.name}" (${category.code})?',
+              : 'Are you sure you want to delete category "${category.name}"?',
           style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc700),
         ),
         actions: [
@@ -95,13 +95,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
               onPressed: () {
                 _repo.deleteCategory(category.id);
                 Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Category "${category.name}" deleted successfully'),
-                    backgroundColor: AppColors.pitchBlack,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                AntdMessage.success(context, 'Category "${category.name}" deleted successfully');
               },
               child: const Text(
                 'Delete',
@@ -183,7 +177,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                     flex: 3,
                     child: ErpFormWidgets.textField(
                       controller: _searchController,
-                      hintText: 'Search by category code, name or HSN...',
+                      hintText: 'Search by category name or HSN...',
                       prefixIcon: Icons.search,
                       onChanged: (val) => setState(() => _searchQuery = val),
                     ),
@@ -242,12 +236,11 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                       ),
                       child: const Row(
                         children: [
-                          SizedBox(width: 100, child: Text('CODE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           Expanded(flex: 3, child: Text('CATEGORY NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 100, child: Text('HSN CODE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 110, child: Text('DEFAULT GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 120, child: Text('SUB-CATS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
-                          SizedBox(width: 110, child: Text('PRODUCTS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 110, child: Text('HSN CODE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 120, child: Text('DEFAULT GST', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 130, child: Text('SUB-CATEGORIES', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
+                          SizedBox(width: 120, child: Text('PRODUCTS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           SizedBox(width: 100, child: Text('STATUS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           SizedBox(width: 90, child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700)))),
                         ],
@@ -288,19 +281,6 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                                   color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
                                   child: Row(
                                     children: [
-                                      // Code
-                                      SizedBox(
-                                        width: 100,
-                                        child: Text(
-                                          cat.code,
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 11,
-                                            color: AppColors.pitchBlack,
-                                          ),
-                                        ),
-                                      ),
                                       // Name & Description
                                       Expanded(
                                         flex: 3,
@@ -332,7 +312,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                                       ),
                                       // HSN
                                       SizedBox(
-                                        width: 100,
+                                        width: 110,
                                         child: Text(
                                           cat.hsnCode.isEmpty ? '—' : cat.hsnCode,
                                           style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
@@ -340,7 +320,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                                       ),
                                       // GST
                                       SizedBox(
-                                        width: 110,
+                                        width: 120,
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                           decoration: BoxDecoration(
@@ -356,7 +336,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                                       ),
                                       // Subcategories count
                                       SizedBox(
-                                        width: 120,
+                                        width: 130,
                                         child: Text(
                                           '$subCount sub-types',
                                           style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
@@ -364,7 +344,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
                                       ),
                                       // Products count
                                       SizedBox(
-                                        width: 110,
+                                        width: 120,
                                         child: Text(
                                           '$prodCount items',
                                           style: const TextStyle(fontFamily: 'Poppins', fontSize: 11, color: AppColors.zinc700),
@@ -442,7 +422,7 @@ class _CategoryMasterScreenState extends State<CategoryMasterScreen> {
   }
 }
 
-/// Comprehensive Category Form Dialog enforcing strict 35px heights
+/// Streamlined Category Form Dialog without code requirement
 class _CategoryFormDialog extends StatefulWidget {
   final ProductCategory? category;
   final InventoryRepository repo;
@@ -455,7 +435,6 @@ class _CategoryFormDialog extends StatefulWidget {
 
 class _CategoryFormDialogState extends State<_CategoryFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _codeController;
   late TextEditingController _nameController;
   late TextEditingController _hsnController;
   late TextEditingController _descController;
@@ -466,9 +445,6 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
   void initState() {
     super.initState();
     final isEdit = widget.category != null;
-    _codeController = TextEditingController(
-      text: isEdit ? widget.category!.code : 'CAT-${(widget.repo.categories.length + 1).toString().padLeft(3, '0')}',
-    );
     _nameController = TextEditingController(text: isEdit ? widget.category!.name : '');
     _hsnController = TextEditingController(text: isEdit ? widget.category!.hsnCode : '');
     _descController = TextEditingController(text: isEdit ? widget.category!.description : '');
@@ -478,7 +454,6 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
 
   @override
   void dispose() {
-    _codeController.dispose();
     _nameController.dispose();
     _hsnController.dispose();
     _descController.dispose();
@@ -487,19 +462,15 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
 
   void _saveCategory() {
     final name = _nameController.text.trim();
-    final code = _codeController.text.trim();
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter Category Name'), backgroundColor: Colors.redAccent),
-      );
+      AntdMessage.error(context, 'Please enter Category Name');
       return;
     }
 
     if (widget.category == null) {
       final newCat = ProductCategory(
         id: 'cat_${DateTime.now().millisecondsSinceEpoch}',
-        code: code,
         name: name,
         hsnCode: _hsnController.text.trim(),
         gstPercent: _selectedGst,
@@ -507,9 +478,10 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
         isActive: _isActive,
       );
       widget.repo.addCategory(newCat);
+      Navigator.pop(context);
+      AntdMessage.success(context, 'Category "$name" created successfully');
     } else {
       final updated = widget.category!.copyWith(
-        code: code,
         name: name,
         hsnCode: _hsnController.text.trim(),
         gstPercent: _selectedGst,
@@ -517,16 +489,9 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
         isActive: _isActive,
       );
       widget.repo.updateCategory(updated);
+      Navigator.pop(context);
+      AntdMessage.success(context, 'Category "$name" updated successfully');
     }
-
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(widget.category == null ? 'Category created successfully' : 'Category updated successfully'),
-        backgroundColor: AppColors.pitchBlack,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   @override
@@ -540,7 +505,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
         side: const BorderSide(color: AppColors.border),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 460),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -552,7 +517,7 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isEdit ? 'Edit Category Master' : 'New Category Master',
+                    isEdit ? 'Edit Category' : 'New Category',
                     style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 15,
@@ -576,43 +541,27 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        // Category Code (35px)
-                        Expanded(
-                          flex: 2,
-                          child: ErpFormWidgets.textField(
-                            controller: _codeController,
-                            label: 'Category Code',
-                            hintText: 'e.g. CAT-001',
-                            isRequired: true,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // HSN Code (35px)
-                        Expanded(
-                          flex: 2,
-                          child: ErpFormWidgets.textField(
-                            controller: _hsnController,
-                            label: 'HSN Prefix',
-                            hintText: 'e.g. 0901',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
                     // Category Name (35px)
                     ErpFormWidgets.textField(
                       controller: _nameController,
                       label: 'Category Name',
-                      hintText: 'e.g. Beverages, Bakery, Spices',
+                      hintText: 'e.g. Beverages, Bakery, Snacks, Dairy',
                       isRequired: true,
                     ),
                     const SizedBox(height: 12),
 
                     Row(
                       children: [
+                        // HSN Prefix (35px)
+                        Expanded(
+                          flex: 2,
+                          child: ErpFormWidgets.textField(
+                            controller: _hsnController,
+                            label: 'HSN Prefix',
+                            hintText: 'e.g. 0901, 1905',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
                         // Default GST Slab Dropdown (35px)
                         Expanded(
                           flex: 2,
@@ -624,30 +573,28 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                               DropdownMenuItem(value: 5.0, child: Text('5% GST')),
                               DropdownMenuItem(value: 12.0, child: Text('12% GST')),
                               DropdownMenuItem(value: 18.0, child: Text('18% GST')),
-                              DropdownMenuItem(value: 28.0, child: Text('28% Luxury GST')),
+                              DropdownMenuItem(value: 28.0, child: Text('28% Luxury')),
                             ],
                             onChanged: (val) {
                               if (val != null) setState(() => _selectedGst = val);
                             },
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        // Status Switch (35px)
-                        Expanded(
-                          flex: 2,
-                          child: ErpFormWidgets.dropdownField<bool>(
-                            label: 'Status',
-                            value: _isActive,
-                            items: const [
-                              DropdownMenuItem(value: true, child: Text('Active')),
-                              DropdownMenuItem(value: false, child: Text('Inactive')),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) setState(() => _isActive = val);
-                            },
-                          ),
-                        ),
                       ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Status Dropdown (35px)
+                    ErpFormWidgets.dropdownField<bool>(
+                      label: 'Status',
+                      value: _isActive,
+                      items: const [
+                        DropdownMenuItem(value: true, child: Text('Active')),
+                        DropdownMenuItem(value: false, child: Text('Inactive')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) setState(() => _isActive = val);
+                      },
                     ),
                     const SizedBox(height: 12),
 

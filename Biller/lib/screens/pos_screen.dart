@@ -5,6 +5,7 @@ import '../models/product.dart';
 import '../models/bill_item.dart';
 import '../theme/app_colors.dart';
 import '../services/inventory_repository.dart';
+import '../widgets/antd_message.dart';
 
 class PosScreen extends StatefulWidget {
   const PosScreen({super.key});
@@ -117,22 +118,7 @@ class _PosScreenState extends State<PosScreen> {
       _overallDiscountPercent = 0.0;
       _billNumber = 'INV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}';
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: AppColors.pitchBlack,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          'Bill held successfully (${_heldBills.length} queued)',
-          style: const TextStyle(fontFamily: 'Poppins', color: AppColors.textOnDark, fontSize: 12),
-        ),
-        action: SnackBarAction(
-          label: 'RECALL',
-          textColor: AppColors.textOnDark,
-          onPressed: _recallHeldBill,
-        ),
-      ),
-    );
+    AntdMessage.info(context, 'Bill held in queue (${_heldBills.length} queued)');
   }
 
   void _recallHeldBill() {
@@ -142,6 +128,7 @@ class _PosScreenState extends State<PosScreen> {
       _cart.clear();
       _cart.addAll(lastHeld);
     });
+    AntdMessage.success(context, 'Recalled queued bill (${_cart.length} items)');
   }
 
   void _clearCart() {
@@ -812,7 +799,7 @@ class _PosScreenState extends State<PosScreen> {
                   itemBuilder: (context, index) {
                     final item = _cart[index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
                       child: Row(
                         children: [
                           // Item Name & Rate

@@ -3,6 +3,7 @@ import '../../models/subcategory.dart';
 import '../../services/inventory_repository.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/form_helpers.dart';
+import '../../widgets/antd_message.dart';
 
 class SubcategoryMasterScreen extends StatefulWidget {
   const SubcategoryMasterScreen({super.key});
@@ -38,7 +39,6 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
   List<Subcategory> get _filteredSubcategories {
     return _repo.subcategories.where((sub) {
       final matchesSearch = sub.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          sub.code.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           sub.categoryName.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesCategory = _categoryFilter == 'All' || sub.categoryName.toLowerCase() == _categoryFilter.toLowerCase();
       final matchesStatus = _statusFilter == 'All' ||
@@ -50,12 +50,7 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
 
   void _openSubcategoryForm([Subcategory? subcategoryToEdit]) {
     if (_repo.categories.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please create at least one Category in Category Master first'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      AntdMessage.warning(context, 'Please create at least one Category in Category Master first');
       return;
     }
 
@@ -86,7 +81,7 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
         content: Text(
           productCount > 0
               ? 'Warning: "${subcategory.name}" has $productCount products linked to it. Are you sure you want to delete it?'
-              : 'Are you sure you want to delete sub-category "${subcategory.name}" (${subcategory.code})?',
+              : 'Are you sure you want to delete sub-category "${subcategory.name}"?',
           style: const TextStyle(fontFamily: 'Poppins', fontSize: 12, color: AppColors.zinc700),
         ),
         actions: [
@@ -107,13 +102,7 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
               onPressed: () {
                 _repo.deleteSubcategory(subcategory.id);
                 Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Sub-Category "${subcategory.name}" deleted successfully'),
-                    backgroundColor: AppColors.pitchBlack,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                AntdMessage.success(context, 'Sub-Category "${subcategory.name}" deleted successfully');
               },
               child: const Text(
                 'Delete',
@@ -195,7 +184,7 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
                     flex: 3,
                     child: ErpFormWidgets.textField(
                       controller: _searchController,
-                      hintText: 'Search by sub-category code, name or parent category...',
+                      hintText: 'Search by sub-category name or parent category...',
                       prefixIcon: Icons.search,
                       onChanged: (val) => setState(() => _searchQuery = val),
                     ),
@@ -271,7 +260,6 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
                       ),
                       child: const Row(
                         children: [
-                          SizedBox(width: 110, child: Text('CODE', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           Expanded(flex: 3, child: Text('SUB-CATEGORY NAME', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           Expanded(flex: 2, child: Text('PARENT CATEGORY', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
                           SizedBox(width: 120, child: Text('PRODUCTS', style: TextStyle(fontFamily: 'Poppins', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.zinc700))),
@@ -314,19 +302,6 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
                                   color: index.isEven ? AppColors.lightGray : AppColors.canvas.withValues(alpha: 0.5),
                                   child: Row(
                                     children: [
-                                      // Code
-                                      SizedBox(
-                                        width: 110,
-                                        child: Text(
-                                          sub.code,
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 11,
-                                            color: AppColors.pitchBlack,
-                                          ),
-                                        ),
-                                      ),
                                       // Name & Description
                                       Expanded(
                                         flex: 3,
@@ -467,7 +442,7 @@ class _SubcategoryMasterScreenState extends State<SubcategoryMasterScreen> {
   }
 }
 
-/// Strict 35px Subcategory Form Dialog
+/// Streamlined Subcategory Form Dialog without code requirement
 class _SubcategoryFormDialog extends StatefulWidget {
   final Subcategory? subcategory;
   final InventoryRepository repo;
@@ -480,7 +455,6 @@ class _SubcategoryFormDialog extends StatefulWidget {
 
 class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _codeController;
   late TextEditingController _nameController;
   late TextEditingController _descController;
   late String _selectedCategoryId;
@@ -490,9 +464,6 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
   void initState() {
     super.initState();
     final isEdit = widget.subcategory != null;
-    _codeController = TextEditingController(
-      text: isEdit ? widget.subcategory!.code : 'SUB-${(widget.repo.subcategories.length + 1).toString().padLeft(3, '0')}',
-    );
     _nameController = TextEditingController(text: isEdit ? widget.subcategory!.name : '');
     _descController = TextEditingController(text: isEdit ? widget.subcategory!.description : '');
 
@@ -507,7 +478,6 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
 
   @override
   void dispose() {
-    _codeController.dispose();
     _nameController.dispose();
     _descController.dispose();
     super.dispose();
@@ -515,12 +485,9 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
 
   void _saveSubcategory() {
     final name = _nameController.text.trim();
-    final code = _codeController.text.trim();
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter Sub-Category Name'), backgroundColor: Colors.redAccent),
-      );
+      AntdMessage.error(context, 'Please enter Sub-Category Name');
       return;
     }
 
@@ -534,32 +501,25 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
         id: 'sub_${DateTime.now().millisecondsSinceEpoch}',
         categoryId: parentCat.id,
         categoryName: parentCat.name,
-        code: code,
         name: name,
         description: _descController.text.trim(),
         isActive: _isActive,
       );
       widget.repo.addSubcategory(newSub);
+      Navigator.pop(context);
+      AntdMessage.success(context, 'Sub-Category "$name" created successfully');
     } else {
       final updated = widget.subcategory!.copyWith(
         categoryId: parentCat.id,
         categoryName: parentCat.name,
-        code: code,
         name: name,
         description: _descController.text.trim(),
         isActive: _isActive,
       );
       widget.repo.updateSubcategory(updated);
+      Navigator.pop(context);
+      AntdMessage.success(context, 'Sub-Category "$name" updated successfully');
     }
-
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(widget.subcategory == null ? 'Sub-Category created successfully' : 'Sub-Category updated successfully'),
-        backgroundColor: AppColors.pitchBlack,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   @override
@@ -573,7 +533,7 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
         side: const BorderSide(color: AppColors.border),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 480),
+        constraints: const BoxConstraints(maxWidth: 460),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -585,7 +545,7 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isEdit ? 'Edit Sub-Category Master' : 'New Sub-Category Master',
+                    isEdit ? 'Edit Sub-Category' : 'New Sub-Category',
                     style: const TextStyle(
                       fontFamily: 'Poppins',
                       fontSize: 15,
@@ -618,7 +578,7 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
                           .map(
                             (c) => DropdownMenuItem(
                               value: c.id,
-                              child: Text('${c.name} (${c.code})'),
+                              child: Text(c.name),
                             ),
                           )
                           .toList(),
@@ -628,44 +588,26 @@ class _SubcategoryFormDialogState extends State<_SubcategoryFormDialog> {
                     ),
                     const SizedBox(height: 12),
 
-                    Row(
-                      children: [
-                        // Sub-Category Code (35px)
-                        Expanded(
-                          flex: 2,
-                          child: ErpFormWidgets.textField(
-                            controller: _codeController,
-                            label: 'Sub-Category Code',
-                            hintText: 'e.g. SUB-001',
-                            isRequired: true,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // Status (35px)
-                        Expanded(
-                          flex: 2,
-                          child: ErpFormWidgets.dropdownField<bool>(
-                            label: 'Status',
-                            value: _isActive,
-                            items: const [
-                              DropdownMenuItem(value: true, child: Text('Active')),
-                              DropdownMenuItem(value: false, child: Text('Inactive')),
-                            ],
-                            onChanged: (val) {
-                              if (val != null) setState(() => _isActive = val);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
                     // Sub-Category Name (35px)
                     ErpFormWidgets.textField(
                       controller: _nameController,
                       label: 'Sub-Category Name',
                       hintText: 'e.g. Coffee & Tea, Pastries, Whole Spices',
                       isRequired: true,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Status Dropdown (35px)
+                    ErpFormWidgets.dropdownField<bool>(
+                      label: 'Status',
+                      value: _isActive,
+                      items: const [
+                        DropdownMenuItem(value: true, child: Text('Active')),
+                        DropdownMenuItem(value: false, child: Text('Inactive')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) setState(() => _isActive = val);
+                      },
                     ),
                     const SizedBox(height: 12),
 

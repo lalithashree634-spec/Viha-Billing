@@ -20,28 +20,28 @@ class InventoryRepository extends ChangeNotifier {
   List<Product> get products => List.unmodifiable(_products);
 
   void _initDefaultData() {
-    // Default Categories
+    // Default Categories (Clean, without codes)
     _categories.addAll([
-      const ProductCategory(id: 'cat_1', code: 'CAT-001', name: 'Beverages', hsnCode: '0901', gstPercent: 5.0, description: 'Coffee, tea, and packaged beverages'),
-      const ProductCategory(id: 'cat_2', code: 'CAT-002', name: 'Bakery', hsnCode: '1905', gstPercent: 0.0, description: 'Fresh breads, buns, and confectionery'),
-      const ProductCategory(id: 'cat_3', code: 'CAT-003', name: 'Dairy', hsnCode: '0405', gstPercent: 12.0, description: 'Milk, ghee, cheese, and dairy items'),
-      const ProductCategory(id: 'cat_4', code: 'CAT-004', name: 'Snacks', hsnCode: '1904', gstPercent: 5.0, description: 'Dry fruits, chips, cookies, and nuts'),
-      const ProductCategory(id: 'cat_5', code: 'CAT-005', name: 'Spices', hsnCode: '0910', gstPercent: 5.0, description: 'Whole spices, powdered masalas, seasonings'),
-      const ProductCategory(id: 'cat_6', code: 'CAT-006', name: 'Essentials', hsnCode: '3401', gstPercent: 18.0, description: 'Household staples, oils, and hygiene'),
+      const ProductCategory(id: 'cat_1', name: 'Beverages', hsnCode: '0901', gstPercent: 5.0, description: 'Coffee, tea, and packaged beverages'),
+      const ProductCategory(id: 'cat_2', name: 'Bakery', hsnCode: '1905', gstPercent: 0.0, description: 'Fresh breads, buns, and confectionery'),
+      const ProductCategory(id: 'cat_3', name: 'Dairy', hsnCode: '0405', gstPercent: 12.0, description: 'Milk, ghee, cheese, and dairy items'),
+      const ProductCategory(id: 'cat_4', name: 'Snacks', hsnCode: '1904', gstPercent: 5.0, description: 'Dry fruits, chips, cookies, and nuts'),
+      const ProductCategory(id: 'cat_5', name: 'Spices', hsnCode: '0910', gstPercent: 5.0, description: 'Whole spices, powdered masalas, seasonings'),
+      const ProductCategory(id: 'cat_6', name: 'Essentials', hsnCode: '3401', gstPercent: 18.0, description: 'Household staples, oils, and hygiene'),
     ]);
 
-    // Default Subcategories
+    // Default Subcategories (Clean, without codes)
     _subcategories.addAll([
-      const Subcategory(id: 'sub_1', categoryId: 'cat_1', categoryName: 'Beverages', code: 'SUB-001', name: 'Coffee & Tea', description: 'Filter coffee and roasted tea blends'),
-      const Subcategory(id: 'sub_2', categoryId: 'cat_1', categoryName: 'Beverages', code: 'SUB-002', name: 'Cold Beverages', description: 'Packaged juices and bottled drinks'),
-      const Subcategory(id: 'sub_3', categoryId: 'cat_2', categoryName: 'Bakery', code: 'SUB-003', name: 'Artisan Breads', description: 'Sourdough, whole wheat and multigrain'),
-      const Subcategory(id: 'sub_4', categoryId: 'cat_2', categoryName: 'Bakery', code: 'SUB-004', name: 'Pastries & Croissants', description: 'French croissants and sweet rolls'),
-      const Subcategory(id: 'sub_5', categoryId: 'cat_3', categoryName: 'Dairy', code: 'SUB-005', name: 'Ghee & Butter', description: 'Desi cow ghee, farm table butter'),
-      const Subcategory(id: 'sub_6', categoryId: 'cat_3', categoryName: 'Dairy', code: 'SUB-006', name: 'Paneer & Cheese', description: 'Fresh malai paneer and sliced cheese'),
-      const Subcategory(id: 'sub_7', categoryId: 'cat_4', categoryName: 'Snacks', code: 'SUB-007', name: 'Dry Fruits & Nuts', description: 'Almonds, cashews, raisins, walnuts'),
-      const Subcategory(id: 'sub_8', categoryId: 'cat_4', categoryName: 'Snacks', code: 'SUB-008', name: 'Cookies & Rusks', description: 'Chocolate cookies and butter rusks'),
-      const Subcategory(id: 'sub_9', categoryId: 'cat_5', categoryName: 'Spices', code: 'SUB-009', name: 'Whole Spices', description: 'Cardamom, cinnamon, black pepper'),
-      const Subcategory(id: 'sub_10', categoryId: 'cat_6', categoryName: 'Essentials', code: 'SUB-010', name: 'Cold-Pressed Oils', description: 'Gingelly oil, groundnut and coconut oil'),
+      const Subcategory(id: 'sub_1', categoryId: 'cat_1', categoryName: 'Beverages', name: 'Coffee & Tea', description: 'Filter coffee and roasted tea blends'),
+      const Subcategory(id: 'sub_2', categoryId: 'cat_1', categoryName: 'Beverages', name: 'Cold Beverages', description: 'Packaged juices and bottled drinks'),
+      const Subcategory(id: 'sub_3', categoryId: 'cat_2', categoryName: 'Bakery', name: 'Artisan Breads', description: 'Sourdough, whole wheat and multigrain'),
+      const Subcategory(id: 'sub_4', categoryId: 'cat_2', categoryName: 'Bakery', name: 'Pastries & Croissants', description: 'French croissants and sweet rolls'),
+      const Subcategory(id: 'sub_5', categoryId: 'cat_3', categoryName: 'Dairy', name: 'Ghee & Butter', description: 'Desi cow ghee, farm table butter'),
+      const Subcategory(id: 'sub_6', categoryId: 'cat_3', categoryName: 'Dairy', name: 'Paneer & Cheese', description: 'Fresh malai paneer and sliced cheese'),
+      const Subcategory(id: 'sub_7', categoryId: 'cat_4', categoryName: 'Snacks', name: 'Dry Fruits & Nuts', description: 'Almonds, cashews, raisins, walnuts'),
+      const Subcategory(id: 'sub_8', categoryId: 'cat_4', categoryName: 'Snacks', name: 'Cookies & Rusks', description: 'Chocolate cookies and butter rusks'),
+      const Subcategory(id: 'sub_9', categoryId: 'cat_5', categoryName: 'Spices', name: 'Whole Spices', description: 'Cardamom, cinnamon, black pepper'),
+      const Subcategory(id: 'sub_10', categoryId: 'cat_6', categoryName: 'Essentials', name: 'Cold-Pressed Oils', description: 'Gingelly oil, groundnut and coconut oil'),
     ]);
 
     // Default Products

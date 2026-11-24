@@ -1,6 +1,5 @@
 class ProductCategory {
   final String id;
-  final String code;
   final String name;
   final String hsnCode;
   final double gstPercent;
@@ -9,7 +8,6 @@ class ProductCategory {
 
   const ProductCategory({
     required this.id,
-    required this.code,
     required this.name,
     this.hsnCode = '',
     required this.gstPercent,
@@ -19,7 +17,6 @@ class ProductCategory {
 
   ProductCategory copyWith({
     String? id,
-    String? code,
     String? name,
     String? hsnCode,
     double? gstPercent,
@@ -28,7 +25,6 @@ class ProductCategory {
   }) {
     return ProductCategory(
       id: id ?? this.id,
-      code: code ?? this.code,
       name: name ?? this.name,
       hsnCode: hsnCode ?? this.hsnCode,
       gstPercent: gstPercent ?? this.gstPercent,
