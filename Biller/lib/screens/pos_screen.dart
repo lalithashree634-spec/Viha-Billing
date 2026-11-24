@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -557,7 +558,7 @@ class _PosScreenState extends State<PosScreen> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: crossAxisCount >= 3 ? 0.78 : 0.75,
+        childAspectRatio: crossAxisCount >= 3 ? 0.95 : 0.92,
       ),
       itemBuilder: (context, index) {
         final product = products[index];
@@ -566,13 +567,13 @@ class _PosScreenState extends State<PosScreen> {
     );
   }
 
-  // SHARP PRODUCT TILE IN LIGHT GRAY WITH PRODUCT IMAGE
+  // ULTRA-MODERN FULL BLEED PRODUCT CARD WITH FROSTED GLASS BLURRED PANEL
   Widget _buildProductCard(Product product) {
     final isLowStock = product.stock <= 6;
 
     return Material(
       key: ValueKey(product.id),
-      color: AppColors.lightGray,
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(6),
       child: InkWell(
         borderRadius: BorderRadius.circular(6),
@@ -583,148 +584,226 @@ class _PosScreenState extends State<PosScreen> {
             border: Border.all(color: AppColors.border),
           ),
           clipBehavior: Clip.antiAlias,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              // Product Image Header (70px) with Category Overlay
-              SizedBox(
-                height: 70,
-                width: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    if (product.imageUrl.isNotEmpty)
-                      Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: AppColors.canvas,
-                          child: const Center(
-                            child: Icon(Icons.inventory_2_outlined, size: 22, color: AppColors.zinc400),
-                          ),
-                        ),
-                        loadingBuilder: (ctx, child, progress) {
-                          if (progress == null) return child;
-                          return Container(
-                            color: AppColors.canvas,
-                            child: const Center(
-                              child: SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.pitchBlack),
-                              ),
-                            ),
-                          );
-                        },
-                      )
-                    else
-                      Container(
-                        color: AppColors.canvas,
-                        child: const Center(
-                          child: Icon(Icons.inventory_2_outlined, size: 22, color: AppColors.zinc400),
+              // 1. FULL CARD PRODUCT IMAGE (100% Bleed)
+              if (product.imageUrl.isNotEmpty)
+                Image.network(
+                  product.imageUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: AppColors.surfaceInput,
+                    child: const Center(
+                      child: Icon(Icons.inventory_2_outlined, size: 32, color: AppColors.zinc400),
+                    ),
+                  ),
+                  loadingBuilder: (ctx, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
+                      color: AppColors.surfaceInput,
+                      child: const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
                         ),
                       ),
-                    // Floating Category Pill
-                    Positioned(
-                      top: 6,
-                      left: 6,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.pitchBlack.withValues(alpha: 0.82),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        child: Text(
-                          product.category.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            letterSpacing: 0.4,
+                    );
+                  },
+                )
+              else
+                Container(
+                  color: AppColors.surfaceInput,
+                  child: const Center(
+                    child: Icon(Icons.inventory_2_outlined, size: 32, color: AppColors.zinc400),
+                  ),
+                ),
+
+              // 2. TOP VIGNETTE GRADIENT (Ensures top badges stand out)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 48,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.45),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // 3. TOP FLOATING BADGES (Category & Stock Alert)
+              Positioned(
+                top: 8,
+                left: 8,
+                right: 8,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Frosted Category Pill
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.45),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                          ),
+                          child: Text(
+                            product.category.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              letterSpacing: 0.4,
+                            ),
                           ),
                         ),
                       ),
                     ),
+
+                    // Low Stock Alert Badge
+                    if (isLowStock)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade900.withValues(alpha: 0.72),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: Colors.red.shade300.withValues(alpha: 0.3)),
+                            ),
+                            child: Text(
+                              'Low: ${product.stock}',
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
 
-              // Product Info Area
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Product Name
-                      Text(
-                        product.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                          color: AppColors.pitchBlack,
-                          height: 1.25,
+              // 4. BOTTOM FROSTED GLASS BLURRED PANEL (Product Name, Price, SKU & Add Button)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.52),
+                        border: Border(
+                          top: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.18),
+                            width: 1,
+                          ),
                         ),
                       ),
-                      const Spacer(),
-
-                      // SKU & Stock Level
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
+                          // Product Name on Blurred Glass
                           Text(
-                            product.barcode,
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 10,
-                              color: AppColors.zinc500,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          Text(
-                            isLowStock ? '${product.stock} (Low)' : '${product.stock} left',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 10,
-                              fontWeight: isLowStock ? FontWeight.w600 : FontWeight.w400,
-                              color: isLowStock ? Colors.orange.shade900 : AppColors.zinc600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-
-                      // Selling Price & Add (+) Button
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            currencyFormatter.format(product.price),
+                            product.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              color: AppColors.pitchBlack,
+                              fontSize: 12,
+                              color: Colors.white,
+                              height: 1.25,
+                              shadows: [
+                                Shadow(
+                                  offset: Offset(0, 1),
+                                  blurRadius: 2,
+                                  color: Colors.black45,
+                                ),
+                              ],
                             ),
                           ),
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Icon(Icons.add, color: Colors.white, size: 14),
+                          const SizedBox(height: 5),
+
+                          // Price, Stock & Quick Add (+) Button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    currencyFormatter.format(product.price),
+                                    style: const TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    isLowStock ? '${product.barcode} • ${product.stock} left' : '${product.barcode} • In stock',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 9,
+                                      color: Colors.white.withValues(alpha: 0.75),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // Quick Add Button
+                              Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(4),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primary.withValues(alpha: 0.4),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(Icons.add, color: Colors.white, size: 16),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
