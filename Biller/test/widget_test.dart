@@ -4,6 +4,6 @@ import 'package:biller/main.dart';
 void main() {
   testWidgets('Biller app smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const BillerApp());
-    expect(find.text('Billing Counter'), findsOneWidget);
+    expect(find.text('POS Register'), findsOneWidget);
   });
 }

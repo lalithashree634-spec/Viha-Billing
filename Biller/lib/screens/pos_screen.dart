@@ -337,71 +337,77 @@ class _PosScreenState extends State<PosScreen> {
 
   // COMPACT TOP HEADER
   Widget _buildHeaderBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 420;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'POS Register',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.pitchBlack,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.lightGray,
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: const Text(
-                'COUNTER 01',
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.zinc700,
-                  letterSpacing: 0.5,
+            Row(
+              children: [
+                const Text(
+                  'POS Register',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.pitchBlack,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightGray,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: const Text(
+                    'COUNTER 01',
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.zinc700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            if (!isNarrow)
+              Row(
+                children: [
+                  Text(
+                    DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now()),
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 11,
+                      color: AppColors.zinc500,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  if (_heldBills.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    OutlinedButton.icon(
+                      onPressed: _recallHeldBill,
+                      icon: const Icon(Icons.history_outlined, size: 14),
+                      label: Text(
+                        'Held (${_heldBills.length})',
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColors.lightGray,
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
           ],
-        ),
-        Row(
-          children: [
-            Text(
-              DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now()),
-              style: const TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 11,
-                color: AppColors.zinc500,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-            if (_heldBills.isNotEmpty) ...[
-              const SizedBox(width: 8),
-              OutlinedButton.icon(
-                onPressed: _recallHeldBill,
-                icon: const Icon(Icons.history_outlined, size: 14),
-                label: Text(
-                  'Held (${_heldBills.length})',
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-                ),
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: AppColors.lightGray,
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -453,7 +459,8 @@ class _PosScreenState extends State<PosScreen> {
           ),
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
             borderSide: const BorderSide(color: Color(0xFFD9D9D9)),
@@ -880,7 +887,8 @@ class _PosScreenState extends State<PosScreen> {
               filled: true,
               fillColor: Colors.white,
               isDense: true,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
               focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
@@ -2000,7 +2008,8 @@ class _PosScreenState extends State<PosScreen> {
                 isDense: true,
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                constraints: const BoxConstraints(minHeight: 40, maxHeight: 40),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
                 enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: Color(0xFFD9D9D9))),
                 focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: const BorderSide(color: AppColors.pitchBlack, width: 1.5)),
